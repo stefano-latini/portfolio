@@ -56,6 +56,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
   font-size:13px;line-height:1.5;min-height:100vh;
   padding:2rem 2rem calc(2rem + env(safe-area-inset-bottom));
   transition:background var(--tr),color var(--tr);}
+/* PWA-only: quando aperta come webapp su iPhone, spinge il contenuto sotto la status bar */
+@media all and (display-mode: standalone) {
+  body{ padding-top: calc(env(safe-area-inset-top) + 1.2rem); }
+}
 .container{max-width:1380px;margin:0 auto;}
 
 /* ═══════════════════════════════════════════════════════════════
@@ -371,9 +375,9 @@ select option{background:var(--surface);}
 .mobile-list{list-style:none;}
 .mobile-card{
   display:grid;
-  grid-template-columns:1fr auto auto;
+  grid-template-columns:1fr auto auto auto;
   align-items:center;
-  gap:.75rem;
+  gap:.6rem;
   padding:.85rem 1rem;
   border-bottom:1px solid var(--border);
   cursor:pointer;
@@ -385,15 +389,55 @@ select option{background:var(--surface);}
 .mc-left{}
 .mc-ticker{font-size:13px;font-weight:600;letter-spacing:.03em;}
 .mc-name{font-size:10.5px;color:var(--text3);margin-top:1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
-.mc-mid{text-align:right;}
-.mc-price{font-size:13px;font-weight:500;}
-.mc-chg{font-size:10.5px;margin-top:2px;}
-.mc-spark{width:72px;height:32px;flex-shrink:0;}
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
+/* daily P&L column */
+.mc-pnl{text-align:right;min-width:52px;}
+.mc-pnl-eur{font-size:11.5px;font-weight:500;}
+.mc-pnl-pct{font-size:10px;margin-top:2px;}
+.mc-spark{width:64px;height:30px;flex-shrink:0;}
+/* vertical 3-dot button */
+.ctx-btn-v{background:none;border:none;color:var(--text3);cursor:pointer;
+  padding:4px 5px;border-radius:5px;font-size:18px;line-height:1;letter-spacing:0;
+  writing-mode:vertical-rl;transition:color .12s,background .12s;flex-shrink:0;}
+.ctx-btn-v:hover{color:var(--text2);background:var(--surface);}
+
+/* panel-header mobile: title row + buttons row */
+.panel-header-mobile-btns{
+  display:none;
+  gap:.5rem;
+  padding:.55rem 1.2rem .7rem;
+  border-bottom:1px solid var(--border);
+}
+@media(max-width:600px){
+  .panel-header-mobile-btns{display:flex;}
+  .panel-header-mobile-btns .btn-add,
+  .panel-header-mobile-btns .btn-refresh{flex:1;justify-content:center;}
+  /* Hide the add/refresh buttons from the main panel-header on mobile */
+  .panel-header .btn-add-desktop,
+  .panel-header .btn-refresh-desktop{display:none;}
+}
 
 /* ═══════════════════════════════════════════════════════════════
-   POSITION DETAIL SHEET (slides up from bottom on mobile)
+   P&L PERIOD SECTION
 ═══════════════════════════════════════════════════════════════ */
+.pnl-section{background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.1rem 1.4rem;margin-bottom:1.5rem;}
+.pnl-section-header{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:.9rem;gap:.5rem;flex-wrap:wrap;}
+.pnl-section-header h2{font-family:'Lora',serif;font-weight:600;font-size:.9rem;}
+.pnl-values{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;}
+.pnl-big{font-family:'Lora',serif;font-size:1.55rem;font-weight:600;line-height:1;}
+.pnl-big.pos{color:var(--pos);}
+.pnl-big.neg{color:var(--neg);}
+.pnl-pct-badge{font-size:13px;font-weight:500;padding:2px 8px;border-radius:20px;}
+.pnl-pct-badge.pos{background:rgba(92,184,122,.15);color:var(--pos);}
+.pnl-pct-badge.neg{background:rgba(224,112,112,.15);color:var(--neg);}
+[data-theme="light"] .pnl-pct-badge.pos{background:rgba(22,163,74,.12);}
+[data-theme="light"] .pnl-pct-badge.neg{background:rgba(220,38,38,.10);}
+@media(prefers-color-scheme:light){[data-theme="auto"] .pnl-pct-badge.pos{background:rgba(22,163,74,.12);}
+[data-theme="auto"] .pnl-pct-badge.neg{background:rgba(220,38,38,.10);}}
+.pnl-loading{color:var(--text3);font-size:12px;display:flex;align-items:center;gap:6px;}
+
 .detail-overlay{position:fixed;inset:0;background:var(--overlay);z-index:400;
   opacity:0;pointer-events:none;transition:opacity .22s;}
 .detail-overlay.open{opacity:1;pointer-events:all;}
@@ -474,7 +518,6 @@ select option{background:var(--surface);}
           <span style="font-size:.85rem;font-weight:600;font-family:'Lora',serif;color:var(--text3)" id="totalCostEur">€ —</span>
         </div>
       </div>
-      <div class="card-sub" id="totalValueUsd" style="margin-top:4px">—</div>
     </div>
     <div class="summary-card">
       <div class="card-label">P&amp;L totale</div>
@@ -514,17 +557,44 @@ select option{background:var(--surface);}
     <div id="portfolioChartWrap"><canvas id="portfolioChart"></canvas></div>
   </div>
 
+  <!-- ══ P&L PER PERIODO ══════════════════════════════════════════ -->
+  <div class="pnl-section" id="pnlSection" style="display:none">
+    <div class="pnl-section-header">
+      <h2>Guadagno / Perdita</h2>
+      <div class="period-tabs" id="pnlPeriodTabs">
+        <button class="period-tab active" data-range="1d" onclick="setPnlPeriod(this)">1G</button>
+        <button class="period-tab" data-range="5d" onclick="setPnlPeriod(this)">1S</button>
+        <button class="period-tab" data-range="1mo" onclick="setPnlPeriod(this)">1M</button>
+        <button class="period-tab" data-range="6mo" onclick="setPnlPeriod(this)">6M</button>
+        <button class="period-tab" data-range="1y" onclick="setPnlPeriod(this)">1A</button>
+        <button class="period-tab" data-range="all" onclick="setPnlPeriod(this)">Totale</button>
+      </div>
+    </div>
+    <div id="pnlValues" class="pnl-values">
+      <span class="pnl-loading">Calcolo…<span class="spinner"></span></span>
+    </div>
+  </div>
+
   <!-- ══ POSITIONS TABLE ══════════════════════════════════════════ -->
   <div class="panel">
     <div class="panel-header">
       <div class="panel-header-left">
         <div class="live-dot"></div>
         <h2>Posizioni</h2>
-        <button class="btn-add" onclick="openDrawer()">
+        <!-- visible on desktop only -->
+        <button class="btn-add btn-add-desktop" onclick="openDrawer()">
           <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
           Aggiungi posizione
         </button>
       </div>
+      <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll()">↻ Aggiorna</button>
+    </div>
+    <!-- mobile-only row of buttons below the title -->
+    <div class="panel-header-mobile-btns">
+      <button class="btn-add" onclick="openDrawer()">
+        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+        Aggiungi
+      </button>
       <button class="btn-refresh" onclick="refreshAll()">↻ Aggiorna</button>
     </div>
     <div class="desktop-table">
@@ -1031,6 +1101,7 @@ async function refreshAll(){
   renderTable();
   renderSummary();
   renderPortfolioChart();
+  renderPnlSection();
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1047,8 +1118,10 @@ function renderTable(loading=false){
     </div></td></tr>`;
     mList.innerHTML='<li style="padding:2.5rem 1rem;text-align:center;color:var(--text3);font-size:13px">Nessuna posizione.<br>Clicca <em>Aggiungi posizione</em> per iniziare.</li>';
     document.getElementById('portfolioSection').style.display='none';
+    document.getElementById('pnlSection').style.display='none';
     return;
   }
+  document.getElementById('pnlSection').style.display='';
 
   if(loading){
     body.innerHTML=positions.map(p=>`
@@ -1168,23 +1241,26 @@ function renderTable(loading=false){
     const valEur = cp!=null ? cp*p.qty*curRate : null;
     const pnlEur = valEur!=null ? valEur-costEur : null;
     const pnlPct = pnlEur!=null ? pnlEur/costEur*100 : null;
-    const priceC = pnlEur==null?'':pnlEur>=0?'price-up':'price-down';
     const hasHist= pd?.history?.length>1;
+    // daily P&L in EUR
+    const dayEur = dayChg!=null&&valEur!=null ? valEur*(dayChg/100) : null;
+    const daySign = dayChg!=null ? (dayChg>=0?'pos':'neg') : '';
     return `
     <li class="mobile-card" onclick="openDetail(${p.id})">
       <div class="mc-left">
         <div class="mc-ticker">${p.ticker}</div>
         <div class="mc-name">${p.name||pd?.name||p.currency}</div>
-        ${pnlPct!=null?`<div class="mc-name ${pnlEur>=0?'pos':'neg'}" style="margin-top:3px">${pnlEur>=0?'+':''}${pnlPct.toFixed(2)}% totale</div>`:''}
+        ${pnlPct!=null?`<div class="mc-name ${pnlEur>=0?'pos':'neg'}" style="margin-top:2px">${pnlEur>=0?'+':''}${pnlPct.toFixed(2)}% tot.</div>`:''}
       </div>
-      <div class="mc-mid">
-        <div class="mc-price ${priceC}">${cp!=null?`${sym} ${fmtN(cp)}`:'—'}</div>
-        ${dayChg!=null?`<div class="mc-chg ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`:''}
+      <div class="mc-pnl">
+        ${dayEur!=null?`<div class="mc-pnl-eur ${daySign}">${dayEur>=0?'+':'−'}€${fmtN(Math.abs(dayEur))}</div>`:
+          cp!=null?`<div class="mc-pnl-eur" style="color:var(--text3)">${sym} ${fmtN(cp)}</div>`:'<div class="mc-pnl-eur" style="color:var(--text3)">—</div>'}
+        ${dayChg!=null?`<div class="mc-pnl-pct ${daySign}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`:''}
       </div>
       ${hasHist?`<canvas id="mspark_${p.id}" class="mc-spark"></canvas>`:`<div class="mc-spark"></div>`}
-      <div class="ctx-wrap" onclick="e=>e.stopPropagation()" style="flex-shrink:0">
-        <button class="ctx-btn" onclick="event.stopPropagation();toggleCtx(event,${p.id}+'m')" title="Azioni">···</button>
-        <div class="ctx-menu" id="ctx_${p.id}m" style="right:0">
+      <div class="ctx-wrap" style="flex-shrink:0" onclick="event.stopPropagation()">
+        <button class="ctx-btn-v" onclick="event.stopPropagation();toggleCtx(event,${p.id}+'m')" title="Azioni">⋮</button>
+        <div class="ctx-menu" id="ctx_${p.id}m">
           <button class="ctx-item" onclick="openDetail(${p.id});closeAllCtx()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Dettagli
           </button>
@@ -1321,7 +1397,6 @@ function renderSummary(){
   const fxPct=totalFxAtBuy>0?totalFx/totalFxAtBuy*100:0;
 
   setText('totalValueEur',`€ ${fmtN(totalVal)}`);
-  setText('totalValueUsd',`$ ${fmtN(totalVal*eurUsd)}`);
   setText('totalCostEur',`€ ${fmtN(totalCost)}`);
 
   const pEl=document.getElementById('totalPnlEur');
@@ -1605,6 +1680,77 @@ async function renderPortfolioChart(){
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   P&L PER PERIODO
+═══════════════════════════════════════════════════════════════════ */
+let pnlPeriod='1d';
+
+async function setPnlPeriod(btn){
+  pnlPeriod=btn.dataset.range;
+  document.querySelectorAll('#pnlPeriodTabs .period-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  await renderPnlSection();
+}
+
+async function renderPnlSection(){
+  if(positions.length===0) return;
+  const el=document.getElementById('pnlValues');
+  el.innerHTML='<span class="pnl-loading">Calcolo…<span class="spinner"></span></span>';
+
+  // "all" = use stored buy price vs current price (no fetch needed)
+  if(pnlPeriod==='all'){
+    let totalVal=0, totalCost=0;
+    positions.forEach(p=>{
+      const cp=currentPrices[p.ticker]?.price;
+      if(cp==null) return;
+      const curRate=toEurRate(p.currency);
+      totalVal+=cp*p.qty*curRate;
+      totalCost+=p.buyPrice*p.qty*p.historicalFxToEur;
+    });
+    const pnl=totalVal-totalCost;
+    const pct=totalCost>0?pnl/totalCost*100:0;
+    _showPnl(el, pnl, pct);
+    return;
+  }
+
+  // Fetch historical data for the chosen period for each ticker
+  const tickers=[...new Set(positions.map(p=>p.ticker))];
+  const histMap={};
+  await Promise.allSettled(tickers.map(async t=>{
+    const d=await fetchPriceRange(t,pnlPeriod);
+    if(d&&d.history.length>=2) histMap[t]=d.history;
+  }));
+
+  // For each position: value at period START vs value NOW
+  let totalPnl=0, totalBase=0;
+  let anyData=false;
+  positions.forEach(p=>{
+    const h=histMap[p.ticker];
+    const cp=currentPrices[p.ticker]?.price;
+    if(!h||cp==null) return;
+    anyData=true;
+    const startPrice=h[0].v;
+    const curRate=toEurRate(p.currency);
+    const startVal=startPrice*p.qty*curRate;
+    const nowVal=cp*p.qty*curRate;
+    totalBase+=startVal;
+    totalPnl+=nowVal-startVal;
+  });
+
+  if(!anyData){ el.innerHTML='<span style="color:var(--text3);font-size:12px">Dati non disponibili</span>'; return; }
+  const pct=totalBase>0?totalPnl/totalBase*100:0;
+  _showPnl(el, totalPnl, pct);
+}
+
+function _showPnl(el, pnl, pct){
+  const sign=pnl>=0;
+  const pnlStr=`${sign?'+':'−'}€ ${fmtN(Math.abs(pnl))}`;
+  const pctStr=`${sign?'+':''}${pct.toFixed(2)}%`;
+  el.innerHTML=`
+    <span class="pnl-big ${sign?'pos':'neg'}">${pnlStr}</span>
+    <span class="pnl-pct-badge ${sign?'pos':'neg'}">${pctStr}</span>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    CHART POPUP
 ═══════════════════════════════════════════════════════════════════ */
 async function openChartPopup(ticker){
@@ -1746,7 +1892,7 @@ function saveEdit(){
   } else {
     p.dividendsAuto=true; // re-enable auto if field cleared
   }
-  save(); closeEdit(); renderTable(); renderSummary(); renderPortfolioChart();
+  save(); closeEdit(); renderTable(); renderSummary(); renderPortfolioChart(); renderPnlSection();
   showNotif(`${p.ticker} aggiornato.`);
 }
 
@@ -1799,7 +1945,7 @@ function closeDrawer(){
 function deletePos(id){
   if(!confirm('Eliminare questa posizione?')) return;
   positions=positions.filter(p=>p.id!==id);
-  save(); renderTable(); renderSummary(); renderPortfolioChart();
+  save(); renderTable(); renderSummary(); renderPortfolioChart(); renderPnlSection();
 }
 
 /* ═══════════════════════════════════════════════════════════════════

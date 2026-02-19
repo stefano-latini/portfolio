@@ -11,8 +11,8 @@
 <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
 <title>Portfolio Tracker</title>
 
-<!-- 180x180 Apple touch icon — proper PNG (iOS/Safari requires PNG, not SVG data URIs) -->
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADeElEQVR42u3dW27bMBBAUa+jKNCNdSVdWXeXIt9BUdS2xOHlMXC/I4xO/JAp+vEY+vj2/ceH5vbwABZ4gAU4yAIbZIENsrKwnRxlYDshSqB2EpSBbfDKoDZwZVAbtDKoDVgZ1AarDGoDVQa1QSqF2hCVAW2AyqA2OKVQG5oyoA1MKdSGpQxog1IKtSEpA9qAlEJtOMqANhilUBuKgJaAli4GbSBKoTYMAS0BLQEtAS2gJaClUaANQinUhiCgJaAloCWgBbQEtAS0BLQEtAbq5+9fXwJaCcivoAZaYzE/gxpojcYMtFKYgVYKM9BKYQZax2IGOgSjiBlo12yPxgy0y1wpzEC7MpDCDHT8A9Uq2CuPF+gw5hWoVx8n0HHMd8KecGxAHwT6StRTjgnogzBfhWjSPxjQB2J+J6hprxZAHw76FVgT3/oAfTjmZ5FN/XAKdGSd8J2oJ19pATq08P2OZ+vp18OBDt7FcRXqHb7cATp6S9K7n613+aYS6Pg9dis/ZK5YSwJ0GPNq1HZOgnnslyC7LF8F+iDQO36tDjTMS1GvnivQB2K++9o10EBvs4552n2MQB+OecXeGUDD7BiBBvrqY504Y6BhTu3SBDTMqYAGGmjBDDTQMAPt2VlAwwy0gAZaMAMNM8xAb/TtFdBAvw0LzHoUX8phBjr1vnSHtcTwHQq6uHM9eECPhQ0z0Kk7k4EGesymKDADnQJ95/ZasB0Meod92IAGeizmq7eqBQ3o2/YuvnoHe8gOBj3pJxne9TcgOxT0xJ9kePWVADCgx/4sA8xAj7liADTQuUU9MAOdXKUGM9DJVWpAA51c1AMz0MlVajADnVylBjTQyUU9MAN9ybOfO82VAW0vEI0F7T2pMqB9yNLRoJ0YjQUNszKgvdXQ0aCdEI0FDbMyoGEW0NJE0DArAxpmAS1NBA2zMqBhFtDSRNAwKwMaZgEtTQQNszKgYVYGtDXOOhq0ISsD2oAFtDQRtOFqCejPx7tBG6yWYf5f0P9CbbDaDvTfUBuqtgUtAS0BLQEtoKUIaKiVwgy0gJaAlm4CDbVSmIFWDjTUSmEGWjnQUCuFGWjlQEOtFGaglQMNtVKYoVYOM9DKgYZaKcxQK4cZauUwQ60cZqiVwwy1cpihVg4z2MpBhlpJzGArBxlsJSGDrSRksJWEDDjAHsAD++TjDyAWkWj+ati/AAAAAElFTkSuQmCC">
+<!-- 180x180 Apple touch icon — proper PNG base64 -->
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADYElEQVR42u3d0W0UQRBAQYcBIjUiITKyM+IbIR3odqbnTa30Eugtrc/n6fXHx7Dry9dvnzqnj9svCICHWHBDLLhBFtggKwbbDVECtZugDGyDVwa1gSuD2qCVQW3AyqA2WGVQG6gyqA1SGdQGqBRqw1MGtMEpg9rAlEJtWMqANiilUBuSMqANSCnUhiOgpYmgDUYp1IYioKWJoA1EKdSGIaAloCWgJaAFtAS0NAq0QSiF2hAEtAS0BLQEtICWgJaAloDW9L7//PFHQCuDeRdsoPUo5tWwgdYSzKtwA63lmJ+EDbS2YX4CNtAaAfpdsIHWGMzvwA20RmL+X9hAazTmf0UNtI4A/SpqoHUE5ldRA61HMO/6eg9oPYL5qSc80NqK+d2wgdYY0CvOgACtpZifPq0HtLZhfuJMNdDajvmdmy9Aawxmp+0ENNCqYgb6om3oGzADfdE29A2YgR6AxYIr0MnPpJ7OQFvvhxnoW9f7b8AM9PCD8DADndzsABro5JoSzEB7X8VFmIE+eIkUZqCve1/FbZiBDq34Aw30tr8IroB9I2agF4Oe/AKXAmagh5zXgBno5OEjmIHOnaYDGujk0VCYgT7iF8FJsIv3B+hDDu7DDHRuCwVooJNrVTADndwRhBnoqxdeb7hfQEeegjADnfyRfjNmoH1GBRpmmIGGWUADLaBhBtoQgAYaZpiBhllAA62TQe+AAzPQqfMIMAOdQeXpDPSoA+swKwV69WY1NEAv32qGGegM5qdeNQsL0KPeEuTpDHQGsy1poIEGGmiYdR1omAU00JoIese3EzADfcSpNqC1FfRJ/8YBDKBH/JkZZqVA7z69pwtAn/TWeyCAPuZUG8xAJ7dBYAba4XkBDbQyoGEW0G6GJoKGWRnQMAtoN0ETQcMsoN0ATQQNszKgYRbQBq+JoGEW0IauiaBhVgY0zALasDURNMwC2qA1ETTMGg/69wWzMpiB1nWgYRbQBqwKaMNVBrTBCmhp4rcchqoRoN+B2kA1BvOroP+G2kB1LGjpCNBQK4UZaAEtTQYNtVKYgVYONNRKYQZaOdBQK4UZauUwA60caKiVwgy1cpihVg4z1Mphhlo5zFArhxlq5TBDrRxmsJWDDLWSmMFWDjLYSkKGW0nEcCuLGHhgV12/AFai7TKYs2ARAAAAAElFTkSuQmCC">
 <!-- Standard favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231e2022'/%3E%3Cpolyline points='4,24 10,15 16,18 23,9 28,12' fill='none' stroke='%235cb87a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
@@ -120,7 +120,9 @@ header{display:flex;align-items:center;justify-content:space-between;
 ═══════════════════════════════════════════════════════════════ */
 .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.5rem;}
 .summary-card{background:var(--card);border:1px solid var(--border);
-  border-radius:var(--radius);padding:1rem 1.2rem;transition:border-color var(--tr);}
+  border-radius:var(--radius);padding:1rem 1.2rem;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;transition:border-color var(--tr);min-height:90px;}
 .summary-card:hover{border-color:var(--border2);}
 .card-label{color:var(--text3);font-size:10px;font-weight:500;letter-spacing:.07em;
   text-transform:uppercase;margin-bottom:.45rem;}
@@ -128,6 +130,13 @@ header{display:flex;align-items:center;justify-content:space-between;
 .card-value.positive{color:var(--pos);}
 .card-value.negative{color:var(--neg);}
 .card-sub{color:var(--text3);font-size:11px;margin-top:3px;}
+/* FX card — value + sparkline side by side on desktop, stacked on mobile */
+.fx-card-inner{display:flex;align-items:center;justify-content:center;gap:.75rem;width:100%;}
+.fx-card-inner canvas{flex-shrink:0;}
+@media(max-width:600px){
+  .fx-card-inner{flex-direction:column;align-items:center;gap:.3rem;}
+  .fx-card-inner canvas{width:80px !important;height:30px !important;}
+}
 
 /* ═══════════════════════════════════════════════════════════════
    PORTFOLIO CHART SECTION
@@ -458,9 +467,9 @@ select option{background:var(--surface);}
   <div class="summary-grid">
     <div class="summary-card">
       <div class="card-label">Valore attuale</div>
-      <div style="display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap;">
+      <div style="display:flex;align-items:baseline;gap:.6rem;justify-content:center;flex-wrap:wrap;">
         <div class="card-value" id="totalValueEur">€ —</div>
-        <div style="display:flex;flex-direction:column;line-height:1.2;">
+        <div style="display:flex;flex-direction:column;align-items:center;line-height:1.25;">
           <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:500;">Investito</span>
           <span style="font-size:.85rem;font-weight:600;font-family:'Lora',serif;color:var(--text3)" id="totalCostEur">€ —</span>
         </div>
@@ -474,12 +483,12 @@ select option{background:var(--surface);}
     </div>
     <div class="summary-card">
       <div class="card-label">Impatto cambio</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
-        <div>
+      <div class="fx-card-inner">
+        <div style="text-align:center;">
           <div class="card-value" id="fxImpact">€ —</div>
           <div class="card-sub" id="fxImpactPct">—</div>
         </div>
-        <canvas id="fxSparkCanvas" width="72" height="36" style="flex-shrink:0;display:block;"></canvas>
+        <canvas id="fxSparkCanvas" width="72" height="36"></canvas>
       </div>
     </div>
     <div class="summary-card">
@@ -1500,36 +1509,68 @@ async function renderPortfolioChart(){
     return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
   });
 
-  // Build per-point colors (segment coloring: each point colored by its sign)
-  const pointColors=pctData.map(v=>v>=0?posCol:negCol);
-
   if(portfolioChart){portfolioChart.destroy();portfolioChart=null;}
   const canvas=document.getElementById('portfolioChart');
+
+  // ── Custom plugin: redraw the line in green/red split at y=0 ──
+  // afterDatasetsDraw runs after Chart.js draws the line, so we can
+  // overdraw it with a canvas gradient that's perfectly anchored to zero.
+  const zeroLinePlugin={
+    id:'zeroColorLine',
+    afterDatasetsDraw(chart){
+      const {ctx, scales:{y}, chartArea:{left, right}} = chart;
+      const ds = chart.data.datasets[0];
+      const pts = ds._cachedMeta?.data ?? chart.getDatasetMeta(0).data;
+      if(!pts||pts.length<2) return;
+
+      // y-pixel position of zero
+      const zeroY = y.getPixelForValue(0);
+
+      ctx.save();
+      ctx.lineWidth = 2;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+
+      // Draw two clipped passes: green above zero, red below zero
+      const passes = [
+        { color: posCol, clip: (c,t,b) => c.rect(left, t, right-left, zeroY-t) },
+        { color: negCol, clip: (c,t,b) => c.rect(left, zeroY, right-left, b-zeroY) },
+      ];
+
+      passes.forEach(({color, clip})=>{
+        ctx.save();
+        ctx.beginPath();
+        clip(ctx, chart.chartArea.top, chart.chartArea.bottom);
+        ctx.clip();
+
+        ctx.beginPath();
+        pts.forEach((pt, i)=>{
+          const x = pt.x, yp = pt.y;
+          if(i===0) ctx.moveTo(x,yp);
+          else ctx.lineTo(x,yp);
+        });
+        ctx.strokeStyle = color;
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      ctx.restore();
+    }
+  };
+
   portfolioChart=new Chart(canvas,{
     type:'line',
+    plugins:[zeroLinePlugin],
     data:{
       labels,
       datasets:[{
         data:pctData,
-        borderColor:ctx=>{
-          // Color each segment based on whether it's positive or negative
-          const val=pctData[ctx.p1DataIndex];
-          return val>=0?posCol:negCol;
-        },
-        segment:{
-          borderColor:ctx=>{
-            const v=pctData[ctx.p1DataIndex];
-            return v>=0?posCol:negCol;
-          },
-          backgroundColor:ctx=>{
-            const v=pctData[ctx.p1DataIndex];
-            return v>=0?'rgba(92,184,122,0.08)':'rgba(224,112,112,0.08)';
-          }
-        },
-        fill:true,
-        borderWidth:2,
+        borderColor:'transparent',      // hidden — redrawn by plugin
+        backgroundColor:'transparent',
+        fill:false,
+        borderWidth:0,
         pointRadius:0,
-        tension:0.3,
+        tension:0,                      // straight segments so clipping is exact
       }]
     },
     options:{
@@ -1552,7 +1593,10 @@ async function renderPortfolioChart(){
         x:{ticks:{color:text2,font:{family:'Inter',size:10},maxTicksLimit:8},grid:{color:border}},
         y:{
           ticks:{color:text2,font:{family:'Inter',size:10},callback:v=>`${v>=0?'+':''}${v.toFixed(1)}%`},
-          grid:{color:border},
+          grid:{
+            color:ctx2=>ctx2.tick.value===0?getCss('--border2'):border,
+            lineWidth:ctx2=>ctx2.tick.value===0?1.5:1,
+          },
           border:{dash:[3,3]},
         }
       }

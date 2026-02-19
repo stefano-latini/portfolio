@@ -11,9 +11,8 @@
 <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
 <title>Portfolio Tracker</title>
 
-<!-- PWA icons inline as SVG data URIs -->
-<!-- 180x180 Apple touch icon -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231e2022'/%3E%3Cpolyline points='22,130 60,80 90,100 130,48 158,65' fill='none' stroke='%235cb87a' stroke-width='11' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- 180x180 Apple touch icon (PNG, required by iOS — SVG data URIs not supported) -->
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADYElEQVR42u3d223bQBBAUVUSBKkrlaSydOcUEMSIbYmcuXs+7r8wPFg9PKQf377/eAzvTaMa7QVYpcADrBRwiJXCDbJSsEFWCjbISsGGWSnUICsFG2alUMOsFGqYlUINs1KoYVYKNcxKoYZZKdQwK4UaaB0F2gC1CjXMSqEGWkeANjCtRA208qANSmtRA600aAPSatRAC2hpA2iD0XrUQAtoCWjpQtAGogRqoAW0BLQEtAS0gDYMAS2NBG0QygS0gJaA1ph+/v71bkArBXozbKCBTqEGGuiUbaBhTqEGGuiUbaBhTsEGGuiUbaBhTsEGGugUbKBhTsEGGua/4G1GDTTQ/0S3ETbQML8LbdvHEKBhvu0zOdC6BfMm2EBbCU39GR1op3Nq2QlomMfABhrmMV/GgFYG86Q7YoAGOnXfItAwj3mdQMO8YqUTaGUwf+S1Aw109glIQMN8PGagYQZaMAOtdb/nAr0Qg9MZ6OTpBjPQubdrmIHOvWXDDHTyuRRAA5170ArMQCefGgQz0LlHYMEMdAbzFYCABvoW0K9ABDPQt2F+NiiYgR6B+RmwYAZ6FOavIoMZ6KfDuAu10xnol8G4+rSGGehLYFyBGmagL4XxytMaZqBvO+VegRpooG992z7tv0cBfcg2GsxA5/YdYAY6ue8ANNC5W/lhBjq58wAz0LkFHpiBTu47wAx0bhsNaKCTOw8wA53beYAZ6NS+A9BAp+7igBloX6jUAQ2zMqBh1vGgXTiNBO10VgY0zMqAhlnHg3axNBK001kZ0DArAxpmZUDDLKCB1kTQMCsDGmZlQMOs40G7IBoJ2umsDGiYlQENs44H7SJoJGinszKgYdbxoA1fGdAGL6CliaANXRnQBq4MaMMW0NKGxxhIQEtAC2hpOWioVekBtICWgJaAloAW0IYhoKWxoKHWesxAC2gJaOkG0FBrNWagBbS0CTTUWosZaB0BGmqtxAy0jgENtdZhBlpHgYZaqzD/D2iotQYz0DoSNNRagfkjoKHWeMwfBQ21RmP+DGioNRbzZ0FDrZGYvwIaao3D/FXQUGsU5meAhlpjMD8LNNi6HfIrQEOtWzG/AjTYugXyq0GDrUshXwUabF0C+WrQcEP8qIIGHOA0aOCBfVp/AEDICQv4MhJwAAAAAElFTkSuQmCC">
 <!-- Standard favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231e2022'/%3E%3Cpolyline points='4,24 10,15 16,18 23,9 28,12' fill='none' stroke='%235cb87a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
@@ -313,23 +312,86 @@ select option{background:var(--surface);}
   .period-tabs .period-tab{padding:3px 6px;}
 }
 @media(max-width:600px){
-  body{padding:.85rem .85rem env(safe-area-inset-bottom,.85rem);}
+  body{padding:.85rem .85rem calc(.85rem + env(safe-area-inset-bottom));}
   .summary-grid{grid-template-columns:1fr 1fr;gap:.65rem;}
   header{flex-wrap:wrap;gap:.6rem;}
   .logo sub{display:none;}
   .section-header{flex-wrap:wrap;gap:.4rem;}
   .panel-header{flex-wrap:wrap;gap:.4rem;}
   .panel-header-left{flex-wrap:wrap;gap:5px;}
-  .btn-add span{display:none;}
-  .table-wrap{font-size:12px;}
-  thead th{padding:.55rem .6rem;}
-  tbody td{padding:.65rem .6rem;}
+  /* Hide desktop table on mobile */
+  .desktop-table{display:none;}
+  /* Show mobile card list */
+  .mobile-list{display:block;}
   .chart-modal{width:100%;max-width:100vw;border-radius:14px 14px 0 0;position:fixed;bottom:0;}
   .modal-overlay{align-items:flex-end;}
   #popupChartWrap{height:200px;}
   .popup-stats{gap:.8rem;}
   .popup-stat .ps-val{font-size:.9rem;}
 }
+@media(min-width:601px){
+  .mobile-list{display:none;}
+  .desktop-table{display:block;}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE CARD LIST
+═══════════════════════════════════════════════════════════════ */
+.mobile-list{list-style:none;}
+.mobile-card{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  align-items:center;
+  gap:.75rem;
+  padding:.85rem 1rem;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  transition:background .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mobile-card:last-child{border-bottom:none;}
+.mobile-card:active{background:var(--surface);}
+.mc-left{}
+.mc-ticker{font-size:13px;font-weight:600;letter-spacing:.03em;}
+.mc-name{font-size:10.5px;color:var(--text3);margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.mc-mid{text-align:right;}
+.mc-price{font-size:13px;font-weight:500;}
+.mc-chg{font-size:10.5px;margin-top:2px;}
+.mc-spark{width:72px;height:32px;flex-shrink:0;}
+
+/* ═══════════════════════════════════════════════════════════════
+   POSITION DETAIL SHEET (slides up from bottom on mobile)
+═══════════════════════════════════════════════════════════════ */
+.detail-overlay{position:fixed;inset:0;background:var(--overlay);z-index:400;
+  opacity:0;pointer-events:none;transition:opacity .22s;}
+.detail-overlay.open{opacity:1;pointer-events:all;}
+.detail-sheet{position:fixed;left:0;right:0;bottom:0;
+  background:var(--card);border-radius:18px 18px 0 0;
+  border-top:1px solid var(--border);z-index:401;
+  max-height:88vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  padding-bottom:env(safe-area-inset-bottom);}
+.detail-sheet.open{transform:translateY(0);}
+.detail-handle{width:36px;height:4px;border-radius:2px;
+  background:var(--border2);margin:10px auto 0;}
+.detail-header{padding:.9rem 1.2rem .6rem;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid var(--border);}
+.detail-ticker{font-family:'Lora',serif;font-size:1.1rem;font-weight:600;}
+.detail-name{font-size:11px;color:var(--text3);}
+.detail-body{padding:1rem 1.2rem;}
+.detail-row{display:flex;justify-content:space-between;align-items:center;
+  padding:.5rem 0;border-bottom:1px solid var(--border);}
+.detail-row:last-child{border-bottom:none;}
+.detail-key{font-size:11.5px;color:var(--text3);}
+.detail-val{font-size:12.5px;font-weight:500;text-align:right;}
+.detail-actions{display:flex;gap:.5rem;padding:0 1.2rem 1rem;}
+.detail-actions .btn-ghost{flex:1;margin:0;font-size:12px;padding:8px;}
+.detail-actions .btn-del-full{flex:1;margin:0;font-size:12px;padding:8px;
+  background:transparent;border:1px solid var(--neg);color:var(--neg);
+  border-radius:6px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;
+  transition:all .15s;}
+.detail-actions .btn-del-full:hover{background:rgba(224,112,112,.1);}
 </style>
 </head>
 <body>
@@ -428,7 +490,8 @@ select option{background:var(--surface);}
       </div>
       <button class="btn-refresh" onclick="refreshAll()">↻ Aggiorna</button>
     </div>
-    <div class="table-wrap">
+    <div class="desktop-table">
+      <div class="table-wrap">
       <table>
         <thead>
           <tr>
@@ -454,7 +517,9 @@ select option{background:var(--surface);}
           </td></tr>
         </tbody>
       </table>
+      </div>
     </div>
+    <ul class="mobile-list" id="mobileList"></ul>
   </div>
 
 </div><!-- /container -->
@@ -637,6 +702,24 @@ select option{background:var(--surface);}
       </div>
       <button class="btn-primary" onclick="saveEdit()">Salva modifiche</button>
     </div>
+  </div>
+</div>
+
+<!-- ══ POSITION DETAIL SHEET (mobile) ═══════════════════════════════ -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="detail-sheet" id="detailSheet">
+  <div class="detail-handle"></div>
+  <div class="detail-header">
+    <div>
+      <div class="detail-ticker" id="detailTicker">—</div>
+      <div class="detail-name" id="detailName">—</div>
+    </div>
+    <button class="drawer-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
+  <div class="detail-actions">
+    <button class="btn-ghost" id="detailEditBtn" onclick="">✎ Modifica</button>
+    <button class="btn-del-full" id="detailDelBtn" onclick="">✕ Elimina</button>
   </div>
 </div>
 
@@ -912,16 +995,18 @@ async function refreshAll(){
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   RENDER TABLE
+   RENDER TABLE + MOBILE LIST
 ═══════════════════════════════════════════════════════════════════ */
 function renderTable(loading=false){
   const body = document.getElementById('positionsBody');
+  const mList = document.getElementById('mobileList');
 
   if(positions.length===0){
     body.innerHTML=`<tr><td colspan="11"><div class="empty-state">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       <p>Nessuna posizione.<br>Clicca <em>Aggiungi posizione</em> per iniziare.</p>
     </div></td></tr>`;
+    mList.innerHTML='<li style="padding:2.5rem 1rem;text-align:center;color:var(--text3);font-size:13px">Nessuna posizione.<br>Clicca <em>Aggiungi posizione</em> per iniziare.</li>';
     document.getElementById('portfolioSection').style.display='none';
     return;
   }
@@ -934,6 +1019,11 @@ function renderTable(loading=false){
           Aggiornamento<span class="spinner"></span>
         </td>
       </tr>`).join('');
+    mList.innerHTML=positions.map(p=>`
+      <li class="mobile-card">
+        <div class="mc-left"><div class="mc-ticker">${p.ticker}</div><div class="mc-name">${p.name||''}</div></div>
+        <div class="mc-mid"><span style="color:var(--text3)">—<span class="spinner"></span></span></div>
+      </li>`).join('');
     return;
   }
 
@@ -941,6 +1031,19 @@ function renderTable(loading=false){
   Object.values(sparkCharts).forEach(c=>c&&c.destroy());
   sparkCharts={};
 
+  // Helper: sparkline color based on period performance (first→last point)
+  function sparkColor(history){
+    if(!history||history.length<2) return {col:getCss('--text3'),bg:'transparent',isUp:null};
+    const first=history[0].v, last=history[history.length-1].v;
+    const isUp = last >= first;
+    return {
+      isUp,
+      col: isUp ? getCss('--pos') : getCss('--neg'),
+      bg:  isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)'
+    };
+  }
+
+  // ── DESKTOP TABLE ─────────────────────────────────────────────
   body.innerHTML = positions.map(p=>{
     const pd  = currentPrices[p.ticker];
     const cp  = pd?.price;
@@ -954,11 +1057,9 @@ function renderTable(loading=false){
     const divEur   = p.dividends||0;
     const dayChg   = pd?.prevClose!=null&&cp!=null ? ((cp-pd.prevClose)/pd.prevClose*100) : null;
     const fxAtBuy  = p.currency!=='EUR' ? (1/p.historicalFxToEur) : null;
-
     const posNeg   = pnlEur==null?'':pnlEur>=0?'pos':'neg';
     const fxPN     = fxImpact==null?'':fxImpact>=0?'pos':'neg';
     const priceC   = pnlEur==null?'':pnlEur>=0?'price-up':'price-down';
-
     return `
     <tr>
       <td>
@@ -989,17 +1090,11 @@ function renderTable(loading=false){
           <span class="pnl-pct ${posNeg}">${pnlPct!=null?`${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%`:''}</span>
         </div>
       </td>
-      <td>
-        ${fxAtBuy!=null
-          ?`<span>${fxAtBuy.toFixed(4)}</span>`
-          :`<span style="color:var(--text3)">—</span>`}
-      </td>
+      <td>${fxAtBuy!=null?`<span>${fxAtBuy.toFixed(4)}</span>`:`<span style="color:var(--text3)">—</span>`}</td>
       <td class="${fxPN}" style="font-size:11.5px">
         ${fxImpact!=null?`${fxImpact>=0?'+':'−'}€ ${fmtN(Math.abs(fxImpact))}`:'—'}
       </td>
-      <td>
-        <span class="${divEur>0?'pos':''}">${divEur>0?`€ ${fmtN(divEur)}`:'—'}</span>
-      </td>
+      <td><span class="${divEur>0?'pos':''}">${divEur>0?`€ ${fmtN(divEur)}`:'—'}</span></td>
       <td style="display:flex;gap:2px;align-items:center;justify-content:flex-end">
         <button class="edit-icon" onclick="openEdit(${p.id})" title="Modifica">✎</button>
         <button class="btn-del" onclick="deletePos(${p.id})" title="Elimina">✕</button>
@@ -1007,32 +1102,117 @@ function renderTable(loading=false){
     </tr>`;
   }).join('');
 
-  // draw sparklines
+  // ── MOBILE LIST ───────────────────────────────────────────────
+  mList.innerHTML = positions.map(p=>{
+    const pd  = currentPrices[p.ticker];
+    const cp  = pd?.price;
+    const sym = {USD:'$',EUR:'€',GBP:'£'}[p.currency]||p.currency;
+    const dayChg = pd?.prevClose!=null&&cp!=null ? ((cp-pd.prevClose)/pd.prevClose*100) : null;
+    const costEur= p.buyPrice*p.qty*p.historicalFxToEur;
+    const curRate= toEurRate(p.currency);
+    const valEur = cp!=null ? cp*p.qty*curRate : null;
+    const pnlEur = valEur!=null ? valEur-costEur : null;
+    const pnlPct = pnlEur!=null ? pnlEur/costEur*100 : null;
+    const priceC = pnlEur==null?'':pnlEur>=0?'price-up':'price-down';
+    const hasHist= pd?.history?.length>1;
+    return `
+    <li class="mobile-card" onclick="openDetail(${p.id})">
+      <div class="mc-left">
+        <div class="mc-ticker">${p.ticker}</div>
+        <div class="mc-name">${p.name||pd?.name||p.currency}</div>
+        ${pnlPct!=null?`<div class="mc-name ${pnlEur>=0?'pos':'neg'}" style="margin-top:3px">${pnlEur>=0?'+':''}${pnlPct.toFixed(2)}% totale</div>`:''}
+      </div>
+      <div class="mc-mid">
+        <div class="mc-price ${priceC}">${cp!=null?`${sym} ${fmtN(cp)}`:'—'}</div>
+        ${dayChg!=null?`<div class="mc-chg ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}% oggi</div>`:''}
+      </div>
+      ${hasHist?`<canvas id="mspark_${p.id}" class="mc-spark"></canvas>`:`<div class="mc-spark"></div>`}
+    </li>`;
+  }).join('');
+
+  // ── DRAW SPARKLINES (both desktop + mobile) ───────────────────
   requestAnimationFrame(()=>{
     positions.forEach(p=>{
       const pd=currentPrices[p.ticker];
       if(!pd?.history?.length) return;
-      const el=document.getElementById(`spark_${p.id}`);
-      if(!el) return;
       const vals=pd.history.map(h=>h.v);
-      const isUp=vals[vals.length-1]>=vals[0];
-      const col=isUp?getCss('--pos'):getCss('--neg');
-      const bg =isUp?'rgba(92,184,122,0.12)':'rgba(224,112,112,0.12)';
-      sparkCharts[p.ticker]=new Chart(el,{
-        type:'line',
-        data:{
-          labels:vals.map((_,i)=>i),
-          datasets:[{data:vals,borderColor:col,borderWidth:1.5,
-            backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]
-        },
-        options:{
-          animation:false,responsive:false,
-          plugins:{legend:{display:false},tooltip:{enabled:false}},
-          scales:{x:{display:false},y:{display:false}},
-        }
-      });
+      const {col,bg}=sparkColor(pd.history);
+
+      // Desktop spark
+      const el=document.getElementById(`spark_${p.id}`);
+      if(el){
+        sparkCharts['d_'+p.id]=new Chart(el,{
+          type:'line',
+          data:{labels:vals.map((_,i)=>i),datasets:[{data:vals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},
+          options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
+        });
+      }
+      // Mobile spark
+      const mel=document.getElementById(`mspark_${p.id}`);
+      if(mel){
+        mel.width=72; mel.height=32;
+        sparkCharts['m_'+p.id]=new Chart(mel,{
+          type:'line',
+          data:{labels:vals.map((_,i)=>i),datasets:[{data:vals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},
+          options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
+        });
+      }
     });
   });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE DETAIL SHEET
+═══════════════════════════════════════════════════════════════════ */
+function openDetail(id){
+  const p=positions.find(x=>x.id===id);
+  if(!p) return;
+  const pd=currentPrices[p.ticker];
+  const cp=pd?.price;
+  const sym={USD:'$',EUR:'€',GBP:'£'}[p.currency]||p.currency;
+  const costEur=p.buyPrice*p.qty*p.historicalFxToEur;
+  const curRate=toEurRate(p.currency);
+  const valEur=cp!=null?cp*p.qty*curRate:null;
+  const pnlEur=valEur!=null?valEur-costEur:null;
+  const pnlPct=pnlEur!=null?pnlEur/costEur*100:null;
+  const fxImpact=(valEur!=null&&p.currency!=='EUR')?valEur-(cp*p.qty*p.historicalFxToEur):null;
+  const fxAtBuy=p.currency!=='EUR'?(1/p.historicalFxToEur):null;
+  const divEur=p.dividends||0;
+  const dayChg=pd?.prevClose!=null&&cp!=null?((cp-pd.prevClose)/pd.prevClose*100):null;
+
+  document.getElementById('detailTicker').textContent=p.ticker;
+  document.getElementById('detailName').textContent=p.name||pd?.name||'';
+
+  const rows=[
+    ['Prezzo attuale', cp!=null?`${sym} ${fmtN(cp)}`:'N/D', pnlEur!=null?(pnlEur>=0?'pos':'neg'):''],
+    ['Variaz. oggi', dayChg!=null?`${dayChg>=0?'+':''}${dayChg.toFixed(2)}%`:'—', dayChg!=null?(dayChg>=0?'pos':'neg'):''],
+    ['Quantità', `${p.qty}`, ''],
+    ['Prezzo acquisto', `${sym} ${fmtN(p.buyPrice)} (€ ${fmtN(costEur)})`, ''],
+    ['Valore attuale', valEur!=null?`€ ${fmtN(valEur)}`:'—', ''],
+    ['P&L totale', pnlEur!=null?`${pnlEur>=0?'+':'−'}€ ${fmtN(Math.abs(pnlEur))} (${pnlPct>=0?'+':''}${pnlPct?.toFixed(2)}%)`:'—', pnlEur!=null?(pnlEur>=0?'pos':'neg'):''],
+    ['FX acquisto', fxAtBuy!=null?fxAtBuy.toFixed(4):'—', ''],
+    ['Effetto cambio', fxImpact!=null?`${fxImpact>=0?'+':'−'}€ ${fmtN(Math.abs(fxImpact))}`:'—', fxImpact!=null?(fxImpact>=0?'pos':'neg'):''],
+    ['Dividendi', divEur>0?`€ ${fmtN(divEur)}`:'—', divEur>0?'pos':''],
+    ['Data acquisto', p.buyDate, ''],
+    ['Valuta', p.currency, ''],
+  ];
+
+  document.getElementById('detailBody').innerHTML=rows.map(([k,v,cls])=>`
+    <div class="detail-row">
+      <span class="detail-key">${k}</span>
+      <span class="detail-val ${cls}">${v}</span>
+    </div>`).join('');
+
+  document.getElementById('detailEditBtn').onclick=()=>{closeDetail();openEdit(id);};
+  document.getElementById('detailDelBtn').onclick=()=>{closeDetail();deletePos(id);};
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.getElementById('detailSheet').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.getElementById('detailSheet').classList.remove('open');
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1451,7 +1631,7 @@ function importData(e){
 // Close modals on ESC
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    closeChartPopup(); closeEdit(); closeSettings(); closeDrawer();
+    closeChartPopup(); closeEdit(); closeSettings(); closeDrawer(); closeDetail();
   }
 });
 </script>

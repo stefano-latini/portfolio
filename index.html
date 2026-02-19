@@ -11,8 +11,8 @@
 <meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)">
 <title>Portfolio Tracker</title>
 
-<!-- 180x180 Apple touch icon (PNG, required by iOS — SVG data URIs not supported) -->
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADYElEQVR42u3d223bQBBAUVUSBKkrlaSydOcUEMSIbYmcuXs+7r8wPFg9PKQf377/eAzvTaMa7QVYpcADrBRwiJXCDbJSsEFWCjbISsGGWSnUICsFG2alUMOsFGqYlUINs1KoYVYKNcxKoYZZKdQwK4UaaB0F2gC1CjXMSqEGWkeANjCtRA208qANSmtRA600aAPSatRAC2hpA2iD0XrUQAtoCWjpQtAGogRqoAW0BLQEtAS0gDYMAS2NBG0QygS0gJaA1ph+/v71bkArBXozbKCBTqEGGuiUbaBhTqEGGuiUbaBhTsEGGuiUbaBhTsEGGugUbKBhTsEGGua/4G1GDTTQ/0S3ETbQML8LbdvHEKBhvu0zOdC6BfMm2EBbCU39GR1op3Nq2QlomMfABhrmMV/GgFYG86Q7YoAGOnXfItAwj3mdQMO8YqUTaGUwf+S1Aw109glIQMN8PGagYQZaMAOtdb/nAr0Qg9MZ6OTpBjPQubdrmIHOvWXDDHTyuRRAA5170ArMQCefGgQz0LlHYMEMdAbzFYCABvoW0K9ABDPQt2F+NiiYgR6B+RmwYAZ6FOavIoMZ6KfDuAu10xnol8G4+rSGGehLYFyBGmagL4XxytMaZqBvO+VegRpooG992z7tv0cBfcg2GsxA5/YdYAY6ue8ANNC5W/lhBjq58wAz0LkFHpiBTu47wAx0bhsNaKCTOw8wA53beYAZ6NS+A9BAp+7igBloX6jUAQ2zMqBh1vGgXTiNBO10VgY0zMqAhlnHg3axNBK001kZ0DArAxpmZUDDLKCB1kTQMCsDGmZlQMOs40G7IBoJ2umsDGiYlQENs44H7SJoJGinszKgYdbxoA1fGdAGL6CliaANXRnQBq4MaMMW0NKGxxhIQEtAC2hpOWioVekBtICWgJaAloAW0IYhoKWxoKHWesxAC2gJaOkG0FBrNWagBbS0CTTUWosZaB0BGmqtxAy0jgENtdZhBlpHgYZaqzD/D2iotQYz0DoSNNRagfkjoKHWeMwfBQ21RmP+DGioNRbzZ0FDrZGYvwIaao3D/FXQUGsU5meAhlpjMD8LNNi6HfIrQEOtWzG/AjTYugXyq0GDrUshXwUabF0C+WrQcEP8qIIGHOA0aOCBfVp/AEDICQv4MhJwAAAAAElFTkSuQmCC">
+<!-- 180x180 Apple touch icon — proper PNG (iOS/Safari requires PNG, not SVG data URIs) -->
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAADeElEQVR42u3dW27bMBBAUa+jKNCNdSVdWXeXIt9BUdS2xOHlMXC/I4xO/JAp+vEY+vj2/ceH5vbwABZ4gAU4yAIbZIENsrKwnRxlYDshSqB2EpSBbfDKoDZwZVAbtDKoDVgZ1AarDGoDVQa1QSqF2hCVAW2AyqA2OKVQG5oyoA1MKdSGpQxog1IKtSEpA9qAlEJtOMqANhilUBuKgJaAli4GbSBKoTYMAS0BLQEtAS2gJaClUaANQinUhiCgJaAloCWgBbQEtAS0BLQEtAbq5+9fXwJaCcivoAZaYzE/gxpojcYMtFKYgVYKM9BKYQZax2IGOgSjiBlo12yPxgy0y1wpzEC7MpDCDHT8A9Uq2CuPF+gw5hWoVx8n0HHMd8KecGxAHwT6StRTjgnogzBfhWjSPxjQB2J+J6hprxZAHw76FVgT3/oAfTjmZ5FN/XAKdGSd8J2oJ19pATq08P2OZ+vp18OBDt7FcRXqHb7cATp6S9K7n613+aYS6Pg9dis/ZK5YSwJ0GPNq1HZOgnnslyC7LF8F+iDQO36tDjTMS1GvnivQB2K++9o10EBvs4552n2MQB+OecXeGUDD7BiBBvrqY504Y6BhTu3SBDTMqYAGGmjBDDTQMAPt2VlAwwy0gAZaMAMNM8xAb/TtFdBAvw0LzHoUX8phBjr1vnSHtcTwHQq6uHM9eECPhQ0z0Kk7k4EGesymKDADnQJ95/ZasB0Meod92IAGeizmq7eqBQ3o2/YuvnoHe8gOBj3pJxne9TcgOxT0xJ9kePWVADCgx/4sA8xAj7liADTQuUU9MAOdXKUGM9DJVWpAA51c1AMz0MlVajADnVylBjTQyUU9MAN9ybOfO82VAW0vEI0F7T2pMqB9yNLRoJ0YjQUNszKgvdXQ0aCdEI0FDbMyoGEW0NJE0DArAxpmAS1NBA2zMqBhFtDSRNAwKwMaZgEtTQQNszKgYVYGtDXOOhq0ISsD2oAFtDQRtOFqCejPx7tBG6yWYf5f0P9CbbDaDvTfUBuqtgUtAS0BLQEtoKUIaKiVwgy0gJaAlm4CDbVSmIFWDjTUSmEGWjnQUCuFGWjlQEOtFGaglQMNtVKYoVYOM9DKgYZaKcxQK4cZauUwQ60cZqiVwwy1cpihVg4z2MpBhlpJzGArBxlsJSGDrSRksJWEDDjAHsAD++TjDyAWkWj+ati/AAAAAElFTkSuQmCC">
 <!-- Standard favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231e2022'/%3E%3Cpolyline points='4,24 10,15 16,18 23,9 28,12' fill='none' stroke='%235cb87a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
@@ -89,9 +89,31 @@ header{display:flex;align-items:center;justify-content:space-between;
 /* add-position inline button */
 .btn-add{background:none;border:1px solid var(--border);color:var(--text2);
   font-family:'Inter',sans-serif;font-size:11px;font-weight:500;
-  padding:4px 12px;border-radius:5px;cursor:pointer;
+  padding:4px 14px;border-radius:20px;cursor:pointer;
   transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
 .btn-add:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ─── 3-DOT CONTEXT MENU ─────────────────────────────────────── */
+.ctx-wrap{position:relative;display:inline-flex;}
+.ctx-btn{background:none;border:none;color:var(--text3);cursor:pointer;
+  padding:4px 7px;border-radius:5px;font-size:15px;line-height:1;
+  transition:color .12s,background .12s;letter-spacing:.08em;}
+.ctx-btn:hover{color:var(--text2);background:var(--surface);}
+.ctx-menu{position:absolute;right:0;top:100%;margin-top:3px;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow);z-index:500;min-width:160px;overflow:hidden;
+  opacity:0;pointer-events:none;transform:scale(.95) translateY(-4px);
+  transition:opacity .15s,transform .15s;}
+.ctx-menu.open{opacity:1;pointer-events:all;transform:scale(1) translateY(0);}
+.ctx-item{display:flex;align-items:center;gap:.55rem;width:100%;
+  background:none;border:none;color:var(--text2);font-family:'Inter',sans-serif;
+  font-size:12px;padding:.6rem 1rem;cursor:pointer;text-align:left;
+  transition:background .1s;}
+.ctx-item:hover{background:var(--surface);color:var(--text);}
+.ctx-item.danger{color:var(--neg);}
+.ctx-item.danger:hover{background:rgba(224,112,112,.08);}
+.ctx-item svg{flex-shrink:0;opacity:.7;}
+.ctx-sep{border:none;border-top:1px solid var(--border);margin:3px 0;}
 
 /* ═══════════════════════════════════════════════════════════════
    SUMMARY CARDS
@@ -135,8 +157,8 @@ header{display:flex;align-items:center;justify-content:space-between;
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--pos);animation:blink 2.5s infinite;flex-shrink:0;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
 .btn-refresh{background:none;border:1px solid var(--border);color:var(--text3);
-  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 10px;
-  border-radius:5px;cursor:pointer;transition:all .15s;}
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;
+  border-radius:20px;cursor:pointer;transition:all .15s;}
 .btn-refresh:hover{border-color:var(--border2);color:var(--text2);}
 
 /* ═══════════════════════════════════════════════════════════════
@@ -436,13 +458,14 @@ select option{background:var(--surface);}
   <div class="summary-grid">
     <div class="summary-card">
       <div class="card-label">Valore attuale</div>
-      <div class="card-value" id="totalValueEur">€ —</div>
-      <div class="card-sub" id="totalValueUsd" style="margin-top:2px">—</div>
-      <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border)">
-        <div class="card-label" style="margin-bottom:.25rem">Investito</div>
-        <div style="font-size:.95rem;font-weight:600;font-family:'Lora',serif;color:var(--text2)" id="totalCostEur">€ —</div>
-        <div class="card-sub" id="totalCostUsd">—</div>
+      <div style="display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap;">
+        <div class="card-value" id="totalValueEur">€ —</div>
+        <div style="display:flex;flex-direction:column;line-height:1.2;">
+          <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:500;">Investito</span>
+          <span style="font-size:.85rem;font-weight:600;font-family:'Lora',serif;color:var(--text3)" id="totalCostEur">€ —</span>
+        </div>
       </div>
+      <div class="card-sub" id="totalValueUsd" style="margin-top:4px">—</div>
     </div>
     <div class="summary-card">
       <div class="card-label">P&amp;L totale</div>
@@ -451,8 +474,13 @@ select option{background:var(--surface);}
     </div>
     <div class="summary-card">
       <div class="card-label">Impatto cambio</div>
-      <div class="card-value" id="fxImpact">€ —</div>
-      <div class="card-sub">effetto EUR/USD sul P&amp;L</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+        <div>
+          <div class="card-value" id="fxImpact">€ —</div>
+          <div class="card-sub" id="fxImpactPct">—</div>
+        </div>
+        <canvas id="fxSparkCanvas" width="72" height="36" style="flex-shrink:0;display:block;"></canvas>
+      </div>
     </div>
     <div class="summary-card">
       <div class="card-label">Dividendi incassati</div>
@@ -499,7 +527,7 @@ select option{background:var(--surface);}
             <th>Qtà</th>
             <th>Acquistato</th>
             <th>Prezzo att.</th>
-            <th id="sparkColHeader">1S</th>
+            <th id="sparkColHeader">1G</th>
             <th>Valore (€)</th>
             <th>P&amp;L (€)</th>
             <th>FX acquisto</th>
@@ -566,19 +594,10 @@ select option{background:var(--surface);}
       </div>
     </div>
     <button class="btn-primary" onclick="addPosition()">+ Aggiungi</button>
-    <button class="btn-ghost" onclick="refreshAll(); closeDrawer();">↻ Aggiorna prezzi</button>
+    <button class="btn-ghost" style="border-radius:20px;margin-top:.5rem" onclick="refreshAll(); closeDrawer();">↻ Aggiorna prezzi</button>
     <div class="fx-pill">
       <span class="key">EUR/USD ora</span>
       <span class="val" id="fxRate">—</span>
-    </div>
-    <hr class="divider">
-    <div class="card-label" style="margin-bottom:.6rem">Backup dati</div>
-    <div class="export-row">
-      <button class="btn-ghost" onclick="exportData()">↓ Esporta</button>
-      <label>
-        <div class="btn-ghost">↑ Importa</div>
-        <input type="file" accept=".json" onchange="importData(event)" style="display:none">
-      </label>
     </div>
   </div>
 </div>
@@ -594,8 +613,8 @@ select option{background:var(--surface);}
       <div class="settings-section">
         <div class="settings-label">Periodo grafico singolo titolo (popup)</div>
         <div class="period-tabs" style="width:fit-content">
-          <button class="period-tab" data-range="1d" onclick="setSettingPeriod('spark','1d',this)">1G</button>
-          <button class="period-tab active" data-range="5d" onclick="setSettingPeriod('spark','5d',this)">1S</button>
+          <button class="period-tab active" data-range="1d" onclick="setSettingPeriod('spark','1d',this)">1G</button>
+          <button class="period-tab" data-range="5d" onclick="setSettingPeriod('spark','5d',this)">1S</button>
           <button class="period-tab" data-range="1mo" onclick="setSettingPeriod('spark','1mo',this)">1M</button>
           <button class="period-tab" data-range="6mo" onclick="setSettingPeriod('spark','6mo',this)">6M</button>
           <button class="period-tab" data-range="1y" onclick="setSettingPeriod('spark','1y',this)">1A</button>
@@ -607,16 +626,26 @@ select option{background:var(--surface);}
         <div class="settings-label">Dati sparkline nella tabella</div>
         <div class="radio-group">
           <label class="radio-row">
-            <input type="radio" name="sparkPeriod" value="1d" onchange="setSparkTablePeriod('1d')">
+            <input type="radio" name="sparkPeriod" value="1d" checked onchange="setSparkTablePeriod('1d')">
             <label>Giornaliero (dati intraday)</label>
           </label>
           <label class="radio-row">
-            <input type="radio" name="sparkPeriod" value="5d" checked onchange="setSparkTablePeriod('5d')">
+            <input type="radio" name="sparkPeriod" value="5d" onchange="setSparkTablePeriod('5d')">
             <label>Ultima settimana</label>
           </label>
           <label class="radio-row">
             <input type="radio" name="sparkPeriod" value="1mo" onchange="setSparkTablePeriod('1mo')">
             <label>Ultimo mese</label>
+          </label>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">Backup dati</div>
+        <div class="export-row" style="margin-top:.3rem">
+          <button class="btn-ghost" onclick="exportData();closeSettings()">↓ Esporta JSON</button>
+          <label style="flex:1">
+            <div class="btn-ghost" style="text-align:center;cursor:pointer">↑ Importa JSON</div>
+            <input type="file" accept=".json" onchange="importData(event)" style="display:none">
           </label>
         </div>
       </div>
@@ -634,8 +663,8 @@ select option{background:var(--surface);}
       </div>
       <div style="display:flex;align-items:center;gap:.5rem">
         <div class="period-tabs" id="popupPeriodTabs">
-          <button class="period-tab" data-range="1d" onclick="setPopupPeriod(this)">1G</button>
-          <button class="period-tab active" data-range="5d" onclick="setPopupPeriod(this)">1S</button>
+          <button class="period-tab active" data-range="1d" onclick="setPopupPeriod(this)">1G</button>
+          <button class="period-tab" data-range="5d" onclick="setPopupPeriod(this)">1S</button>
           <button class="period-tab" data-range="1mo" onclick="setPopupPeriod(this)">1M</button>
           <button class="period-tab" data-range="6mo" onclick="setPopupPeriod(this)">6M</button>
           <button class="period-tab" data-range="1y" onclick="setPopupPeriod(this)">1A</button>
@@ -735,12 +764,13 @@ let fxRates       = { EUR:1, USD:1.08, GBP:0.86 };
 let eurUsd        = 1.08;
 let currentPrices = {};       // ticker → { price, prevClose, currency, name, histories:{range→[]} }
 let sparkCharts   = {};
+let fxSparkChart  = null;
 let portfolioChart= null;
 let popupChart    = null;
 let popupTicker   = null;
-let popupRange    = '5d';
+let popupRange    = '1d';
 let portfolioRange= '1d';
-let sparkTableRange='5d';
+let sparkTableRange='1d';
 let editingId     = null;
 let dividendCache = {};  // ticker → { totalEurPerShare, fetchedAt, perShareNative }
 
@@ -1075,7 +1105,7 @@ function renderTable(loading=false){
       <td>
         ${cp!=null
           ?`<div class="${priceC}">${sym} ${fmtN(cp)}</div>
-            ${dayChg!=null?`<div class="meta-line ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}% oggi</div>`:''}`
+            ${dayChg!=null?`<div class="meta-line ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`:''}`
           :`<span style="color:var(--text3)">N/D</span>`}
       </td>
       <td class="spark-cell">
@@ -1095,9 +1125,25 @@ function renderTable(loading=false){
         ${fxImpact!=null?`${fxImpact>=0?'+':'−'}€ ${fmtN(Math.abs(fxImpact))}`:'—'}
       </td>
       <td><span class="${divEur>0?'pos':''}">${divEur>0?`€ ${fmtN(divEur)}`:'—'}</span></td>
-      <td style="display:flex;gap:2px;align-items:center;justify-content:flex-end">
-        <button class="edit-icon" onclick="openEdit(${p.id})" title="Modifica">✎</button>
-        <button class="btn-del" onclick="deletePos(${p.id})" title="Elimina">✕</button>
+      <td style="text-align:right;white-space:nowrap;">
+        <div class="ctx-wrap">
+          <button class="ctx-btn" onclick="toggleCtx(event,${p.id})" title="Azioni">···</button>
+          <div class="ctx-menu" id="ctx_${p.id}">
+            <button class="ctx-item" onclick="movePos(${p.id},-1);closeAllCtx()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>Sposta su
+            </button>
+            <button class="ctx-item" onclick="movePos(${p.id},1);closeAllCtx()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>Sposta giù
+            </button>
+            <hr class="ctx-sep">
+            <button class="ctx-item" onclick="openEdit(${p.id});closeAllCtx()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifica
+            </button>
+            <button class="ctx-item danger" onclick="deletePos(${p.id});closeAllCtx()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>Elimina
+            </button>
+          </div>
+        </div>
       </td>
     </tr>`;
   }).join('');
@@ -1124,9 +1170,30 @@ function renderTable(loading=false){
       </div>
       <div class="mc-mid">
         <div class="mc-price ${priceC}">${cp!=null?`${sym} ${fmtN(cp)}`:'—'}</div>
-        ${dayChg!=null?`<div class="mc-chg ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}% oggi</div>`:''}
+        ${dayChg!=null?`<div class="mc-chg ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`:''}
       </div>
       ${hasHist?`<canvas id="mspark_${p.id}" class="mc-spark"></canvas>`:`<div class="mc-spark"></div>`}
+      <div class="ctx-wrap" onclick="e=>e.stopPropagation()" style="flex-shrink:0">
+        <button class="ctx-btn" onclick="event.stopPropagation();toggleCtx(event,${p.id}+'m')" title="Azioni">···</button>
+        <div class="ctx-menu" id="ctx_${p.id}m" style="right:0">
+          <button class="ctx-item" onclick="openDetail(${p.id});closeAllCtx()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Dettagli
+          </button>
+          <button class="ctx-item" onclick="movePos(${p.id},-1);closeAllCtx()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>Sposta su
+          </button>
+          <button class="ctx-item" onclick="movePos(${p.id},1);closeAllCtx()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>Sposta giù
+          </button>
+          <hr class="ctx-sep">
+          <button class="ctx-item" onclick="closeAllCtx();openEdit(${p.id})">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifica
+          </button>
+          <button class="ctx-item danger" onclick="closeAllCtx();deletePos(${p.id})">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>Elimina
+          </button>
+        </div>
+      </div>
     </li>`;
   }).join('');
 
@@ -1185,7 +1252,7 @@ function openDetail(id){
 
   const rows=[
     ['Prezzo attuale', cp!=null?`${sym} ${fmtN(cp)}`:'N/D', pnlEur!=null?(pnlEur>=0?'pos':'neg'):''],
-    ['Variaz. oggi', dayChg!=null?`${dayChg>=0?'+':''}${dayChg.toFixed(2)}%`:'—', dayChg!=null?(dayChg>=0?'pos':'neg'):''],
+    ['Variaz. periodo', dayChg!=null?`${dayChg>=0?'+':''}${dayChg.toFixed(2)}%`:'—', dayChg!=null?(dayChg>=0?'pos':'neg'):''],
     ['Quantità', `${p.qty}`, ''],
     ['Prezzo acquisto', `${sym} ${fmtN(p.buyPrice)} (€ ${fmtN(costEur)})`, ''],
     ['Valore attuale', valEur!=null?`€ ${fmtN(valEur)}`:'—', ''],
@@ -1219,7 +1286,10 @@ function closeDetail(){
    SUMMARY
 ═══════════════════════════════════════════════════════════════════ */
 function renderSummary(){
-  let totalVal=0,totalCost=0,totalFx=0,totalDiv=0;
+  let totalVal=0,totalCost=0,totalDiv=0;
+  // For FX impact: compare current EUR value vs value at purchase FX
+  // Also accumulate daily FX impact history using USD positions
+  let totalFxCur=0,totalFxAtBuy=0;
   positions.forEach(p=>{
     const pd=currentPrices[p.ticker];
     const cp=pd?.price;
@@ -1230,16 +1300,20 @@ function renderSummary(){
     if(cp!=null){
       const valEur=cp*p.qty*curRate;
       totalVal+=valEur;
-      if(p.currency!=='EUR') totalFx+=valEur-(cp*p.qty*p.historicalFxToEur);
+      if(p.currency!=='EUR'){
+        totalFxCur +=valEur;
+        totalFxAtBuy+=cp*p.qty*p.historicalFxToEur;
+      }
     }
   });
+  const totalFx=totalFxCur-totalFxAtBuy;
   const pnl=totalVal-totalCost;
   const pct=totalCost>0?pnl/totalCost*100:0;
+  const fxPct=totalFxAtBuy>0?totalFx/totalFxAtBuy*100:0;
 
   setText('totalValueEur',`€ ${fmtN(totalVal)}`);
   setText('totalValueUsd',`$ ${fmtN(totalVal*eurUsd)}`);
   setText('totalCostEur',`€ ${fmtN(totalCost)}`);
-  setText('totalCostUsd',`$ ${fmtN(totalCost*eurUsd)}`);
 
   const pEl=document.getElementById('totalPnlEur');
   pEl.textContent=`${pnl>=0?'+':'−'}€ ${fmtN(Math.abs(pnl))}`;
@@ -1249,12 +1323,112 @@ function renderSummary(){
   const fEl=document.getElementById('fxImpact');
   fEl.textContent=`${totalFx>=0?'+':'−'}€ ${fmtN(Math.abs(totalFx))}`;
   fEl.className=`card-value ${totalFx>=0?'positive':'negative'}`;
+  const fpEl=document.getElementById('fxImpactPct');
+  if(fpEl){
+    fpEl.textContent=totalFxAtBuy>0?`${fxPct>=0?'+':''}${fxPct.toFixed(2)}% cambio`:'effetto EUR/USD';
+    fpEl.className=`card-sub ${fxPct>=0?'pos':'neg'}`;
+  }
 
   setText('totalDividends',`€ ${fmtN(totalDiv)}`);
+
+  // FX sparkline: fetch USD/EUR history from earliest buy date
+  renderFxSpark();
+}
+
+let fxSparkData = []; // cached fx history [{t,v}]
+
+async function renderFxSpark(){
+  // Only for portfolios with non-EUR positions
+  const hasUsd = positions.some(p=>p.currency!=='EUR');
+  const canvas = document.getElementById('fxSparkCanvas');
+  if(!canvas||!hasUsd){ if(canvas) canvas.style.display='none'; return; }
+  canvas.style.display='block';
+
+  // Find earliest buy date of USD/foreign positions
+  const foreignPos = positions.filter(p=>p.currency!=='EUR');
+  if(!foreignPos.length) return;
+  const earliest = foreignPos.map(p=>p.buyDate).sort()[0];
+  const buyTs = Math.floor(new Date(earliest).getTime()/1000);
+  const nowTs = Math.floor(Date.now()/1000);
+  const daysSince = (nowTs-buyTs)/86400;
+
+  // Choose range based on time since purchase
+  let range='1y'; let interval='1wk';
+  if(daysSince<=7){range='5d';interval='60m';}
+  else if(daysSince<=35){range='1mo';interval='1d';}
+  else if(daysSince<=200){range='6mo';interval='1wk';}
+
+  // Fetch USDEUR=X or use frankfurter history
+  // Use Yahoo Finance for EUR=X (EUR/USD), then invert
+  const proxies=[
+    `https://query1.finance.yahoo.com/v8/finance/chart/USDEUR%3DX?interval=${interval}&range=${range}`,
+    `https://query2.finance.yahoo.com/v8/finance/chart/USDEUR%3DX?interval=${interval}&range=${range}`,
+    `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/USDEUR%3DX?interval=${interval}&range=${range}`)}`,
+  ];
+  let hist=[];
+  for(const url of proxies){
+    try{
+      const res=await ft(url,7000);
+      if(!res.ok) continue;
+      const data=JSON.parse(await res.text());
+      const result=data?.chart?.result?.[0];
+      const closes=result?.indicators?.quote?.[0]?.close??[];
+      const timestamps=result?.timestamp??[];
+      hist=closes.map((c,i)=>({t:timestamps[i],v:c})).filter(x=>x.v!=null);
+      if(hist.length) break;
+    } catch{}
+  }
+
+  if(hist.length<2) return;
+
+  // Filter to only from earliest buy date
+  hist=hist.filter(h=>h.t>=buyTs);
+  if(hist.length<2) return;
+
+  // Add baseline zero reference: compute FX impact delta over time
+  // For simplicity: show normalized USD/EUR rate change from first point
+  const base=hist[0].v;
+  const vals=hist.map(h=>h.v-base); // delta from baseline (baseline=0)
+  const last=vals[vals.length-1];
+  const isUp=last>=0;
+  const col=isUp?getCss('--pos'):getCss('--neg');
+  const bg=isUp?'rgba(92,184,122,0.10)':'rgba(224,112,112,0.10)';
+  const border=getCss('--border');
+  const text2=getCss('--text2');
+
+  if(fxSparkChart){fxSparkChart.destroy();fxSparkChart=null;}
+  fxSparkChart=new Chart(canvas,{
+    type:'line',
+    data:{
+      labels:vals.map((_,i)=>i),
+      datasets:[{
+        data:vals,
+        borderColor:col,borderWidth:1.5,
+        backgroundColor:bg,fill:true,
+        pointRadius:0,tension:0.3
+      }]
+    },
+    options:{
+      animation:false,responsive:false,
+      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      scales:{
+        x:{display:false},
+        y:{
+          display:true,
+          ticks:{display:false},
+          grid:{color:border,drawTicks:false},
+          // Show zero baseline
+          border:{dash:[2,2]},
+          min:Math.min(0,Math.min(...vals))*1.1,
+          max:Math.max(0,Math.max(...vals))*1.1||0.001,
+        }
+      }
+    }
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   PORTFOLIO CHART (combined line — % change from period start)
+   PORTFOLIO CHART — % change, clipped to purchase date, colored by sign
 ═══════════════════════════════════════════════════════════════════ */
 let portfolioPeriod='1d';
 
@@ -1273,31 +1447,35 @@ async function renderPortfolioChart(){
   }
   document.getElementById('portfolioSection').style.display='';
 
-  // Fetch histories for this range for each unique ticker
   const tickers=[...new Set(positions.map(p=>p.ticker))];
   const histories={};
   await Promise.allSettled(tickers.map(async t=>{
-    const d=await fetchPriceRange(t, portfolioPeriod);
+    const d=await fetchPriceRange(t,portfolioPeriod);
     if(d) histories[t]=d.history;
   }));
 
-  // Build combined portfolio value timeseries
-  const allHistories = tickers.map(t=>histories[t]||[]).filter(h=>h.length>0);
+  // Find earliest purchase timestamp among all positions
+  const earliestBuyTs=Math.min(...positions.map(p=>new Date(p.buyDate).getTime()/1000));
+
+  // Build combined value timeseries — only include points after earliest purchase
+  const allHistories=tickers.map(t=>histories[t]||[]).filter(h=>h.length>0);
   if(allHistories.length===0){
     document.getElementById('portfolioSection').style.display='none';
     return;
   }
-  const minLen = Math.min(...allHistories.map(h=>h.length));
-  const combined = [];
+  const minLen=Math.min(...allHistories.map(h=>h.length));
+  const combined=[];
   for(let i=0;i<minLen;i++){
-    let total=0; let valid=true;
+    let total=0;let valid=true;
     positions.forEach(p=>{
       const h=histories[p.ticker];
-      if(!h||!h[i]){valid=false;return;}
+      if(!h||!h[i]||h[i].v==null){valid=false;return;}
       const curRate=toEurRate(p.currency);
       total+=h[i].v*p.qty*curRate;
     });
-    if(valid) combined.push({t:allHistories[0][i]?.t,v:total});
+    const ts=allHistories[0][i]?.t;
+    // Skip data points before earliest purchase
+    if(valid&&ts&&ts>=earliestBuyTs) combined.push({t:ts,v:total});
   }
 
   if(combined.length<2){
@@ -1309,19 +1487,21 @@ async function renderPortfolioChart(){
   const base=combined[0].v;
   const pctData=combined.map(p=>base>0?+((p.v-base)/base*100).toFixed(3):0);
 
-  const isUp=pctData[pctData.length-1]>=0;
-  const col =isUp?getCss('--pos'):getCss('--neg');
-  const bg  =isUp?'rgba(92,184,122,0.10)':'rgba(224,112,112,0.10)';
   const border=getCss('--border');
   const text2=getCss('--text2');
+  const posCol=getCss('--pos');
+  const negCol=getCss('--neg');
 
-  const labels = combined.map(p=>{
+  const labels=combined.map(p=>{
     if(!p.t) return '';
     const d=new Date(p.t*1000);
     if(['1d','5d'].includes(portfolioPeriod))
       return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
     return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
   });
+
+  // Build per-point colors (segment coloring: each point colored by its sign)
+  const pointColors=pctData.map(v=>v>=0?posCol:negCol);
 
   if(portfolioChart){portfolioChart.destroy();portfolioChart=null;}
   const canvas=document.getElementById('portfolioChart');
@@ -1331,9 +1511,25 @@ async function renderPortfolioChart(){
       labels,
       datasets:[{
         data:pctData,
-        borderColor:col,borderWidth:2,
-        backgroundColor:bg,fill:true,
-        pointRadius:0,tension:0.3,
+        borderColor:ctx=>{
+          // Color each segment based on whether it's positive or negative
+          const val=pctData[ctx.p1DataIndex];
+          return val>=0?posCol:negCol;
+        },
+        segment:{
+          borderColor:ctx=>{
+            const v=pctData[ctx.p1DataIndex];
+            return v>=0?posCol:negCol;
+          },
+          backgroundColor:ctx=>{
+            const v=pctData[ctx.p1DataIndex];
+            return v>=0?'rgba(92,184,122,0.08)':'rgba(224,112,112,0.08)';
+          }
+        },
+        fill:true,
+        borderWidth:2,
+        pointRadius:0,
+        tension:0.3,
       }]
     },
     options:{
@@ -1353,18 +1549,10 @@ async function renderPortfolioChart(){
         }
       },
       scales:{
-        x:{
-          ticks:{color:text2,font:{family:'Inter',size:10},maxTicksLimit:8},
-          grid:{color:border}
-        },
+        x:{ticks:{color:text2,font:{family:'Inter',size:10},maxTicksLimit:8},grid:{color:border}},
         y:{
-          ticks:{
-            color:text2,
-            font:{family:'Inter',size:10},
-            callback:v=>`${v>=0?'+':''}${v.toFixed(1)}%`
-          },
+          ticks:{color:text2,font:{family:'Inter',size:10},callback:v=>`${v>=0?'+':''}${v.toFixed(1)}%`},
           grid:{color:border},
-          // Draw a zero line
           border:{dash:[3,3]},
         }
       }
@@ -1569,6 +1757,34 @@ function deletePos(id){
   positions=positions.filter(p=>p.id!==id);
   save(); renderTable(); renderSummary(); renderPortfolioChart();
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOVE (reorder)
+═══════════════════════════════════════════════════════════════════ */
+function movePos(id, dir){
+  const idx=positions.findIndex(p=>p.id===id);
+  if(idx<0) return;
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=positions.length) return;
+  [positions[idx],positions[newIdx]]=[positions[newIdx],positions[idx]];
+  save(); renderTable();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONTEXT MENU
+═══════════════════════════════════════════════════════════════════ */
+function toggleCtx(e, id){
+  e.stopPropagation();
+  const menu=document.getElementById('ctx_'+id);
+  if(!menu) return;
+  const wasOpen=menu.classList.contains('open');
+  closeAllCtx();
+  if(!wasOpen) menu.classList.add('open');
+}
+function closeAllCtx(){
+  document.querySelectorAll('.ctx-menu.open').forEach(m=>m.classList.remove('open'));
+}
+document.addEventListener('click',()=>closeAllCtx());
 
 /* ═══════════════════════════════════════════════════════════════════
    REBUILDALLCHARTS (after theme change)

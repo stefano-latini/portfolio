@@ -1747,20 +1747,6 @@ async function renderMobileHero(){
 
   setText('mhValue', `€ ${fmtN(totalVal)}`);
 
-  const sub = document.getElementById('mhSubRow');
-  const fmtChg = (v,p,lbl) => {
-    if(v==null) return '';
-    const s = v>=0;
-    const col = s ? 'var(--pos)' : 'var(--neg)';
-    return `<span style="color:${col};font-size:12.5px;font-weight:500">${s?'+':''}${fmtN(v)} (${p>=0?'+':''}${p.toFixed(2)}%)</span>
-            <span style="font-size:11px;color:var(--text3)">${lbl}</span>`;
-  };
-  sub.innerHTML = [
-    fmtChg(dayChg, dayPct, 'Oggi'),
-    dayChg!=null&&totPnl!=null ? '<span style="color:var(--border2);font-size:12px">·</span>' : '',
-    fmtChg(totPnl, totPct, 'Totale')
-  ].join('');
-
   // Calcola earliest purchase timestamp per clipping TOT
   const earliestBuyTs = Math.min(...positions.map(p=>new Date(p.buyDate).getTime()/1000));
 
@@ -1798,8 +1784,11 @@ async function renderMobileHero(){
 
   if(mhPeriod==='1d'){
     const nowTs = Math.floor(Date.now()/1000);
-    // I punti con timestamp > adesso sono "futuri" → li rende null per non tracciarli
-    const validIdx = combined.findLastIndex(d=>d.t<=nowTs);
+    // Trova l'ultimo indice con timestamp <= adesso (compatibile con tutti i browser)
+    let validIdx = -1;
+    for(let i=0; i<combined.length; i++){
+      if(combined[i].t <= nowTs) validIdx = i;
+    }
     if(validIdx>=0 && validIdx<combined.length-1){
       futureCount = combined.length - validIdx - 1;
       displayVals = combined.map((d,i)=> i<=validIdx ? d.v : null);
@@ -1837,9 +1826,7 @@ async function renderMobileHero(){
     }
   }
 
-  // ── Rimuovi il sub-row (P&L ora è nel badge) ──
-  const sub=document.getElementById('mhSubRow');
-  if(sub) sub.innerHTML='';
+  // ── Il sub-row non è più nell'HTML, badge P&L è nel mhPnlBadge ──
 
   const base = totalCost > 0 ? totalCost : combined[0].v;
 

@@ -190,7 +190,7 @@ tbody td:first-child{text-align:left;}
 ═══════════════════════════════════════════════════════════════ */
 .drawer-overlay{position:fixed;inset:0;background:var(--overlay);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--tr);}
 .drawer-overlay.open{opacity:1;pointer-events:all;}
-.drawer{position:fixed;right:0;top:0;bottom:0;width:360px;background:var(--card);border-left:1px solid var(--border);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:360px;background:var(--card);border-left:1px solid var(--border);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .drawer.open{transform:translateX(0);}
 .drawer-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .drawer-header h3{font-family:'Lora',serif;font-weight:600;font-size:.95rem;}
@@ -333,6 +333,13 @@ select option{background:var(--surface);}
 .panel-header-mobile-btns{display:none;gap:.5rem;padding:.5rem 1rem .6rem;border-bottom:1px solid var(--border);}
 
 /* ═══════════════════════════════════════════════════════════════
+   TOUCH — previeni scroll orizzontale causato dai canvas
+═══════════════════════════════════════════════════════════════ */
+html, body { overscroll-behavior-x: none; }
+canvas { touch-action: pan-y; }
+.mc-spark, .spark-cell canvas, #fxSparkCanvas { touch-action: none; }
+
+/* ═══════════════════════════════════════════════════════════════
    RESPONSIVE 900px
 ═══════════════════════════════════════════════════════════════ */
 @media(max-width:900px){
@@ -393,6 +400,38 @@ select option{background:var(--surface);}
   .mobile-hero{display:none !important;}
   .mobile-stats-strip{display:none !important;}
   .panel-header-mobile-btns{display:none;}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE BOTTOM SHEETS — Settings e Drawer come sheet dal basso
+═══════════════════════════════════════════════════════════════ */
+@media(max-width:600px){
+  /* Settings: da modale centrato a bottom sheet */
+  #settingsOverlay { align-items:flex-end; }
+  #settingsOverlay .modal {
+    width:100%; max-width:100%;
+    border-radius:18px 18px 0 0;
+    max-height:88vh; overflow-y:auto;
+    transform:translateY(100%);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);
+    padding-bottom:max(env(safe-area-inset-bottom),16px);
+  }
+  #settingsOverlay.open .modal { transform:translateY(0); }
+  #settingsHandle { display:block !important; }
+
+  /* Drawer "aggiungi": da pannello laterale a bottom sheet */
+  .drawer {
+    left:0; right:0; bottom:0; top:auto;
+    width:100%;
+    border-left:none;
+    border-top:1px solid var(--border);
+    border-radius:18px 18px 0 0;
+    max-height:92vh;
+    overflow-y:auto;
+    transform:translateY(100%);
+  }
+  .drawer.open { transform:translateY(0); }
+  #drawerHandle { display:block !important; }
 }
 </style>
 </head>
@@ -598,6 +637,7 @@ select option{background:var(--surface);}
 <!-- ══ DRAWER (add position) ════════════════════════════════════════ -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="drawer">
+  <div id="drawerHandle" style="width:36px;height:4px;border-radius:2px;background:var(--border2);margin:10px auto 0;display:none"></div>
   <div class="drawer-header">
     <h3>Nuova posizione</h3>
     <button class="drawer-close" onclick="closeDrawer()">✕</button>
@@ -648,6 +688,7 @@ select option{background:var(--surface);}
 <!-- ══ SETTINGS MODAL ═══════════════════════════════════════════════ -->
 <div class="modal-overlay" id="settingsOverlay" onclick="closeSettings(event)">
   <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="sh-handle" style="width:36px;height:4px;border-radius:2px;background:var(--border2);margin:10px auto 0;display:none" id="settingsHandle"></div>
     <div class="modal-header">
       <h3>Impostazioni</h3>
       <button class="drawer-close" onclick="closeSettings()">✕</button>
@@ -2112,6 +2153,28 @@ function closeSettings(e){
   if(e&&e.target!==document.getElementById('settingsOverlay')) return;
   document.getElementById('settingsOverlay').classList.remove('open');
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   BLOCCO SCROLL ORIZZONTALE — previene swipe laterale da canvas
+═══════════════════════════════════════════════════════════════════ */
+(function preventHorizontalScroll(){
+  let startX=0, startY=0, isLocked=false;
+  document.addEventListener('touchstart', e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isLocked = false;
+  }, {passive:true});
+  document.addEventListener('touchmove', e=>{
+    if(isLocked) return;
+    const dx = Math.abs(e.touches[0].clientX - startX);
+    const dy = Math.abs(e.touches[0].clientY - startY);
+    // Se il gesto è prevalentemente orizzontale, blocca completamente
+    if(dx > dy && dx > 8){
+      e.preventDefault();
+    }
+    isLocked = true;
+  }, {passive:false});
+})();
 
 function setSettingPeriod(type,range,btn){
   if(type==='spark') popupRange=range;

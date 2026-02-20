@@ -145,11 +145,26 @@ header{display:flex;align-items:center;justify-content:space-between;
 .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .panel-header{padding:.85rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
 .panel-header-left{display:flex;align-items:center;gap:7px;}
+.panel-header-right{display:flex;align-items:center;gap:.35rem;margin-left:auto;}
 .panel-header h2{font-family:'Lora',serif;font-weight:600;font-size:.9rem;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--pos);animation:blink 2.5s infinite;flex-shrink:0;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
 .btn-refresh{background:none;border:1px solid var(--border);color:var(--text3);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;cursor:pointer;transition:all .15s;}
 .btn-refresh:hover{border-color:var(--border2);color:var(--text2);}
+/* Icon-only buttons for mobile panel header */
+.ph-icon-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:5px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent;}
+.ph-icon-btn:hover{color:var(--text2);background:var(--surface);}
+.ph-icon-btn:active{background:var(--border);}
+/* Desktop: hide icon-only buttons; show text buttons */
+.ph-icon-mobile{display:none;}
+@media(min-width:601px){
+  .btn-add-desktop,.btn-refresh-desktop{display:inline-flex;}
+  .ph-icon-mobile{display:none!important;}
+}
+@media(max-width:600px){
+  .btn-add-desktop,.btn-refresh-desktop{display:none!important;}
+  .ph-icon-mobile{display:flex!important;}
+}
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;}
 thead th{color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.7rem 1rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--card);}
@@ -483,11 +498,11 @@ canvas { touch-action: pan-y; }
     <div class="mh-chart"><canvas id="mhChart"></canvas></div>
     <div class="mh-tabs" id="mhTabs">
       <button class="mh-tab active" data-range="1d"  onclick="setMhPeriod(this)">1G</button>
-      <button class="mh-tab" data-range="5d"  onclick="setMhPeriod(this)">5G</button>
+      <button class="mh-tab" data-range="5d"  onclick="setMhPeriod(this)">1S</button>
       <button class="mh-tab" data-range="1mo" onclick="setMhPeriod(this)">1M</button>
       <button class="mh-tab" data-range="6mo" onclick="setMhPeriod(this)">6M</button>
       <button class="mh-tab" data-range="1y"  onclick="setMhPeriod(this)">1A</button>
-      <button class="mh-tab" data-range="5y"  onclick="setMhPeriod(this)">5A</button>
+      <button class="mh-tab" data-range="tot" onclick="setMhPeriod(this)">TOT</button>
     </div>
   </div>
 
@@ -554,7 +569,7 @@ canvas { touch-action: pan-y; }
         <button class="period-tab" data-range="1mo" onclick="setPortfolioPeriod(this)">1M</button>
         <button class="period-tab" data-range="6mo" onclick="setPortfolioPeriod(this)">6M</button>
         <button class="period-tab" data-range="1y" onclick="setPortfolioPeriod(this)">1A</button>
-        <button class="period-tab" data-range="5y" onclick="setPortfolioPeriod(this)">5A</button>
+        <button class="period-tab" data-range="tot" onclick="setPortfolioPeriod(this)">TOT</button>
       </div>
     </div>
     <div id="portfolioChartWrap"><canvas id="portfolioChart"></canvas></div>
@@ -584,22 +599,25 @@ canvas { touch-action: pan-y; }
       <div class="panel-header-left">
         <div class="live-dot"></div>
         <h2>Posizioni</h2>
-        <!-- visible on desktop only -->
+      </div>
+      <div class="panel-header-right">
+        <!-- Desktop: testo + icona -->
         <button class="btn-add btn-add-desktop" onclick="openDrawer()">
           <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
           Aggiungi posizione
         </button>
+        <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll()">↻ Aggiorna</button>
+        <!-- Mobile: solo icone, inline nel titolo -->
+        <button class="ph-icon-btn ph-icon-mobile" onclick="openDrawer()" title="Aggiungi posizione">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </button>
+        <button class="ph-icon-btn ph-icon-mobile" onclick="refreshAll()" title="Aggiorna prezzi">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
       </div>
-      <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll()">↻ Aggiorna</button>
     </div>
-    <!-- mobile-only row of buttons below the title -->
-    <div class="panel-header-mobile-btns">
-      <button class="btn-add" onclick="openDrawer()">
-        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
-        Aggiungi
-      </button>
-      <button class="btn-refresh" onclick="refreshAll()">↻ Aggiorna</button>
-    </div>
+    <!-- mobile-only row REMOVED: buttons are now inline in header -->
+    <div class="panel-header-mobile-btns" style="display:none!important"></div>
     <div class="desktop-table">
       <div class="table-wrap">
       <table>
@@ -829,6 +847,20 @@ canvas { touch-action: pan-y; }
     </div>
     <button class="drawer-close" onclick="closeDetail()">✕</button>
   </div>
+  <!-- Grafico singolo titolo dentro il detail sheet -->
+  <div style="padding:.75rem 1rem 0;border-bottom:1px solid var(--border)">
+    <div id="detailChartWrap" style="height:130px;position:relative;margin-bottom:.5rem">
+      <canvas id="detailChart"></canvas>
+    </div>
+    <div class="mh-tabs" id="detailChartTabs" style="border-top:1px solid var(--border);padding-top:.4rem;margin-bottom:0">
+      <button class="mh-tab active" data-range="1d"  onclick="setDetailChartPeriod(this,'1d')">1G</button>
+      <button class="mh-tab" data-range="5d"         onclick="setDetailChartPeriod(this,'5d')">1S</button>
+      <button class="mh-tab" data-range="1mo"        onclick="setDetailChartPeriod(this,'1mo')">1M</button>
+      <button class="mh-tab" data-range="6mo"        onclick="setDetailChartPeriod(this,'6mo')">6M</button>
+      <button class="mh-tab" data-range="1y"         onclick="setDetailChartPeriod(this,'1y')">1A</button>
+      <button class="mh-tab" data-range="5y"         onclick="setDetailChartPeriod(this,'5y')">TOT</button>
+    </div>
+  </div>
   <div class="detail-body" id="detailBody"></div>
   <div class="detail-actions">
     <button class="btn-ghost" id="detailEditBtn" onclick="">✎ Modifica</button>
@@ -976,6 +1008,7 @@ const INTERVALS = {
   '6mo': { interval:'1wk', range:'6mo' },
   '1y':  { interval:'1wk', range:'1y'  },
   '5y':  { interval:'1mo', range:'5y'  },
+  'tot': { interval:'1mo', range:'5y'  }, // TOT = max available, clipped to first purchase
 };
 
 function yahooUrl(ticker, range){
@@ -1345,6 +1378,50 @@ function renderTable(loading=false){
 /* ═══════════════════════════════════════════════════════════════════
    MOBILE DETAIL SHEET
 ═══════════════════════════════════════════════════════════════════ */
+let detailChart = null;
+let detailTicker = null;
+
+async function setDetailChartPeriod(btn, range){
+  document.querySelectorAll('#detailChartTabs .mh-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(detailTicker) await loadDetailChart(detailTicker, range);
+}
+
+async function loadDetailChart(ticker, range){
+  if(detailChart){detailChart.destroy();detailChart=null;}
+  const canvas=document.getElementById('detailChart');
+  if(!canvas) return;
+  const d=await fetchPriceRange(ticker, range);
+  if(!d||!d.history.length) return;
+
+  const vals=d.history.map(h=>h.v);
+  const isUp=vals[vals.length-1]>=vals[0];
+  const col=isUp?getCss('--pos'):getCss('--neg');
+  const bg=isUp?'rgba(92,184,122,0.10)':'rgba(224,112,112,0.10)';
+  const sym={USD:'$',EUR:'€',GBP:'£'}[d.currency]||d.currency;
+  const labels=d.history.map(h=>{
+    const dt=new Date(h.t*1000);
+    if(['1d','5d'].includes(range)) return dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    return dt.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
+  });
+
+  detailChart=new Chart(canvas,{
+    type:'line',
+    data:{labels,datasets:[{
+      data:vals.map(v=>+v.toFixed(4)),
+      borderColor:col,borderWidth:2,
+      backgroundColor:bg,fill:true,
+      pointRadius:0,tension:0.3,
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:250},
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>`${sym} ${fmtN(c.parsed.y)}`}}},
+      scales:{x:{display:false},y:{display:false,grace:'3%'}}
+    }
+  });
+}
+
 function openDetail(id){
   const p=positions.find(x=>x.id===id);
   if(!p) return;
@@ -1389,11 +1466,18 @@ function openDetail(id){
 
   document.getElementById('detailOverlay').classList.add('open');
   document.getElementById('detailSheet').classList.add('open');
+
+  // Carica grafico — resetta tab su 1G e carica
+  detailTicker=p.ticker;
+  document.querySelectorAll('#detailChartTabs .mh-tab').forEach((b,i)=>b.classList.toggle('active',i===0));
+  loadDetailChart(p.ticker,'1d');
 }
 
 function closeDetail(){
   document.getElementById('detailOverlay').classList.remove('open');
   document.getElementById('detailSheet').classList.remove('open');
+  if(detailChart){detailChart.destroy();detailChart=null;}
+  detailTicker=null;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1615,7 +1699,7 @@ async function renderMobileHero(){
   }
   document.getElementById('mobileHero').style.display='';
 
-  // Calcola valore totale corrente
+  // Calcola valore totale corrente e costo investito
   let totalVal=0, totalCost=0, totalDayStart=0;
   positions.forEach(p=>{
     const pd=currentPrices[p.ticker];
@@ -1636,7 +1720,6 @@ async function renderMobileHero(){
 
   setText('mhValue', `€ ${fmtN(totalVal)}`);
 
-  // Sub-row: variazione giornaliera e totale
   const sub = document.getElementById('mhSubRow');
   const fmtChg = (v,p,lbl) => {
     if(v==null) return '';
@@ -1651,11 +1734,15 @@ async function renderMobileHero(){
     fmtChg(totPnl, totPct, 'Totale')
   ].join('');
 
-  // Fetch history per il grafico hero
+  // Calcola earliest purchase timestamp per clipping TOT
+  const earliestBuyTs = Math.min(...positions.map(p=>new Date(p.buyDate).getTime()/1000));
+
+  // Fetch history — per 'tot' usiamo '5y' come range Yahoo
+  const fetchRange = mhPeriod==='tot' ? '5y' : mhPeriod;
   const tickers=[...new Set(positions.map(p=>p.ticker))];
   const histories={};
   await Promise.allSettled(tickers.map(async t=>{
-    const d=await fetchPriceRange(t, mhPeriod);
+    const d=await fetchPriceRange(t, fetchRange);
     if(d) histories[t]=d.history;
   }));
 
@@ -1671,48 +1758,77 @@ async function renderMobileHero(){
       if(!h||!h[i]||h[i].v==null){ok=false;return;}
       tot+=h[i].v*p.qty*toEurRate(p.currency);
     });
-    if(ok) combined.push({t:allH[0][i].t, v:tot});
+    const ts=allH[0][i]?.t;
+    // Per TOT, salta i punti prima del primo acquisto
+    if(ok && (mhPeriod!=='tot' || !ts || ts>=earliestBuyTs))
+      combined.push({t:ts, v:tot});
   }
   if(combined.length<2) return;
 
   const vals = combined.map(d=>d.v);
-  const base = vals[0];
-  const last = vals[vals.length-1];
-  const isUp = last>=base;
-  const lineCol = isUp ? getCss('--pos') : getCss('--neg');
-  const fillCol = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
-  const border2 = getCss('--border');
-  const text2   = getCss('--text2');
+
+  // Baseline = costo investito totale (linea dello zero P&L)
+  // Questo funziona per tutti i periodi: verde = sopra il costo, rosso = sotto
+  const base = totalCost > 0 ? totalCost : vals[0];
+
+  const posCol=getCss('--pos');
+  const negCol=getCss('--neg');
+  const fillPos='rgba(92,184,122,0.12)';
+  const fillNeg='rgba(224,112,112,0.12)';
 
   const labels = combined.map(d=>{
     const dt=new Date(d.t*1000);
     if(['1d','5d'].includes(mhPeriod))
       return dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    if(mhPeriod==='tot')
+      return dt.toLocaleDateString('it-IT',{month:'short',year:'2-digit'});
     return dt.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
   });
 
   if(mhChart){mhChart.destroy();mhChart=null;}
   const canvas=document.getElementById('mhChart');
 
-  // Zero-crossing color plugin (same approach as portfolio chart)
-  const posCol2=lineCol, negCol2=isUp?getCss('--neg'):getCss('--pos');
+  // Zero-crossing plugin: verde sopra base, rosso sotto base
   const zeroPlugin={
     id:'mhZero',
     afterDatasetsDraw(chart){
       const {ctx,scales:{y},chartArea:{left,right,top,bottom}}=chart;
       const pts=chart.getDatasetMeta(0).data;
       if(!pts||pts.length<2) return;
-      const zeroY=y.getPixelForValue(base); // baseline = starting value
+      const zeroY=y.getPixelForValue(base);
       ctx.save();
-      [[lineCol,top,zeroY],[isUp?getCss('--neg'):getCss('--pos'),zeroY,bottom]].forEach(([col,clipTop,clipBot])=>{
-        if(clipTop>=clipBot) return;
-        ctx.save();
-        ctx.beginPath();ctx.rect(left,clipTop,right-left,clipBot-clipTop);ctx.clip();
-        ctx.beginPath();
-        pts.forEach((pt,i)=>{ i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y); });
-        ctx.strokeStyle=col;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
-        ctx.restore();
-      });
+      // Gradiente fill: verde sopra baseline, rosso sotto
+      const gradFill=ctx.createLinearGradient(0,top,0,bottom);
+      const zeroFrac=Math.max(0,Math.min(1,(zeroY-top)/(bottom-top)));
+      gradFill.addColorStop(0,'rgba(92,184,122,0.18)');
+      gradFill.addColorStop(zeroFrac,'rgba(92,184,122,0.04)');
+      gradFill.addColorStop(zeroFrac,'rgba(224,112,112,0.04)');
+      gradFill.addColorStop(1,'rgba(224,112,112,0.18)');
+      // Fill area
+      ctx.beginPath();
+      pts.forEach((pt,i)=>{ i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y); });
+      ctx.lineTo(pts[pts.length-1].x, bottom);
+      ctx.lineTo(pts[0].x, bottom);
+      ctx.closePath();
+      ctx.fillStyle=gradFill;
+      ctx.fill();
+      // Linea verde sopra baseline
+      ctx.save();
+      ctx.beginPath();ctx.rect(left,top,right-left,Math.max(0,zeroY-top));ctx.clip();
+      ctx.beginPath();pts.forEach((pt,i)=>{ i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y); });
+      ctx.strokeStyle=posCol;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+      ctx.restore();
+      // Linea rossa sotto baseline
+      ctx.save();
+      ctx.beginPath();ctx.rect(left,zeroY,right-left,Math.max(0,bottom-zeroY));ctx.clip();
+      ctx.beginPath();pts.forEach((pt,i)=>{ i===0?ctx.moveTo(pt.x,pt.y):ctx.lineTo(pt.x,pt.y); });
+      ctx.strokeStyle=negCol;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+      ctx.restore();
+      // Linea baseline tratteggiata
+      const baselineY=Math.max(top,Math.min(bottom,zeroY));
+      ctx.beginPath();ctx.setLineDash([4,4]);ctx.moveTo(left,baselineY);ctx.lineTo(right,baselineY);
+      ctx.strokeStyle=getCss('--border2');ctx.lineWidth=1;ctx.stroke();
+      ctx.setLineDash([]);
       ctx.restore();
     }
   };
@@ -1725,8 +1841,8 @@ async function renderMobileHero(){
       datasets:[{
         data:vals,
         borderColor:'transparent',
-        backgroundColor:fillCol,
-        fill:true,
+        backgroundColor:'transparent',
+        fill:false,
         borderWidth:0,
         pointRadius:0,
         tension:0,
@@ -1739,15 +1855,22 @@ async function renderMobileHero(){
         legend:{display:false},
         tooltip:{
           mode:'index',intersect:false,
-          callbacks:{label:c=>`€ ${fmtN(c.parsed.y)}`}
+          callbacks:{
+            label:c=>{
+              const v=c.parsed.y;
+              const pnl=v-base;
+              const pct=base>0?pnl/base*100:0;
+              return `€ ${fmtN(v)}  (${pnl>=0?'+':''}${fmtN(pnl)}, ${pct>=0?'+':''}${pct.toFixed(2)}%)`;
+            }
+          }
         }
       },
       scales:{
         x:{display:false},
         y:{
           display:false,
-          // add 5% padding so line doesn't touch edges
-          grace:'5%',
+          min: Math.min(base*0.97, ...vals)*0.995,
+          max: Math.max(base*1.03, ...vals)*1.005,
         }
       }
     }
@@ -1774,17 +1897,20 @@ async function renderPortfolioChart(){
   }
   document.getElementById('portfolioSection').style.display='';
 
+  // Per 'tot' usiamo '5y' come range Yahoo
+  const fetchRange = portfolioPeriod==='tot' ? '5y' : portfolioPeriod;
+
   const tickers=[...new Set(positions.map(p=>p.ticker))];
   const histories={};
   await Promise.allSettled(tickers.map(async t=>{
-    const d=await fetchPriceRange(t,portfolioPeriod);
+    const d=await fetchPriceRange(t, fetchRange);
     if(d) histories[t]=d.history;
   }));
 
-  // Find earliest purchase timestamp among all positions
+  // Find earliest purchase timestamp
   const earliestBuyTs=Math.min(...positions.map(p=>new Date(p.buyDate).getTime()/1000));
 
-  // Build combined value timeseries — only include points after earliest purchase
+  // Build combined value timeseries — clip to purchase date for TOT
   const allHistories=tickers.map(t=>histories[t]||[]).filter(h=>h.length>0);
   if(allHistories.length===0){
     document.getElementById('portfolioSection').style.display='none';
@@ -1797,11 +1923,10 @@ async function renderPortfolioChart(){
     positions.forEach(p=>{
       const h=histories[p.ticker];
       if(!h||!h[i]||h[i].v==null){valid=false;return;}
-      const curRate=toEurRate(p.currency);
-      total+=h[i].v*p.qty*curRate;
+      total+=h[i].v*p.qty*toEurRate(p.currency);
     });
     const ts=allHistories[0][i]?.t;
-    // Skip data points before earliest purchase
+    // Per TOT (e tutti i periodi), salta punti prima del primo acquisto
     if(valid&&ts&&ts>=earliestBuyTs) combined.push({t:ts,v:total});
   }
 
@@ -1810,8 +1935,12 @@ async function renderPortfolioChart(){
     return;
   }
 
-  // Convert to % change from first point
-  const base=combined[0].v;
+  // Baseline = costo investito totale (linea dello zero P&L)
+  let totalCost=0;
+  positions.forEach(p=>{ totalCost+=p.buyPrice*p.qty*p.historicalFxToEur; });
+  const base = totalCost>0 ? totalCost : combined[0].v;
+
+  // Convert to % change from cost basis (zero = break-even)
   const pctData=combined.map(p=>base>0?+((p.v-base)/base*100).toFixed(3):0);
 
   const border=getCss('--border');
@@ -1824,54 +1953,40 @@ async function renderPortfolioChart(){
     const d=new Date(p.t*1000);
     if(['1d','5d'].includes(portfolioPeriod))
       return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    if(portfolioPeriod==='tot')
+      return d.toLocaleDateString('it-IT',{month:'short',year:'2-digit'});
     return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
   });
 
   if(portfolioChart){portfolioChart.destroy();portfolioChart=null;}
   const canvas=document.getElementById('portfolioChart');
 
-  // ── Custom plugin: redraw the line in green/red split at y=0 ──
-  // afterDatasetsDraw runs after Chart.js draws the line, so we can
-  // overdraw it with a canvas gradient that's perfectly anchored to zero.
   const zeroLinePlugin={
     id:'zeroColorLine',
     afterDatasetsDraw(chart){
-      const {ctx, scales:{y}, chartArea:{left, right}} = chart;
+      const {ctx, scales:{y}, chartArea:{left, right, top, bottom}} = chart;
       const ds = chart.data.datasets[0];
       const pts = ds._cachedMeta?.data ?? chart.getDatasetMeta(0).data;
       if(!pts||pts.length<2) return;
-
-      // y-pixel position of zero
       const zeroY = y.getPixelForValue(0);
-
       ctx.save();
       ctx.lineWidth = 2;
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
-
-      // Draw two clipped passes: green above zero, red below zero
-      const passes = [
-        { color: posCol, clip: (c,t,b) => c.rect(left, t, right-left, zeroY-t) },
-        { color: negCol, clip: (c,t,b) => c.rect(left, zeroY, right-left, b-zeroY) },
-      ];
-
-      passes.forEach(({color, clip})=>{
+      [
+        { color: posCol, clip: (c,t,b) => c.rect(left, t, right-left, Math.max(0,zeroY-t)) },
+        { color: negCol, clip: (c,t,b) => c.rect(left, zeroY, right-left, Math.max(0,b-zeroY)) },
+      ].forEach(({color, clip})=>{
         ctx.save();
         ctx.beginPath();
-        clip(ctx, chart.chartArea.top, chart.chartArea.bottom);
+        clip(ctx, top, bottom);
         ctx.clip();
-
         ctx.beginPath();
-        pts.forEach((pt, i)=>{
-          const x = pt.x, yp = pt.y;
-          if(i===0) ctx.moveTo(x,yp);
-          else ctx.lineTo(x,yp);
-        });
+        pts.forEach((pt, i)=>{ if(i===0) ctx.moveTo(pt.x,pt.y); else ctx.lineTo(pt.x,pt.y); });
         ctx.strokeStyle = color;
         ctx.stroke();
         ctx.restore();
       });
-
       ctx.restore();
     }
   };
@@ -1883,12 +1998,12 @@ async function renderPortfolioChart(){
       labels,
       datasets:[{
         data:pctData,
-        borderColor:'transparent',      // hidden — redrawn by plugin
+        borderColor:'transparent',
         backgroundColor:'transparent',
         fill:false,
         borderWidth:0,
         pointRadius:0,
-        tension:0,                      // straight segments so clipping is exact
+        tension:0,
       }]
     },
     options:{

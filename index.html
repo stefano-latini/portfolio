@@ -23,6 +23,29 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// Crosshair plugin globale — linea verticale + punto evidenziato durante hover
+const crosshairPlugin = {
+  id: 'crosshair',
+  afterDatasetsDraw(chart) {
+    const {ctx, chartArea:{left,right,top,bottom}, tooltip, scales:{x,y}} = chart;
+    if(!tooltip||!tooltip._active||!tooltip._active.length) return;
+    const pt = tooltip._active[0];
+    if(!pt) return;
+    const xPos = pt.element.x;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(xPos, top);
+    ctx.lineTo(xPos, bottom);
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border2').trim() || 'rgba(150,150,150,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+Chart.register(crosshairPlugin);
+</script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    TOKENS
@@ -59,7 +82,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{overflow-x:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;
-  font-size:13px;line-height:1.5;min-height:100vh;
+  font-size:13px;line-height:1.5;
   padding:2rem 2rem calc(2rem + env(safe-area-inset-bottom));
   transition:background var(--tr),color var(--tr);
   overflow-x:hidden;}
@@ -103,7 +126,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 /* ═══════════════════════════════════════════════════════════════
    DESKTOP SUMMARY BAR
 ═══════════════════════════════════════════════════════════════ */
-.ds-bar{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1.6rem;margin-bottom:1.2rem;gap:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.ds-bar{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1.6rem;gap:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);margin-bottom:1rem;}
 .ds-card{display:flex;flex-direction:column;flex:1;min-width:0;padding:0 1.2rem;}
 .ds-card:first-child{padding-left:0;}
 .ds-card:last-child{padding-right:0;}
@@ -124,7 +147,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 /* ═══════════════════════════════════════════════════════════════
    PORTFOLIO CHART SECTION
 ═══════════════════════════════════════════════════════════════ */
-.portfolio-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.6rem 1.2rem;margin-bottom:1.5rem;}
+.portfolio-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.6rem 1.2rem;margin-bottom:1rem;}
 /* Header: sinistra = label+valore+subrow, destra = badge+tabs */
 .pc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.1rem;gap:1rem;}
 .pc-header-left{display:flex;flex-direction:column;gap:2px;}
@@ -148,7 +171,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 /* ═══════════════════════════════════════════════════════════════
    P&L SECTION
 ═══════════════════════════════════════════════════════════════ */
-.pnl-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.4rem;margin-bottom:1.5rem;}
+.pnl-section{display:none!important;margin:0;padding:0;}
 .pnl-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;gap:.5rem;flex-wrap:wrap;}
 .pnl-section-header h2{font-family:'Lora',serif;font-weight:600;font-size:.9rem;}
 .pnl-values{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;}
@@ -166,7 +189,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 /* ═══════════════════════════════════════════════════════════════
    PANEL + TABLE
 ═══════════════════════════════════════════════════════════════ */
-.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);contain:paint;}
 .panel-header{padding:.85rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
 .panel-header-left{display:flex;align-items:center;gap:7px;}
 .panel-header-right{display:flex;align-items:center;gap:.35rem;margin-left:auto;}
@@ -189,15 +212,17 @@ header{display:flex;align-items:center;justify-content:space-between;
   .btn-add-desktop,.btn-refresh-desktop{display:none!important;}
   .ph-icon-mobile{display:flex!important;}
 }
-.table-wrap{overflow-x:auto;}
+.table-wrap{overflow-x:auto;overflow-y:clip;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.table-wrap::-webkit-scrollbar{height:3px;width:0;}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.table-wrap::-webkit-scrollbar-corner{background:transparent;}
 table{width:100%;border-collapse:collapse;}
 thead th{color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.75rem 1rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--card);}
 thead th:first-child{text-align:left;}
 tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
 tbody tr:hover{background:var(--surface);}
 tbody tr:last-child{border-bottom:none;}
-tbody td{padding:.8rem 1rem;text-align:right;vertical-align:middle;white-space:nowrap;}
-tbody td:first-child{text-align:left;}
+
 .ticker-chip{font-size:12px;font-weight:600;letter-spacing:.04em;}
 .meta-line{color:var(--text3);font-size:10.5px;line-height:1.5;}
 .price-up{color:var(--pos);}
@@ -365,7 +390,7 @@ select option{background:var(--surface);}
 /* ═══════════════════════════════════════════════════════════════
    MOBILE CARD LIST
 ═══════════════════════════════════════════════════════════════ */
-.mobile-list{list-style:none;}
+.mobile-list{list-style:none;margin:0;padding:0;}
 .mobile-card{display:flex;align-items:center;gap:.7rem;padding:.8rem 1rem;border-bottom:1px solid var(--border);-webkit-tap-highlight-color:transparent;transition:background .1s;cursor:pointer;}
 .mobile-card:last-child{border-bottom:none;}
 .mobile-card:active{background:var(--surface);}
@@ -413,10 +438,10 @@ canvas { touch-action: pan-y; }
 ═══════════════════════════════════════════════════════════════ */
 @media(max-width:600px){
   html,body{overflow-x:hidden;width:100%;}
-  .summary-grid,.portfolio-section,.desktop-table,.pnl-section{display:none !important;}
+  .summary-grid,.portfolio-section,.desktop-table,.pnl-section,.ds-bar{display:none !important;}
   .mobile-list{display:block;}
   .mobile-hero{display:block !important;}
-  body{padding:0 .75rem calc(env(safe-area-inset-bottom) + 5rem);overflow-x:hidden;}
+  body{padding:0 .75rem calc(env(safe-area-inset-bottom) + 1.5rem);overflow-x:hidden;}
   header{position:fixed;top:0;left:0;right:0;z-index:200;padding-top:max(env(safe-area-inset-top),10px);padding-bottom:.55rem;padding-left:.85rem;padding-right:.85rem;border-bottom:1px solid var(--border);background:var(--card);margin-bottom:0;}
   .container{padding-top:calc(max(env(safe-area-inset-top),10px) + 50px);max-width:100%;overflow-x:hidden;}
   .logo h1{font-size:1.1rem;}
@@ -444,7 +469,7 @@ canvas { touch-action: pan-y; }
   /* Stats strip */
   .mobile-stats-strip{display:flex !important;gap:.5rem;margin-bottom:.65rem;}
   /* Panel */
-  .panel{border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+  .panel{border-radius:14px;border:1px solid var(--border);contain:paint;}
   .panel-header{padding:.65rem 1rem;}
   .panel-header-mobile-btns{display:flex;gap:.5rem;padding:.4rem 1rem .5rem;border-bottom:1px solid var(--border);}
   .panel-header-mobile-btns .btn-add,.panel-header-mobile-btns .btn-refresh{flex:1;justify-content:center;}
@@ -462,11 +487,12 @@ canvas { touch-action: pan-y; }
   .popup-stat .ps-val{font-size:.9rem;}
 }
 @media(min-width:601px){
-  .mobile-list{display:none;}
+  .mobile-list{display:none !important;height:0;overflow:hidden;}
   .desktop-table{display:block;}
   .mobile-hero{display:none !important;}
   .mobile-stats-strip{display:none !important;}
-  .panel-header-mobile-btns{display:none;}
+  .panel-header-mobile-btns{display:none !important;height:0;}
+  .ds-bar{display:flex !important;}
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -578,12 +604,6 @@ canvas { touch-action: pan-y; }
   <!-- ══ SUMMARY BAR desktop ══════════════════════════════════════ -->
   <div class="ds-bar">
     <div class="ds-card">
-      <div class="ds-label">Valore</div>
-      <div class="ds-value" id="totalValueEur">€ —</div>
-      <div class="ds-sub" id="totalCostEur" style="color:var(--text3)">— inv.</div>
-    </div>
-    <div class="ds-sep"></div>
-    <div class="ds-card">
       <div class="ds-label">P&amp;L totale</div>
       <div class="ds-value" id="totalPnlEur">€ —</div>
       <div class="ds-sub" id="totalPnlPct">—</div>
@@ -629,18 +649,10 @@ canvas { touch-action: pan-y; }
     <div id="portfolioChartWrap"><canvas id="portfolioChart"></canvas></div>
   </div>
 
-  <!-- P&L section nascosta su desktop (info integrate nel chart hero) -->
-  <div class="pnl-section" id="pnlSection" style="display:none!important">
-    <div class="period-tabs" id="pnlPeriodTabs" style="display:none">
-      <button class="period-tab active" data-range="1d" onclick="setPnlPeriod(this)">1G</button>
-      <button class="period-tab" data-range="5d">1S</button>
-      <button class="period-tab" data-range="1mo">1M</button>
-      <button class="period-tab" data-range="6mo">6M</button>
-      <button class="period-tab" data-range="1y">1A</button>
-      <button class="period-tab" data-range="all">Totale</button>
-    </div>
-    <div id="pnlValues" style="display:none"></div>
-  </div>
+  <!-- pnlSection rimossa (elementi JS nascosti) -->
+  <span id="pnlSection" style="display:none"></span>
+  <span id="pnlPeriodTabs" style="display:none"></span>
+  <span id="pnlValues" style="display:none"></span>
 
   <!-- ══ POSITIONS TABLE ══════════════════════════════════════════ -->
   <div class="panel">
@@ -665,8 +677,6 @@ canvas { touch-action: pan-y; }
         </button>
       </div>
     </div>
-    <!-- mobile-only row REMOVED: buttons are now inline in header -->
-    <div class="panel-header-mobile-btns" style="display:none!important"></div>
     <div class="desktop-table">
       <div class="table-wrap">
       <table>
@@ -693,8 +703,8 @@ canvas { touch-action: pan-y; }
       </table>
       </div>
     </div>
-    <ul class="mobile-list" id="mobileList"></ul>
   </div>
+  <ul class="mobile-list" id="mobileList"></ul>
 
 </div><!-- /container -->
 
@@ -1048,13 +1058,13 @@ function toEurRate(currency){
    PRICE FETCH — multi-proxy with range support
 ═══════════════════════════════════════════════════════════════════ */
 const INTERVALS = {
-  '1d':  { interval:'5m',  range:'1d'  },
-  '5d':  { interval:'60m', range:'5d'  },
-  '1mo': { interval:'1d',  range:'1mo' },
-  '6mo': { interval:'1wk', range:'6mo' },
-  '1y':  { interval:'1wk', range:'1y'  },
-  '5y':  { interval:'1mo', range:'5y'  },
-  'tot': { interval:'1mo', range:'5y'  }, // TOT = max available, clipped to first purchase
+  '1d':  { interval:'1m',  range:'1d'  },  // minuto per minuto ~390 punti
+  '5d':  { interval:'5m',  range:'5d'  },  // 5m per settimana ~650 punti
+  '1mo': { interval:'60m', range:'1mo' },  // orario per 1 mese ~170 punti
+  '6mo': { interval:'1d',  range:'6mo' },  // giornaliero per 6 mesi ~126 punti
+  '1y':  { interval:'1d',  range:'1y'  },  // giornaliero per 1 anno ~252 punti
+  '5y':  { interval:'1wk', range:'5y'  },  // settimanale per 5 anni ~260 punti
+  'tot': { interval:'1wk', range:'max' },  // max disponibile, clip al primo acquisto
 };
 
 function yahooUrl(ticker, range){
@@ -1955,18 +1965,30 @@ async function renderMobileHero(){
         data:displayVals,
         borderColor:'transparent',
         backgroundColor:'transparent',
-        fill:false, borderWidth:0, pointRadius:0, tension:0.3, spanGaps:false,
+        fill:false, borderWidth:0, pointRadius:0, tension:0.15, spanGaps:false,
       }]
     },
     options:{
       responsive:true, maintainAspectRatio:false,
       animation:{duration:280},
+      interaction:{mode:'index',intersect:false,axis:'x'},
       plugins:{
         legend:{display:false},
         tooltip:{
           mode:'index', intersect:false,
+          animation:{duration:60},
           filter:item=>item.parsed.y!=null,
           callbacks:{
+            title:items=>{
+              const idx=items[0]?.dataIndex;
+              if(idx==null) return '';
+              const ts=combined[idx]?.t;
+              if(!ts) return labels[idx]||'';
+              const dt=new Date(ts*1000);
+              if(mhPeriod==='1d'||mhPeriod==='5d')
+                return dt.toLocaleString('it-IT',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+              return dt.toLocaleDateString('it-IT',{weekday:'short',day:'2-digit',month:'long',year:'numeric'});
+            },
             label:c=>{
               const v=c.parsed.y; if(v==null) return '';
               const d=v-base; const pct=base>0?d/base*100:0;
@@ -2001,11 +2023,11 @@ async function setPortfolioPeriod(btn){
 
 async function renderPortfolioChart(){
   if(positions.length===0){
-    document.getElementById('portfolioSection').style.display='none';
+    const ps0=document.getElementById('portfolioSection'); ps0.style.display='none'; ps0.style.marginBottom='0';
     if(portfolioChart){portfolioChart.destroy();portfolioChart=null;}
     return;
   }
-  document.getElementById('portfolioSection').style.display='';
+  const ps=document.getElementById('portfolioSection'); ps.style.display=''; ps.style.marginBottom='';
 
   // ── Valore totale attuale ──────────────────────────────────────
   let totalVal=0, totalCost=0, totalDayStart=0;
@@ -2035,7 +2057,7 @@ async function renderPortfolioChart(){
   const earliestBuyTs=Math.min(...positions.map(p=>new Date(p.buyDate).getTime()/1000));
   const allHistories=tickers.map(t=>histories[t]||[]).filter(h=>h.length>0);
   if(allHistories.length===0){
-    document.getElementById('portfolioSection').style.display='none';
+    const ps2=document.getElementById('portfolioSection'); ps2.style.display='none'; ps2.style.marginBottom='0';
     return;
   }
   const minLen=Math.min(...allHistories.map(h=>h.length));
@@ -2053,7 +2075,7 @@ async function renderPortfolioChart(){
   }
 
   if(combined.length<2){
-    document.getElementById('portfolioSection').style.display='none';
+    const ps2=document.getElementById('portfolioSection'); ps2.style.display='none'; ps2.style.marginBottom='0';
     return;
   }
 
@@ -2140,20 +2162,61 @@ async function renderPortfolioChart(){
   portfolioChart=new Chart(canvas,{
     type:'line', plugins:[pcPlugin],
     data:{labels,datasets:[{data:vals,borderColor:'transparent',backgroundColor:'transparent',
-      fill:false,borderWidth:0,pointRadius:0,tension:0.3}]},
+      fill:false,borderWidth:0,pointRadius:0,tension:0.15}]},
     options:{
-      responsive:true,maintainAspectRatio:false,animation:{duration:350},
-      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,
-        callbacks:{label:ctx=>{
-          const v=ctx.parsed.y; const d=v-base; const pct=base>0?d/base*100:0;
-          return `€ ${fmtN(v)}  (${d>=0?'+':'−'}€${fmtN(Math.abs(d))}, ${d>=0?'+':''}${pct.toFixed(2)}%)`;
-        }}}},
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:350},
+      interaction:{mode:'index',intersect:false,axis:'x'},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          mode:'index',intersect:false,
+          animation:{duration:80},
+          callbacks:{
+            title:items=>{
+              // Mostra data/ora esatta del punto
+              const idx=items[0]?.dataIndex;
+              if(idx==null) return '';
+              const ts=combined[idx]?.t;
+              if(!ts) return labels[idx]||'';
+              const d=new Date(ts*1000);
+              if(['1d','5d'].includes(portfolioPeriod))
+                return d.toLocaleString('it-IT',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+              return d.toLocaleDateString('it-IT',{weekday:'short',day:'2-digit',month:'long',year:'numeric'});
+            },
+            label:ctx=>{
+              const v=ctx.parsed.y; const d=v-base; const pct=base>0?d/base*100:0;
+              return `€ ${fmtN(v)}  (${d>=0?'+':'−'}€${fmtN(Math.abs(d))}, ${d>=0?'+':''}${pct.toFixed(2)}%)`;
+            }
+          }
+        }
+      },
       scales:{
-        x:{ticks:{color:text2,font:{family:'Inter',size:10},maxTicksLimit:8},grid:{color:border}},
-        y:{ticks:{color:text2,font:{family:'Inter',size:10},callback:v=>`€ ${fmtN(v)}`},
+        x:{
+          ticks:{
+            color:text2,font:{family:'Inter',size:10},
+            maxTicksLimit:['6mo','1y','tot'].includes(portfolioPeriod)?7:8,
+            callback:(val,idx)=>{
+              const ts=combined[idx]?.t;
+              if(!ts) return labels[idx]||'';
+              const d=new Date(ts*1000);
+              if(portfolioPeriod==='tot')
+                return d.toLocaleDateString('it-IT',{month:'short',year:'2-digit'});
+              if(['6mo','1y'].includes(portfolioPeriod))
+                return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
+              if(portfolioPeriod==='5d')
+                return d.toLocaleDateString('it-IT',{weekday:'short',day:'2-digit'});
+              return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+            }
+          },
+          grid:{color:border}
+        },
+        y:{
+          ticks:{color:text2,font:{family:'Inter',size:10},callback:v=>`€ ${fmtN(v)}`},
           grid:{color:border},
           min:Math.min(base,...vals)*0.993,
-          max:Math.max(base,...vals)*1.007}
+          max:Math.max(base,...vals)*1.007
+        }
       }
     }
   });
@@ -2170,7 +2233,7 @@ async function setPnlPeriod(btn){
   await renderPnlSection();
 }
 
-async function renderPnlSection(){
+async function renderPnlSection(){ return; // sezione rimossa dall'UI
   if(positions.length===0) return;
   const el=document.getElementById('pnlValues');
   el.innerHTML='<span class="pnl-loading">Calcolo…<span class="spinner"></span></span>';
@@ -2299,21 +2362,53 @@ async function loadPopupChart(ticker,range){
         data:vals.map(v=>+v.toFixed(4)),
         borderColor:col,borderWidth:2,
         backgroundColor:bg,fill:true,
-        pointRadius:0,tension:0.3,
+        pointRadius:0,tension:0.15,
       }]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
       animation:{duration:300},
+      interaction:{mode:'index',intersect:false,axis:'x'},
       plugins:{
         legend:{display:false},
         tooltip:{
           mode:'index',intersect:false,
-          callbacks:{label:ctx=>`${sym} ${fmtN(ctx.parsed.y)}`}
+          animation:{duration:80},
+          callbacks:{
+            title:items=>{
+              const idx=items[0]?.dataIndex;
+              if(idx==null||!d?.history) return labels[idx]||'';
+              const ts=d.history[idx]?.t;
+              if(!ts) return labels[idx]||'';
+              const dt=new Date(ts*1000);
+              if(['1d','5d'].includes(popupRange))
+                return dt.toLocaleString('it-IT',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+              return dt.toLocaleDateString('it-IT',{weekday:'short',day:'2-digit',month:'long',year:'numeric'});
+            },
+            label:ctx=>`${sym} ${fmtN(ctx.parsed.y)}`
+          }
         }
       },
       scales:{
-        x:{ticks:{color:text2,font:{family:'Inter',size:10},maxTicksLimit:8},grid:{color:border}},
+        x:{
+          ticks:{
+            color:text2,font:{family:'Inter',size:10},
+            maxTicksLimit:7,
+            callback:(val,idx)=>{
+              if(!d?.history?.[idx]) return labels[idx]||'';
+              const ts=d.history[idx].t;
+              const dt=new Date(ts*1000);
+              if(popupRange==='5y')
+                return dt.toLocaleDateString('it-IT',{month:'short',year:'2-digit'});
+              if(['6mo','1y'].includes(popupRange))
+                return dt.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
+              if(popupRange==='5d')
+                return dt.toLocaleDateString('it-IT',{weekday:'short',day:'2-digit'});
+              return dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+            }
+          },
+          grid:{color:border}
+        },
         y:{ticks:{color:text2,font:{family:'Inter',size:10},callback:v=>`${sym}${v.toFixed(2)}`},grid:{color:border}}
       }
     }
@@ -2544,5 +2639,8 @@ document.addEventListener('keydown',e=>{
   }
 });
 </script>
+<!-- Elementi nascosti per JS -->
+<span id="totalValueEur" style="display:none;position:absolute;visibility:hidden"></span>
+<span id="totalCostEur" style="display:none;position:absolute;visibility:hidden"></span>
 </body>
 </html>

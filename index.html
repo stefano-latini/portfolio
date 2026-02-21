@@ -101,13 +101,20 @@ header{display:flex;align-items:center;justify-content:space-between;
 .ctx-sep{border:none;border-top:1px solid var(--border);margin:3px 0;}
 
 /* ═══════════════════════════════════════════════════════════════
-   SUMMARY CARDS (desktop)
+   DESKTOP SUMMARY BAR
 ═══════════════════════════════════════════════════════════════ */
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.5rem;}
-.summary-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:border-color var(--tr);min-height:90px;}
-.summary-card:hover{border-color:var(--border2);}
+.ds-bar{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1.6rem;margin-bottom:1.2rem;gap:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.ds-card{display:flex;flex-direction:column;flex:1;min-width:0;padding:0 1.2rem;}
+.ds-card:first-child{padding-left:0;}
+.ds-card:last-child{padding-right:0;}
+.ds-fx{flex:1.3;}
+.ds-sep{width:1px;align-self:stretch;background:var(--border);flex-shrink:0;}
+.ds-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.3rem;}
+.ds-value{font-family:'Lora',serif;font-size:1.35rem;font-weight:700;line-height:1.1;color:var(--text);}
+.ds-sub{font-size:10.5px;color:var(--text3);margin-top:2px;}
+/* keep card-value/card-sub/card-label for JS that still uses them */
 .card-label{color:var(--text3);font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;}
-.card-value{font-family:'Lora',serif;font-size:1.45rem;font-weight:600;line-height:1.1;}
+.card-value{font-family:'Lora',serif;font-size:1.35rem;font-weight:600;line-height:1.1;}
 .card-value.positive{color:var(--pos);}
 .card-value.negative{color:var(--neg);}
 .card-sub{color:var(--text3);font-size:11px;margin-top:3px;}
@@ -121,7 +128,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 /* Header: sinistra = label+valore+subrow, destra = badge+tabs */
 .pc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.1rem;gap:1rem;}
 .pc-header-left{display:flex;flex-direction:column;gap:2px;}
-.pc-header-right{display:flex;align-items:center;gap:.75rem;flex-shrink:0;}
+.pc-header-right{display:flex;align-items:flex-end;gap:0;flex-shrink:0;}
 .pc-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.3rem;}
 .pc-value{font-family:'Lora',serif;font-size:1.9rem;font-weight:700;line-height:1;color:var(--text);}
 .pc-subrow{display:flex;flex-direction:column;gap:1px;margin-top:.3rem;}
@@ -184,7 +191,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 }
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;}
-thead th{color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.7rem 1rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--card);}
+thead th{color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.75rem 1rem;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--card);}
 thead th:first-child{text-align:left;}
 tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
 tbody tr:hover{background:var(--surface);}
@@ -203,6 +210,17 @@ tbody td:first-child{text-align:left;}
 .spark-cell{width:88px;text-align:center !important;padding:0 .5rem !important;}
 .spark-cell canvas{display:block;margin:0 auto;cursor:pointer;}
 .spark-cell canvas:hover{opacity:.8;}
+/* Badge stile mobile per tabella desktop */
+.dt-badge{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:5px;line-height:1.5;}
+.dt-badge.pos{background:rgba(92,184,122,.18);color:var(--pos);}
+.dt-badge.neg{background:rgba(224,112,112,.18);color:var(--neg);}
+[data-theme="light"] .dt-badge.pos{background:rgba(22,163,74,.13);}
+[data-theme="light"] .dt-badge.neg{background:rgba(220,38,38,.11);}
+@media(prefers-color-scheme:light){[data-theme="auto"] .dt-badge.pos{background:rgba(22,163,74,.13);}[data-theme="auto"] .dt-badge.neg{background:rgba(220,38,38,.11);}}
+.ds-price{font-family:'Lora',serif;font-size:1rem;font-weight:600;}
+/* Righe tabella desktop più "aerose" */
+tbody td{padding:.9rem 1rem;text-align:right;vertical-align:middle;white-space:nowrap;}
+tbody td:first-child{text-align:left;}
 .edit-icon{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:2px 4px;margin-left:3px;border-radius:3px;transition:color .15s;vertical-align:middle;}
 .edit-icon:hover{color:var(--accent);}
 .btn-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:4px 6px;border-radius:4px;transition:all .15s;line-height:1;}
@@ -267,6 +285,11 @@ select option{background:var(--surface);}
 .settings-section:last-child{margin-bottom:0;}
 .settings-label{color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem;}
 .settings-period-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:.75rem;}
+/* Underline tabs — usati nei chart desktop e popup */
+.ul-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);}
+.ul-tab{background:none;border:none;color:var(--text3);cursor:pointer;padding:5px 12px;font-size:12px;font-family:'Inter',sans-serif;font-weight:500;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;-webkit-tap-highlight-color:transparent;margin-bottom:-1px;white-space:nowrap;}
+.ul-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+.ul-tab:hover:not(.active){color:var(--text2);}
 .settings-ptab{background:none;border:none;color:var(--text3);cursor:pointer;padding:6px 14px;font-size:12.5px;font-family:'Inter',sans-serif;font-weight:500;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;-webkit-tap-highlight-color:transparent;margin-bottom:-1px;}
 .settings-ptab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
 .settings-ptab:hover:not(.active){color:var(--text2);}
@@ -552,37 +575,35 @@ canvas { touch-action: pan-y; }
     </div>
   </div>
 
-  <!-- ══ SUMMARY ═════════════════════════════════════════════════════ -->
-  <div class="summary-grid">
-    <div class="summary-card">
-      <div class="card-label">Valore attuale</div>
-      <div style="display:flex;align-items:baseline;gap:.6rem;justify-content:center;flex-wrap:wrap;">
-        <div class="card-value" id="totalValueEur">€ —</div>
-        <div style="display:flex;flex-direction:column;align-items:center;line-height:1.25;">
-          <span style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:500;">Investito</span>
-          <span style="font-size:.85rem;font-weight:600;font-family:'Lora',serif;color:var(--text3)" id="totalCostEur">€ —</span>
+  <!-- ══ SUMMARY BAR desktop ══════════════════════════════════════ -->
+  <div class="ds-bar">
+    <div class="ds-card">
+      <div class="ds-label">Valore</div>
+      <div class="ds-value" id="totalValueEur">€ —</div>
+      <div class="ds-sub" id="totalCostEur" style="color:var(--text3)">— inv.</div>
+    </div>
+    <div class="ds-sep"></div>
+    <div class="ds-card">
+      <div class="ds-label">P&amp;L totale</div>
+      <div class="ds-value" id="totalPnlEur">€ —</div>
+      <div class="ds-sub" id="totalPnlPct">—</div>
+    </div>
+    <div class="ds-sep"></div>
+    <div class="ds-card ds-fx">
+      <div class="ds-label">FX impact</div>
+      <div style="display:flex;align-items:center;gap:.6rem;">
+        <div>
+          <div class="ds-value" id="fxImpact">€ —</div>
+          <div class="ds-sub" id="fxImpactPct">—</div>
         </div>
+        <canvas id="fxSparkCanvas" width="64" height="32" style="flex-shrink:0;opacity:.9"></canvas>
       </div>
     </div>
-    <div class="summary-card">
-      <div class="card-label">P&amp;L totale</div>
-      <div class="card-value" id="totalPnlEur">€ —</div>
-      <div class="card-sub" id="totalPnlPct">—</div>
-    </div>
-    <div class="summary-card">
-      <div class="card-label">Impatto cambio</div>
-      <div class="fx-card-inner">
-        <div style="text-align:center;">
-          <div class="card-value" id="fxImpact">€ —</div>
-          <div class="card-sub" id="fxImpactPct">—</div>
-        </div>
-        <canvas id="fxSparkCanvas" width="72" height="36"></canvas>
-      </div>
-    </div>
-    <div class="summary-card">
-      <div class="card-label">Dividendi incassati</div>
-      <div class="card-value" id="totalDividends">€ —</div>
-      <div class="card-sub" id="totalDivSub">su tutte le posizioni</div>
+    <div class="ds-sep"></div>
+    <div class="ds-card">
+      <div class="ds-label">Dividendi</div>
+      <div class="ds-value pos" id="totalDividends">€ —</div>
+      <div class="ds-sub" id="totalDivSub">incassati</div>
     </div>
   </div>
 
@@ -595,39 +616,30 @@ canvas { touch-action: pan-y; }
         <div class="pc-subrow" id="pcSubRow"></div>
       </div>
       <div class="pc-header-right">
-        <div class="pc-pnl-badge" id="pcPnlBadge" style="display:none">
-          <div class="pc-pnl-eur" id="pcPnlEur">—</div>
-          <div class="pc-pnl-pct" id="pcPnlPct">—</div>
-        </div>
-        <div class="period-tabs" id="portfolioPeriodTabs">
-          <button class="period-tab active" data-range="1d" onclick="setPortfolioPeriod(this)">1G</button>
-          <button class="period-tab" data-range="5d" onclick="setPortfolioPeriod(this)">1S</button>
-          <button class="period-tab" data-range="1mo" onclick="setPortfolioPeriod(this)">1M</button>
-          <button class="period-tab" data-range="6mo" onclick="setPortfolioPeriod(this)">6M</button>
-          <button class="period-tab" data-range="1y" onclick="setPortfolioPeriod(this)">1A</button>
-          <button class="period-tab" data-range="tot" onclick="setPortfolioPeriod(this)">TOT</button>
+        <div class="ul-tabs" id="portfolioPeriodTabs">
+          <button class="ul-tab active" data-range="1d" onclick="setPortfolioPeriod(this)">1G</button>
+          <button class="ul-tab" data-range="5d" onclick="setPortfolioPeriod(this)">1S</button>
+          <button class="ul-tab" data-range="1mo" onclick="setPortfolioPeriod(this)">1M</button>
+          <button class="ul-tab" data-range="6mo" onclick="setPortfolioPeriod(this)">6M</button>
+          <button class="ul-tab" data-range="1y" onclick="setPortfolioPeriod(this)">1A</button>
+          <button class="ul-tab" data-range="tot" onclick="setPortfolioPeriod(this)">TOT</button>
         </div>
       </div>
     </div>
     <div id="portfolioChartWrap"><canvas id="portfolioChart"></canvas></div>
   </div>
 
-  <!-- ══ P&L PER PERIODO ══════════════════════════════════════════ -->
-  <div class="pnl-section" id="pnlSection" style="display:none">
-    <div class="pnl-section-header">
-      <h2>Guadagno / Perdita</h2>
-      <div class="period-tabs" id="pnlPeriodTabs">
-        <button class="period-tab active" data-range="1d" onclick="setPnlPeriod(this)">1G</button>
-        <button class="period-tab" data-range="5d" onclick="setPnlPeriod(this)">1S</button>
-        <button class="period-tab" data-range="1mo" onclick="setPnlPeriod(this)">1M</button>
-        <button class="period-tab" data-range="6mo" onclick="setPnlPeriod(this)">6M</button>
-        <button class="period-tab" data-range="1y" onclick="setPnlPeriod(this)">1A</button>
-        <button class="period-tab" data-range="all" onclick="setPnlPeriod(this)">Totale</button>
-      </div>
+  <!-- P&L section nascosta su desktop (info integrate nel chart hero) -->
+  <div class="pnl-section" id="pnlSection" style="display:none!important">
+    <div class="period-tabs" id="pnlPeriodTabs" style="display:none">
+      <button class="period-tab active" data-range="1d" onclick="setPnlPeriod(this)">1G</button>
+      <button class="period-tab" data-range="5d">1S</button>
+      <button class="period-tab" data-range="1mo">1M</button>
+      <button class="period-tab" data-range="6mo">6M</button>
+      <button class="period-tab" data-range="1y">1A</button>
+      <button class="period-tab" data-range="all">Totale</button>
     </div>
-    <div id="pnlValues" class="pnl-values">
-      <span class="pnl-loading">Calcolo…<span class="spinner"></span></span>
-    </div>
+    <div id="pnlValues" style="display:none"></div>
   </div>
 
   <!-- ══ POSITIONS TABLE ══════════════════════════════════════════ -->
@@ -660,21 +672,18 @@ canvas { touch-action: pan-y; }
       <table>
         <thead>
           <tr>
-            <th>Titolo</th>
-            <th>Qtà</th>
-            <th>Acquistato</th>
-            <th>Prezzo att.</th>
-            <th id="sparkColHeader">1G</th>
+            <th style="text-align:left">Titolo</th>
+            <th>Prezzo</th>
+            <th id="sparkColHeader">Trend</th>
             <th>Valore (€)</th>
-            <th>P&amp;L (€)</th>
-            <th>FX acquisto</th>
+            <th>P&amp;L tot.</th>
+            <th>Oggi</th>
             <th>FX effect</th>
-            <th>Dividendi (€)</th>
             <th></th>
           </tr>
         </thead>
         <tbody id="positionsBody">
-          <tr><td colspan="11">
+          <tr><td colspan="8">
             <div class="empty-state">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
               <p>Nessuna posizione.<br>Clicca <em>Aggiungi posizione</em> per iniziare.</p>
@@ -801,13 +810,13 @@ canvas { touch-action: pan-y; }
         <span id="popupSubtitle">—</span>
       </div>
       <div style="display:flex;align-items:center;gap:.5rem">
-        <div class="period-tabs" id="popupPeriodTabs">
-          <button class="period-tab active" data-range="1d" onclick="setPopupPeriod(this)">1G</button>
-          <button class="period-tab" data-range="5d" onclick="setPopupPeriod(this)">1S</button>
-          <button class="period-tab" data-range="1mo" onclick="setPopupPeriod(this)">1M</button>
-          <button class="period-tab" data-range="6mo" onclick="setPopupPeriod(this)">6M</button>
-          <button class="period-tab" data-range="1y" onclick="setPopupPeriod(this)">1A</button>
-          <button class="period-tab" data-range="5y" onclick="setPopupPeriod(this)">5A</button>
+        <div class="ul-tabs" id="popupPeriodTabs">
+          <button class="ul-tab active" data-range="1d" onclick="setPopupPeriod(this)">1G</button>
+          <button class="ul-tab" data-range="5d" onclick="setPopupPeriod(this)">1S</button>
+          <button class="ul-tab" data-range="1mo" onclick="setPopupPeriod(this)">1M</button>
+          <button class="ul-tab" data-range="6mo" onclick="setPopupPeriod(this)">6M</button>
+          <button class="ul-tab" data-range="1y" onclick="setPopupPeriod(this)">1A</button>
+          <button class="ul-tab" data-range="5y" onclick="setPopupPeriod(this)">5A</button>
         </div>
         <button class="drawer-close" onclick="closeChartPopup()">✕</button>
       </div>
@@ -1225,7 +1234,7 @@ function renderTable(loading=false){
   const mList = document.getElementById('mobileList');
 
   if(positions.length===0){
-    body.innerHTML=`<tr><td colspan="11"><div class="empty-state">
+    body.innerHTML=`<tr><td colspan="8"><div class="empty-state">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
       <p>Nessuna posizione.<br>Clicca <em>Aggiungi posizione</em> per iniziare.</p>
     </div></td></tr>`;
@@ -1292,19 +1301,17 @@ function renderTable(loading=false){
     return `
     <tr>
       <td>
-        <div class="ticker-chip">${p.ticker}</div>
-        <div class="meta-line">${p.name||pd?.name||''}</div>
-        <div class="meta-line">${p.buyDate} · ${p.currency}</div>
-      </td>
-      <td>${p.qty}</td>
-      <td>
-        <div>${sym} ${fmtN(p.buyPrice)}</div>
-        <div class="meta-line">€ ${fmtN(costEur)}</div>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <div>
+            <div class="ticker-chip">${p.ticker}</div>
+            <div class="meta-line">${p.name||pd?.name||''}</div>
+          </div>
+        </div>
       </td>
       <td>
         ${cp!=null
-          ?`<div class="${priceC}">${sym} ${fmtN(cp)}</div>
-            ${dayChg!=null?`<div class="meta-line ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`:''}`
+          ?`<div class="ds-price ${priceC}">${sym} ${fmtN(cp)}</div>
+            <div class="meta-line" style="color:var(--text3);font-size:9.5px">${p.qty} × ${sym} ${fmtN(p.buyPrice)}</div>`
           :`<span style="color:var(--text3)">N/D</span>`}
       </td>
       <td class="spark-cell">
@@ -1312,18 +1319,24 @@ function renderTable(loading=false){
           ?`<canvas id="spark_${p.id}" width="80" height="36" title="Clicca per ingrandire" onclick="openChartPopup('${p.ticker}')"></canvas>`
           :`<span style="color:var(--text3);font-size:11px">—</span>`}
       </td>
-      <td>${valEur!=null?`€ ${fmtN(valEur)}`:'—'}</td>
       <td>
-        <div class="pnl-cell">
-          <span class="pnl-main ${posNeg}">${pnlEur!=null?`${pnlEur>=0?'+':'−'}€ ${fmtN(Math.abs(pnlEur))}`:'—'}</span>
-          <span class="pnl-pct ${posNeg}">${pnlPct!=null?`${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%`:''}</span>
-        </div>
+        ${valEur!=null?`<div style="font-weight:600">€ ${fmtN(valEur)}</div>
+          <div class="meta-line" style="font-size:9.5px">inv. € ${fmtN(costEur)}</div>`:'—'}
       </td>
-      <td>${fxAtBuy!=null?`<span>${fxAtBuy.toFixed(4)}</span>`:`<span style="color:var(--text3)">—</span>`}</td>
+      <td>
+        <div class="dt-badge ${posNeg}">
+          ${pnlEur!=null?`${pnlEur>=0?'+':'−'}€ ${fmtN(Math.abs(pnlEur))}`:'—'}
+        </div>
+        ${pnlPct!=null?`<div class="meta-line ${posNeg}" style="font-size:10px;margin-top:2px">${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%</div>`:''}
+      </td>
+      <td>
+        ${dayChg!=null
+          ?`<div class="dt-badge ${dayChg>=0?'pos':'neg'}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`
+          :'<span style="color:var(--text3)">—</span>'}
+      </td>
       <td class="${fxPN}" style="font-size:11.5px">
         ${fxImpact!=null?`${fxImpact>=0?'+':'−'}€ ${fmtN(Math.abs(fxImpact))}`:'—'}
       </td>
-      <td><span class="${divEur>0?'pos':''}">${divEur>0?`€ ${fmtN(divEur)}`:'—'}</span></td>
       <td style="text-align:right;white-space:nowrap;">
         <div class="ctx-wrap">
           <button class="ctx-btn" onclick="toggleCtx(event,${p.id})" title="Azioni">···</button>
@@ -1590,20 +1603,22 @@ function renderSummary(){
   const fxPct=totalFxAtBuy>0?totalFx/totalFxAtBuy*100:0;
 
   setText('totalValueEur',`€ ${fmtN(totalVal)}`);
-  setText('totalCostEur',`€ ${fmtN(totalCost)}`);
+  const tcEl=document.getElementById('totalCostEur');
+  if(tcEl){ tcEl.textContent=`€ ${fmtN(totalCost)} inv.`; tcEl.className='ds-sub'; }
 
   const pEl=document.getElementById('totalPnlEur');
   pEl.textContent=`${pnl>=0?'+':'−'}€ ${fmtN(Math.abs(pnl))}`;
-  pEl.className=`card-value ${pnl>=0?'positive':'negative'}`;
-  setText('totalPnlPct',`${pct>=0?'+':''}${pct.toFixed(2)}%`);
+  pEl.className=`ds-value ${pnl>=0?'pos':'neg'}`;
+  const ppEl=document.getElementById('totalPnlPct');
+  if(ppEl){ ppEl.textContent=`${pct>=0?'+':''}${pct.toFixed(2)}%`; ppEl.className=`ds-sub ${pnl>=0?'pos':'neg'}`; }
 
   const fEl=document.getElementById('fxImpact');
   fEl.textContent=`${totalFx>=0?'+':'−'}€ ${fmtN(Math.abs(totalFx))}`;
-  fEl.className=`card-value ${totalFx>=0?'positive':'negative'}`;
+  fEl.className=`ds-value ${totalFx>=0?'pos':'neg'}`;
   const fpEl=document.getElementById('fxImpactPct');
   if(fpEl){
     fpEl.textContent=totalFxAtBuy>0?`${fxPct>=0?'+':''}${fxPct.toFixed(2)}% cambio`:'effetto EUR/USD';
-    fpEl.className=`card-sub ${fxPct>=0?'pos':'neg'}`;
+    fpEl.className=`ds-sub ${fxPct>=0?'pos':'neg'}`;
   }
 
   setText('totalDividends',`€ ${fmtN(totalDiv)}`);
@@ -1979,7 +1994,7 @@ let portfolioPeriod='1d';
 
 async function setPortfolioPeriod(btn){
   portfolioPeriod=btn.dataset.range;
-  document.querySelectorAll('#portfolioPeriodTabs .period-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#portfolioPeriodTabs .ul-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   await renderPortfolioChart();
 }
@@ -2063,17 +2078,7 @@ async function renderPortfolioChart(){
   const dayChg=totalDayStart>0?totalVal-totalDayStart:null;
   const dayPct=totalDayStart>0?(totalVal-totalDayStart)/totalDayStart*100:null;
 
-  const pcBadge=document.getElementById('pcPnlBadge');
-  const pcEurEl=document.getElementById('pcPnlEur');
-  const pcPctEl=document.getElementById('pcPnlPct');
-  if(pcBadge&&pcEurEl&&pcPctEl&&periodPnl!=null){
-    const s=periodPnl>=0;
-    pcBadge.style.display='flex'; pcBadge.className=`pc-pnl-badge ${s?'pos':'neg'}`;
-    pcEurEl.textContent=`${s?'+':'−'}€ ${fmtN(Math.abs(periodPnl))}`;
-    pcEurEl.style.color=s?'var(--pos)':'var(--neg)';
-    pcPctEl.textContent=`${s?'+':''}${periodPct.toFixed(2)}%`;
-    pcPctEl.style.color=s?'var(--pos)':'var(--neg)';
-  } else if(pcBadge){pcBadge.style.display='none';}
+  // pcPnlBadge rimosso (info nel sub-row)
 
   const pcSub=document.getElementById('pcSubRow');
   if(pcSub){
@@ -2230,7 +2235,7 @@ function _showPnl(el, pnl, pct){
 async function openChartPopup(ticker){
   popupTicker=ticker;
   // sync popup period tabs with setting
-  document.querySelectorAll('#popupPeriodTabs .period-tab').forEach(b=>{
+  document.querySelectorAll('#popupPeriodTabs .ul-tab').forEach(b=>{
     b.classList.toggle('active',b.dataset.range===popupRange);
   });
   const pd=currentPrices[ticker];
@@ -2242,7 +2247,7 @@ async function openChartPopup(ticker){
 
 async function setPopupPeriod(btn){
   popupRange=btn.dataset.range;
-  document.querySelectorAll('#popupPeriodTabs .period-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#popupPeriodTabs .ul-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(popupTicker) await loadPopupChart(popupTicker,popupRange);
 }

@@ -235,7 +235,8 @@ header{display:flex;align-items:center;justify-content:space-between;
 }
 @media(max-width:600px){
   .btn-add-desktop,.btn-refresh-desktop{display:none!important;}
-  .ph-icon-mobile{display:flex!important;}
+  .ph-icon-mobile{display:flex!important;align-items:center;}
+  #mBtnAdd{display:flex !important;font-size:12px;padding:5px 13px;border-radius:20px;}
 }
 .table-wrap{overflow-x:auto;overflow-y:clip;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .table-wrap::-webkit-scrollbar{height:3px;width:0;}
@@ -724,13 +725,8 @@ canvas { touch-action: pan-y; }
           Aggiungi titolo
         </button>
         <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll()">↻ Aggiorna</button>
-        <!-- Mobile: solo icone, inline nel titolo -->
-        <button class="ph-icon-btn ph-icon-mobile" id="mBtnAddPos" onclick="openDrawer()" title="Aggiungi posizione">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        </button>
-        <button class="ph-icon-btn ph-icon-mobile" id="mBtnAddWatch" style="display:none" onclick="openWatchlistAdd()" title="Aggiungi alla watchlist">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        </button>
+        <!-- Mobile: bottone contestuale + refresh -->
+        <button class="btn-add ph-icon-mobile" id="mBtnAdd" onclick="openDrawer()">+ Aggiungi posizione</button>
         <button class="ph-icon-btn ph-icon-mobile" onclick="refreshAll()" title="Aggiorna prezzi">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
@@ -2756,33 +2752,32 @@ function saveWl(){ localStorage.setItem('portfolio_wl', JSON.stringify(watchlist
 // ── Switch tab Portafoglio / Watchlist ──────────────────────────
 function switchPanelTab(tab){
   activePanel = tab;
-  // Aggiorna tab buttons
   document.getElementById('tabPortfolio').classList.toggle('active', tab==='portfolio');
   document.getElementById('tabWatchlist').classList.toggle('active', tab==='watchlist');
-
   const isPortfolio = tab === 'portfolio';
+  const isMobile = window.innerWidth <= 600;
 
-  // Desktop: mostra/nascondi tabelle
-  // Usa ID espliciti per evitare querySelector('.desktop-table') ambiguo
-  document.getElementById('portfolioDesktopTable').style.display = isPortfolio ? 'block' : 'none';
-  document.getElementById('watchlistTableWrap').style.display     = isPortfolio ? 'none' : 'block';
+  // Desktop: tabelle (mai su mobile)
+  document.getElementById('portfolioDesktopTable').style.display = (!isMobile && isPortfolio)  ? 'block' : 'none';
+  document.getElementById('watchlistTableWrap').style.display    = (!isMobile && !isPortfolio) ? 'block' : 'none';
 
-  // Mobile: mostra/nascondi liste (su tutti gli schermi)
-  const mList = document.getElementById('mobileList');
-  const wList = document.getElementById('watchMobileList');
-  mList.style.display = isPortfolio ? 'block' : 'none';
-  wList.style.display = isPortfolio ? 'none' : 'block';
+  // Mobile: liste (mai su desktop)
+  document.getElementById('mobileList').style.display      = (isMobile && isPortfolio)  ? 'block' : 'none';
+  document.getElementById('watchMobileList').style.display = (isMobile && !isPortfolio) ? 'block' : 'none';
 
-  // Bottoni header
-  document.getElementById('btnAddPos').style.display    = isPortfolio ? '' : 'none';
-  document.getElementById('btnAddWatch').style.display  = isPortfolio ? 'none' : '';
-  document.getElementById('mBtnAddPos').style.display   = isPortfolio ? '' : 'none';
-  document.getElementById('mBtnAddWatch').style.display = isPortfolio ? 'none' : '';
+  // Bottone mobile contestuale
+  const mBtn = document.getElementById('mBtnAdd');
+  if(mBtn){
+    mBtn.textContent = isPortfolio ? '+ Aggiungi posizione' : '+ Aggiungi titolo';
+    mBtn.onclick = isPortfolio ? ()=>openDrawer() : ()=>openWatchlistAdd();
+  }
+
+  // Bottoni desktop
+  document.getElementById('btnAddPos').style.display   = isPortfolio ? '' : 'none';
+  document.getElementById('btnAddWatch').style.display = isPortfolio ? 'none' : '';
 
   if(tab === 'watchlist') renderWatchlist();
 }
-
-// ── Drawer watchlist ────────────────────────────────────────────
 function openWatchlistAdd(){
   document.getElementById('wlTicker').value = '';
   document.getElementById('wlName').value = '';

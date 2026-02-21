@@ -207,7 +207,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 /* Watchlist compact row */
 .wl-empty{padding:2.5rem 1.2rem;text-align:center;color:var(--text3);font-size:13px;}
 /* Add-to-watchlist button */
-.btn-wl-add{background:none;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-wl-add{display:none;background:none;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;cursor:pointer;transition:all .15s;align-items:center;gap:5px;white-space:nowrap;}
 .btn-wl-add:hover{border-color:var(--accent);color:var(--accent);}
 /* wlDrawer usa stessi stili del drawer principale */
 #wlDrawerOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;opacity:0;transition:opacity var(--tr);}
@@ -419,10 +419,11 @@ select option{background:var(--surface);}
 /* ═══════════════════════════════════════════════════════════════
    MOBILE STATS STRIP
 ═══════════════════════════════════════════════════════════════ */
-.mobile-stats-strip{display:none;}
-.mss-card{flex:1;min-width:0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.6rem .65rem;display:flex;flex-direction:column;align-items:center;text-align:center;}
-.mss-label{font-size:8px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:.2rem;}
-.mss-value{font-family:var(--font-num);font-size:1rem;font-weight:600;line-height:1.15;}
+.mobile-stats-strip{display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.mss-card{flex:1;min-width:0;padding:.65rem .5rem;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;}
+.mss-card+.mss-card::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:var(--border);}
+.mss-label{font-size:8px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem;}
+.mss-value{font-family:var(--font-num);font-size:.95rem;font-weight:700;line-height:1.15;}
 .mss-sub{font-size:9px;color:var(--text3);margin-top:1px;}
 
 /* ═══════════════════════════════════════════════════════════════
@@ -506,7 +507,7 @@ canvas { touch-action: pan-y; }
   .mh-tab{flex:1;background:none;border:none;color:var(--text3);cursor:pointer;padding:5px 2px;font-size:12px;font-family:'Inter',sans-serif;font-weight:500;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;text-align:center;-webkit-tap-highlight-color:transparent;}
   .mh-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
   /* Stats strip */
-  .mobile-stats-strip{display:flex !important;gap:.5rem;margin-bottom:.65rem;}
+  .mobile-stats-strip{display:flex !important;gap:0;margin-bottom:.65rem;}
   /* Panel */
   .panel{border-radius:14px;border:1px solid var(--border);contain:paint;}
   .panel-header{padding:.65rem 1rem;}
@@ -720,7 +721,7 @@ canvas { touch-action: pan-y; }
           <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
           Aggiungi posizione
         </button>
-        <button class="btn-wl-add" id="btnAddWatch" style="display:none" onclick="openWatchlistAdd()">
+        <button class="btn-wl-add" id="btnAddWatch" onclick="openWatchlistAdd()">
           <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
           Aggiungi titolo
         </button>
@@ -2772,9 +2773,9 @@ function switchPanelTab(tab){
     mBtn.onclick = isPortfolio ? ()=>openDrawer() : ()=>openWatchlistAdd();
   }
 
-  // Bottoni desktop
-  document.getElementById('btnAddPos').style.display   = isPortfolio ? '' : 'none';
-  document.getElementById('btnAddWatch').style.display = isPortfolio ? 'none' : '';
+  // Bottoni desktop — valori espliciti (non '' vuoto che lascia vincere il CSS default)
+  document.getElementById('btnAddPos').style.display   = (!isMobile && isPortfolio)  ? 'flex' : 'none';
+  document.getElementById('btnAddWatch').style.display = (!isMobile && !isPortfolio) ? 'flex' : 'none';
 
   if(tab === 'watchlist') renderWatchlist();
 }

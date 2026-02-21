@@ -705,8 +705,8 @@ canvas { touch-action: pan-y; }
       </table>
       </div>
     </div>
+    <ul class="mobile-list" id="mobileList"></ul>
   </div>
-  <ul class="mobile-list" id="mobileList"></ul>
 
 </div><!-- /container -->
 
@@ -2009,6 +2009,11 @@ async function renderMobileHero(){
       }
     }
   });
+
+  // Nascondi tooltip appena si alza il dito dal grafico
+  canvas.addEventListener('touchend', ()=>{
+    if(mhChart){ mhChart.tooltip.setActiveElements([],{x:0,y:0}); mhChart.update('none'); }
+  }, {passive:true});
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2222,6 +2227,13 @@ async function renderPortfolioChart(){
       }
     }
   });
+  // Nascondi tooltip al touchend
+  canvas.addEventListener('touchend', ()=>{
+    if(portfolioChart){
+      portfolioChart.tooltip.setActiveElements([], {x:0,y:0});
+      portfolioChart.update('none');
+    }
+  }, {passive:true});
 }
 /* ═══════════════════════════════════════════════════════════════════
    P&L PER PERIODO

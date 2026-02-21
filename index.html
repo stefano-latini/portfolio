@@ -109,6 +109,8 @@ header{display:flex;align-items:center;justify-content:space-between;
 .theme-btn:hover:not(.active){color:var(--text2);}
 .icon-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px 5px;font-size:19px;transition:color .15s;line-height:1;display:flex;align-items:center;}
 .icon-btn:hover{color:var(--text2);}
+.fx-mobile-pill{display:none;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 9px;font-size:10.5px;color:var(--text3);}
+.fx-mobile-pill .fx-pill-val{color:var(--text2);font-weight:600;font-variant-numeric:tabular-nums;}
 .btn-add{background:none;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
 .btn-add:hover{border-color:var(--accent);color:var(--accent);}
 
@@ -192,6 +194,27 @@ header{display:flex;align-items:center;justify-content:space-between;
    PANEL + TABLE
 ═══════════════════════════════════════════════════════════════ */
 .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);contain:paint;}
+/* Panel tab switcher */
+.panel-tabs{display:flex;gap:0;padding:0 1.2rem;border-bottom:1px solid var(--border);}
+.panel-tab{background:none;border:none;color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:.55rem .1rem;margin-right:1.2rem;border-bottom:2px solid transparent;cursor:pointer;transition:color .15s,border-color .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
+.panel-tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:600;}
+/* Watchlist desktop table */
+/* Watchlist mobile list */
+@media(max-width:600px){
+}
+@media(min-width:601px){
+}
+/* Watchlist compact row */
+.wl-empty{padding:2.5rem 1.2rem;text-align:center;color:var(--text3);font-size:13px;}
+/* Add-to-watchlist button */
+.btn-wl-add{background:none;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-wl-add:hover{border-color:var(--accent);color:var(--accent);}
+/* wlDrawer usa stessi stili del drawer principale */
+#wlDrawerOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;opacity:0;transition:opacity var(--tr);}
+#wlDrawerOverlay.open{display:block;opacity:1;}
+#wlDrawer{position:fixed;top:0;right:-420px;width:400px;max-width:100vw;height:100%;background:var(--card);border-left:1px solid var(--border);z-index:400;display:flex;flex-direction:column;transition:right var(--tr);overflow:hidden;}
+#wlDrawer.open{right:0;}
+.btn-wl-add:hover{border-color:var(--accent);color:var(--accent);}
 .panel-header{padding:.85rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
 .panel-header-left{display:flex;align-items:center;gap:7px;}
 .panel-header-right{display:flex;align-items:center;gap:.35rem;margin-left:auto;}
@@ -284,6 +307,18 @@ input::placeholder{color:var(--text3);}
 select option{background:var(--surface);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
 .hint{color:var(--text3);font-size:10.5px;margin-top:4px;line-height:1.4;}
+/* Autocomplete */
+.ac-wrap{position:relative;}
+.ac-dropdown{position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:600;overflow:hidden;max-height:260px;overflow-y:auto;display:none;}
+.ac-dropdown.open{display:block;}
+.ac-item{display:flex;align-items:center;gap:.65rem;padding:.6rem .9rem;cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border);}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.focused{background:var(--surface);}
+.ac-ticker{font-size:12.5px;font-weight:700;color:var(--text);min-width:52px;font-variant-numeric:tabular-nums;}
+.ac-name{font-size:11.5px;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ac-exch{font-size:10px;color:var(--text3);white-space:nowrap;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1px 5px;}
+.ac-loading{padding:.75rem .9rem;font-size:12px;color:var(--text3);text-align:center;}
+.ac-none{padding:.75rem .9rem;font-size:12px;color:var(--text3);text-align:center;}
 .btn-primary{width:100%;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:9px;cursor:pointer;transition:background .15s,transform .1s;margin-top:.4rem;}
 .btn-primary:hover{background:var(--accent-d);transform:translateY(-1px);}
 .btn-primary:active{transform:translateY(0);}
@@ -440,7 +475,7 @@ canvas { touch-action: pan-y; }
 ═══════════════════════════════════════════════════════════════ */
 @media(max-width:600px){
   html,body{overflow-x:hidden;width:100%;}
-  .summary-grid,.portfolio-section,.desktop-table,.pnl-section,.ds-bar{display:none !important;}
+  .summary-grid,.portfolio-section,.desktop-table:not(#watchlistTableWrap),.pnl-section,.ds-bar{display:none !important;}
   .mobile-list{display:block;}
   .mobile-hero{display:block !important;}
   body{padding:0 .75rem calc(env(safe-area-inset-bottom) + 1.5rem);overflow-x:hidden;}
@@ -449,6 +484,7 @@ canvas { touch-action: pan-y; }
   .logo h1{font-size:1.1rem;}
   .logo sub{display:none;}
   .header-meta{display:none;}
+  .fx-mobile-pill{display:flex !important;}
   .theme-toggle{padding:2px;gap:1px;}
   .theme-btn{padding:4px 5px;font-size:10px;}
   /* Hero */
@@ -490,7 +526,7 @@ canvas { touch-action: pan-y; }
 }
 @media(min-width:601px){
   .mobile-list{display:none !important;height:0;overflow:hidden;}
-  .desktop-table{display:block;}
+  #portfolioDesktopTable{display:block;}
   .mobile-hero{display:none !important;}
   .mobile-stats-strip{display:none !important;}
   .panel-header-mobile-btns{display:none !important;height:0;}
@@ -501,6 +537,15 @@ canvas { touch-action: pan-y; }
    MOBILE BOTTOM SHEETS — Settings e Drawer come sheet dal basso
 ═══════════════════════════════════════════════════════════════ */
 @media(max-width:600px){
+  /* wlDrawer: bottom sheet */
+  #wlDrawer{
+    left:0; right:0; bottom:0; top:auto; width:100%;
+    border-left:none; border-top:1px solid var(--border);
+    border-radius:18px 18px 0 0;
+    height:auto; max-height:80vh;
+    transform:translateY(100%); transition:transform var(--tr);
+  }
+  #wlDrawer.open{ right:0; transform:translateY(0); }
   /* Settings: da modale centrato a bottom sheet */
   #settingsOverlay { align-items:flex-end; }
   #settingsOverlay .modal {
@@ -543,6 +588,11 @@ canvas { touch-action: pan-y; }
       <div class="header-meta">
         <div>Aggiornato: <b id="lastUpdate">—</b></div>
         <div>EUR/USD: <b id="fxCurrent">—</b></div>
+      </div>
+      <!-- EUR/USD pill mobile -->
+      <div class="fx-mobile-pill" id="fxMobilePill">
+        <span class="fx-pill-label">EUR/USD</span>
+        <b class="fx-pill-val" id="fxMobileVal">—</b>
       </div>
       <button class="icon-btn" onclick="openSettings()" title="Impostazioni">
         <!-- gear SVG flat -->
@@ -656,22 +706,29 @@ canvas { touch-action: pan-y; }
   <span id="pnlPeriodTabs" style="display:none"></span>
   <span id="pnlValues" style="display:none"></span>
 
-  <!-- ══ POSITIONS TABLE ══════════════════════════════════════════ -->
+  <!-- ══ POSITIONS + WATCHLIST PANEL ════════════════════════════ -->
   <div class="panel">
     <div class="panel-header">
       <div class="panel-header-left">
         <div class="live-dot"></div>
-        <h2>Posizioni</h2>
+        <h2 id="panelTitle">Posizioni</h2>
       </div>
-      <div class="panel-header-right">
+      <div class="panel-header-right" id="panelHeaderBtns">
         <!-- Desktop: testo + icona -->
-        <button class="btn-add btn-add-desktop" onclick="openDrawer()">
+        <button class="btn-add btn-add-desktop" id="btnAddPos" onclick="openDrawer()">
           <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
           Aggiungi posizione
         </button>
+        <button class="btn-wl-add" id="btnAddWatch" style="display:none" onclick="openWatchlistAdd()">
+          <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+          Aggiungi titolo
+        </button>
         <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll()">↻ Aggiorna</button>
         <!-- Mobile: solo icone, inline nel titolo -->
-        <button class="ph-icon-btn ph-icon-mobile" onclick="openDrawer()" title="Aggiungi posizione">
+        <button class="ph-icon-btn ph-icon-mobile" id="mBtnAddPos" onclick="openDrawer()" title="Aggiungi posizione">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </button>
+        <button class="ph-icon-btn ph-icon-mobile" id="mBtnAddWatch" style="display:none" onclick="openWatchlistAdd()" title="Aggiungi alla watchlist">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         </button>
         <button class="ph-icon-btn ph-icon-mobile" onclick="refreshAll()" title="Aggiorna prezzi">
@@ -679,7 +736,12 @@ canvas { touch-action: pan-y; }
         </button>
       </div>
     </div>
-    <div class="desktop-table">
+    <!-- Tab switcher Portafoglio / Watchlist -->
+    <div class="panel-tabs">
+      <button class="panel-tab active" id="tabPortfolio" onclick="switchPanelTab('portfolio')">Portafoglio</button>
+      <button class="panel-tab" id="tabWatchlist" onclick="switchPanelTab('watchlist')">Watchlist</button>
+    </div>
+    <div class="desktop-table" id="portfolioDesktopTable">
       <div class="table-wrap">
       <table>
         <thead>
@@ -706,6 +768,31 @@ canvas { touch-action: pan-y; }
       </div>
     </div>
     <ul class="mobile-list" id="mobileList"></ul>
+
+    <!-- ── WATCHLIST DESKTOP TABLE ─────────────────────────── -->
+    <div id="watchlistTableWrap" class="desktop-table">
+      <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Titolo</th>
+            <th>Prezzo</th>
+            <th>Trend</th>
+            <th>Oggi</th>
+            <th>52w High</th>
+            <th>52w Low</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="watchlistBody">
+          <tr><td colspan="7"><div class="wl-empty">Nessun titolo nella watchlist.<br>Clicca <em>Aggiungi titolo</em> per iniziare.</div></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- ── WATCHLIST MOBILE LIST ───────────────────────────── -->
+    <ul class="mobile-list" id="watchMobileList"></ul>
   </div>
 
 </div><!-- /container -->
@@ -720,13 +807,19 @@ canvas { touch-action: pan-y; }
   </div>
   <div class="drawer-body">
     <div class="form-group">
-      <label class="form-label">Ticker</label>
-      <input type="text" id="ticker" placeholder="AAPL, ENI.MI, MSFT…" maxlength="15">
-      <div class="hint">Usa .MI (Milano), .PA (Parigi), .L (Londra) per mercati non-US</div>
+      <label class="form-label">Cerca titolo</label>
+      <div class="ac-wrap">
+        <input type="text" id="ticker" placeholder="Cerca per nome o simbolo…" maxlength="40" autocomplete="off"
+               oninput="acSearch(this,'ticker','name','currency')" onkeydown="acKey(event,'acDrop')">
+        <div class="ac-dropdown" id="acDrop"></div>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Nome (opzionale)</label>
-      <input type="text" id="name" placeholder="Apple Inc.">
+    <!-- nome nascosto, compilato dall'autocomplete -->
+    <input type="hidden" id="name">
+    <div id="portSelectedInfo" style="display:none;padding:.5rem .75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:.75rem;">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:2px">Selezionato</div>
+      <div id="portSelectedName" style="font-size:13px;font-weight:600;color:var(--text)"></div>
+      <div id="portSelectedMeta" style="font-size:11px;color:var(--text3);margin-top:1px"></div>
     </div>
     <div class="form-row">
       <div class="form-group">
@@ -758,6 +851,35 @@ canvas { touch-action: pan-y; }
       <span class="key">EUR/USD ora</span>
       <span class="val" id="fxRate">—</span>
     </div>
+  </div>
+</div>
+
+<!-- ══ WATCHLIST ADD DRAWER ════════════════════════════════════════ -->
+<div class="drawer-overlay" id="wlDrawerOverlay" onclick="closeWlDrawer()"></div>
+<div class="drawer" id="wlDrawer">
+  <div id="wlDrawerHandle" style="width:36px;height:4px;border-radius:2px;background:var(--border2);margin:10px auto 0;display:none"></div>
+  <div class="drawer-header">
+    <h3>Aggiungi alla watchlist</h3>
+    <button class="drawer-close" onclick="closeWlDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="form-group">
+      <label class="form-label">Cerca titolo</label>
+      <div class="ac-wrap">
+        <input type="text" id="wlTicker" placeholder="Cerca per nome o simbolo…" maxlength="40" autocomplete="off"
+               oninput="acSearch(this,'wlTicker','wlName','wlCurrency')" onkeydown="acKey(event,'acWlDrop')">
+        <div class="ac-dropdown" id="acWlDrop"></div>
+      </div>
+    </div>
+    <!-- nome e valuta nascosti, compilati dall'autocomplete -->
+    <input type="hidden" id="wlName">
+    <input type="hidden" id="wlCurrency" value="USD">
+    <div id="wlSelectedInfo" style="display:none;padding:.5rem .75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:.75rem;">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:2px">Selezionato</div>
+      <div id="wlSelectedName" style="font-size:13px;font-weight:600;color:var(--text)"></div>
+      <div id="wlSelectedMeta" style="font-size:11px;color:var(--text3);margin-top:1px"></div>
+    </div>
+    <button class="btn-primary" onclick="addToWatchlist()">+ Aggiungi</button>
   </div>
 </div>
 
@@ -1035,10 +1157,10 @@ async function loadFxRates(){
     fxRates={EUR:1,USD:d.rates.USD,GBP:d.rates.GBP};
     eurUsd=d.rates.USD;
     setText('fxRate',`1 € = ${eurUsd.toFixed(4)} $`);
-    setText('fxCurrent',eurUsd.toFixed(4));
+    setText('fxCurrent',eurUsd.toFixed(4)); setText('fxMobileVal',eurUsd.toFixed(4));
   } catch(e){
     setText('fxRate','≈ 1.0800 $ (offline)');
-    setText('fxCurrent','~1.0800');
+    setText('fxCurrent','~1.0800'); setText('fxMobileVal','~1.08');
   }
 }
 async function fetchHistFx(date,currency){
@@ -1228,6 +1350,14 @@ async function refreshAll(){
   refreshDividends().then(()=>{ renderTable(); renderSummary(); });
   setText('lastUpdate', new Date().toLocaleTimeString('it-IT'));
   if(fetched===0) showNotif('Impossibile aggiornare i prezzi. Verifica la connessione.',true);
+  // Aggiorna anche watchlist se visibile
+  if(activePanel==='watchlist'){
+    for(const w of watchlist){
+      const d = await fetchPriceRange(w.ticker, sparkTableRange||'1d');
+      if(d) currentPrices[w.ticker] = d;
+    }
+    renderWatchlist();
+  }
   // Update spark column header
   const el=document.getElementById('sparkColHeader');
   if(el) el.textContent=SPARK_LABELS[sparkTableRange]||sparkTableRange;
@@ -1236,6 +1366,9 @@ async function refreshAll(){
   renderPortfolioChart();
   renderPnlSection();
   renderMobileHero();
+  // Watchlist: nascondi al caricamento
+  document.getElementById('watchlistTableWrap').style.display='none';
+  document.getElementById('watchMobileList').style.display='none';
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2542,7 +2675,12 @@ async function setSparkTablePeriod(range){
 function openDrawer(){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawerOverlay').classList.add('open');
-  document.getElementById('ticker').focus();
+  // Reset autocomplete
+  document.getElementById('ticker').value='';
+  document.getElementById('name').value='';
+  document.getElementById('portSelectedInfo').style.display='none';
+  document.querySelectorAll('.ac-dropdown').forEach(d=>d.classList.remove('open'));
+  setTimeout(()=>document.getElementById('ticker').focus(), 150);
 }
 function closeDrawer(){
   document.getElementById('drawer').classList.remove('open');
@@ -2606,11 +2744,383 @@ function fmtN(n){
   return Math.abs(n).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+/* ═══════════════════════════════════════════════════════════════════
+   WATCHLIST — dati, rendering, UI
+═══════════════════════════════════════════════════════════════════ */
+let watchlist = JSON.parse(localStorage.getItem('portfolio_wl') || '[]');
+let activePanel = 'portfolio'; // 'portfolio' | 'watchlist'
+let wlSparkCharts = {};
+
+function saveWl(){ localStorage.setItem('portfolio_wl', JSON.stringify(watchlist)); }
+
+// ── Switch tab Portafoglio / Watchlist ──────────────────────────
+function switchPanelTab(tab){
+  activePanel = tab;
+  // Aggiorna tab buttons
+  document.getElementById('tabPortfolio').classList.toggle('active', tab==='portfolio');
+  document.getElementById('tabWatchlist').classList.toggle('active', tab==='watchlist');
+
+  const isPortfolio = tab === 'portfolio';
+
+  // Desktop: mostra/nascondi tabelle
+  // Usa ID espliciti per evitare querySelector('.desktop-table') ambiguo
+  document.getElementById('portfolioDesktopTable').style.display = isPortfolio ? 'block' : 'none';
+  document.getElementById('watchlistTableWrap').style.display     = isPortfolio ? 'none' : 'block';
+
+  // Mobile: mostra/nascondi liste (su tutti gli schermi)
+  const mList = document.getElementById('mobileList');
+  const wList = document.getElementById('watchMobileList');
+  mList.style.display = isPortfolio ? 'block' : 'none';
+  wList.style.display = isPortfolio ? 'none' : 'block';
+
+  // Bottoni header
+  document.getElementById('btnAddPos').style.display    = isPortfolio ? '' : 'none';
+  document.getElementById('btnAddWatch').style.display  = isPortfolio ? 'none' : '';
+  document.getElementById('mBtnAddPos').style.display   = isPortfolio ? '' : 'none';
+  document.getElementById('mBtnAddWatch').style.display = isPortfolio ? 'none' : '';
+
+  if(tab === 'watchlist') renderWatchlist();
+}
+
+// ── Drawer watchlist ────────────────────────────────────────────
+function openWatchlistAdd(){
+  document.getElementById('wlTicker').value = '';
+  document.getElementById('wlName').value = '';
+  document.getElementById('wlCurrency').value = 'USD';
+  document.getElementById('wlSelectedInfo').style.display='none';
+  document.querySelectorAll('.ac-dropdown').forEach(d=>d.classList.remove('open'));
+  const ov = document.getElementById('wlDrawerOverlay');
+  const dr = document.getElementById('wlDrawer');
+  ov.classList.add('open');
+  dr.classList.add('open');
+  if(window.innerWidth <= 600){
+    document.getElementById('wlDrawerHandle').style.display = 'block';
+  }
+  setTimeout(()=> document.getElementById('wlTicker').focus(), 100);
+}
+function closeWlDrawer(){
+  document.getElementById('wlDrawerOverlay').classList.remove('open');
+  document.getElementById('wlDrawer').classList.remove('open');
+}
+
+async function addToWatchlist(){
+  const ticker = document.getElementById('wlTicker').value.trim().toUpperCase();
+  const name   = document.getElementById('wlName').value.trim();
+  const cur    = document.getElementById('wlCurrency').value;
+  if(!ticker){ showNotif('Inserisci un ticker',true); return; }
+  if(watchlist.find(w=>w.ticker===ticker)){ showNotif('Già nella watchlist',true); return; }
+  const item = { id: Date.now(), ticker, name, currency: cur };
+  watchlist.push(item);
+  saveWl();
+  closeWlDrawer();
+  showNotif(`${ticker} aggiunto alla watchlist`);
+  // Assicurati di essere nella tab watchlist prima di renderizzare
+  if(activePanel !== 'watchlist') switchPanelTab('watchlist');
+  // Fetch dati subito
+  const d = await fetchPriceRange(ticker, sparkTableRange||'1d');
+  if(d) currentPrices[ticker] = d;
+  renderWatchlist();
+}
+
+function deleteWlItem(id){
+  watchlist = watchlist.filter(w=>w.id!==id);
+  saveWl();
+  renderWatchlist();
+}
+
+// ── Render watchlist ────────────────────────────────────────────
+function renderWatchlist(){
+  // Distruggi vecchi spark
+  Object.values(wlSparkCharts).forEach(ch=>ch&&ch.destroy());
+  wlSparkCharts = {};
+
+  const body  = document.getElementById('watchlistBody');
+  const wList = document.getElementById('watchMobileList');
+
+  if(watchlist.length === 0){
+    body.innerHTML = `<tr><td colspan="7"><div class="wl-empty">Nessun titolo nella watchlist.<br>Clicca <em>Aggiungi titolo</em> per iniziare.</div></td></tr>`;
+    wList.innerHTML = `<li style="padding:2.5rem 1rem;text-align:center;color:var(--text3);font-size:13px">Nessun titolo.<br>Clicca <em>+</em> per aggiungere.</li>`;
+    return;
+  }
+
+  // ── Desktop ──────────────────────────────────────────────────
+  body.innerHTML = watchlist.map(w=>{
+    const pd  = currentPrices[w.ticker];
+    const cp  = pd?.price;
+    const sym = {USD:'$',EUR:'€',GBP:'£'}[w.currency]||w.currency;
+    const dayChg = pd?.prevClose!=null&&cp!=null ? (cp-pd.prevClose)/pd.prevClose*100 : null;
+    const hi52 = pd?.fiftyTwoWeekHigh;
+    const lo52 = pd?.fiftyTwoWeekLow;
+    const hasH = pd?.history?.length>1;
+    const dayCol = dayChg==null?'':dayChg>=0?'pos':'neg';
+    return `<tr>
+      <td>
+        <div class="ticker-chip">${w.ticker}</div>
+        <div class="meta-line">${w.name||pd?.name||''}</div>
+      </td>
+      <td>
+        ${cp!=null ? `<div class="ds-price ${cp>=(pd?.prevClose||0)?'pos':'neg'}">${sym} ${fmtN(cp)}</div>` : '<span style="color:var(--text3)">N/D</span>'}
+      </td>
+      <td class="spark-cell">
+        ${hasH ? `<canvas id="wlspark_${w.id}" width="80" height="36" onclick="openChartPopup('${w.ticker}')"></canvas>` : '<span style="color:var(--text3)">—</span>'}
+      </td>
+      <td>
+        ${dayChg!=null ? `<div class="dt-badge ${dayCol}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>` : '—'}
+      </td>
+      <td style="font-size:12px">${hi52!=null?`${sym} ${fmtN(hi52)}`:'—'}</td>
+      <td style="font-size:12px">${lo52!=null?`${sym} ${fmtN(lo52)}`:'—'}</td>
+      <td style="text-align:right">
+        <button class="btn-del" onclick="deleteWlItem(${w.id})" title="Rimuovi">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // ── Mobile ────────────────────────────────────────────────────
+  wList.innerHTML = watchlist.map(w=>{
+    const pd  = currentPrices[w.ticker];
+    const cp  = pd?.price;
+    const sym = {USD:'$',EUR:'€',GBP:'£'}[w.currency]||w.currency;
+    const dayChg = pd?.prevClose!=null&&cp!=null ? (cp-pd.prevClose)/pd.prevClose*100 : null;
+    const hasH = pd?.history?.length>1;
+    const badgeCls = dayChg!=null?(dayChg>=0?'pos':'neg'):'';
+    const badgeTxt = dayChg!=null?`${dayChg>=0?'+':''}${dayChg.toFixed(2)}%`:'';
+    return `
+    <li class="mobile-card" onclick="openChartPopup('${w.ticker}')">
+      <div class="mc-left">
+        <div class="mc-ticker">${w.ticker}</div>
+        <div class="mc-name">${w.name||pd?.name||w.currency}</div>
+      </div>
+      <div class="mc-spark-wrap">
+        ${hasH ? `<canvas id="wlmspark_${w.id}" class="mc-spark"></canvas>` : `<div class="mc-spark"></div>`}
+      </div>
+      <div class="mc-right">
+        <div class="mc-price">${cp!=null?`${sym} ${fmtN(cp)}`:'—'}</div>
+        ${badgeTxt ? `<div><span class="mc-badge ${badgeCls}">${badgeTxt}</span></div>` : ''}
+      </div>
+      <button class="mc-manage-btn" onclick="event.stopPropagation();deleteWlItem(${w.id})" title="Rimuovi">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </li>`;
+  }).join('');
+
+  // La visibilità è gestita da switchPanelTab — non serve qui
+
+  // ── Sparklines ───────────────────────────────────────────────
+  requestAnimationFrame(()=>{
+    watchlist.forEach(w=>{
+      const pd = currentPrices[w.ticker];
+      if(!pd?.history?.length) return;
+      const vals = pd.history.map(h=>h.v);
+      const ref  = pd.prevClose ?? vals[0];
+      const isUp = vals[vals.length-1] >= ref;
+      const col  = isUp ? getCss('--pos') : getCss('--neg');
+      const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
+      const plotVals = (sparkTableRange==='1d'&&pd.prevClose!=null) ? [pd.prevClose,...vals] : vals;
+      const lbl  = plotVals.map((_,i)=>i);
+
+      const el = document.getElementById(`wlspark_${w.id}`);
+      if(el){ wlSparkCharts['d_'+w.id]=new Chart(el,{type:'line',data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}}); }
+
+      const mel = document.getElementById(`wlmspark_${w.id}`);
+      if(mel){ mel.width=72; mel.height=32; wlSparkCharts['m_'+w.id]=new Chart(mel,{type:'line',data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}}); }
+    });
+  });
+}
+
+// ── refreshAll aggiorna anche la watchlist ──────────────────────
+const _origRefreshAll = refreshAll;
+
+/* ═══════════════════════════════════════════════════════════════════
+   AUTOCOMPLETE — ricerca ticker Yahoo Finance
+═══════════════════════════════════════════════════════════════════ */
+let _acTimer = null;
+let _acFocusIdx = -1;
+
+// Mappa tipo→valuta default
+const typeToCurrency = {
+  'EQUITY':      v => v.exchange?.includes('MIL')||v.exchange==='MCE'?'EUR':
+                      v.exchange?.includes('PAR')||v.exchange?.includes('FRA')?'EUR':
+                      v.exchange?.includes('LON')?'GBP':'USD',
+  'ETF':         v => v.exchange?.includes('MIL')||v.exchange==='MCE'?'EUR':
+                      v.exchange?.includes('PAR')||v.exchange?.includes('FRA')?'EUR':
+                      v.exchange?.includes('LON')?'GBP':'USD',
+  'INDEX':       ()=>'USD',
+  'CRYPTOCURRENCY': ()=>'USD',
+  'CURRENCY':    ()=>'USD',
+  'FUTURE':      ()=>'USD',
+};
+function guessCurrency(item){
+  const sym = item.symbol||'';
+  // Se finisce con =X è una coppia valute
+  if(sym.endsWith('=X')) return 'USD';
+  // Se finisce con .MI o .PA → EUR, .L → GBP
+  if(sym.endsWith('.MI')||sym.endsWith('.PA')||sym.endsWith('.F')||sym.endsWith('.BE')) return 'EUR';
+  if(sym.endsWith('.L')||sym.endsWith('.IL')) return 'GBP';
+  const fn = typeToCurrency[item.quoteType];
+  if(fn) return fn(item);
+  return 'USD';
+}
+
+async function acFetch(query){
+  const base = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&lang=it&region=IT&quotesCount=8&newsCount=0&enableFuzzyQuery=true&enableCb=false`;
+  const proxies = [
+    `https://corsproxy.io/?${encodeURIComponent(base)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(base)}`,
+  ];
+  for(const url of proxies){
+    try{
+      const r = await fetch(url,{signal:AbortSignal.timeout(4000)});
+      if(!r.ok) continue;
+      const d = await r.json();
+      const items = d?.quotes||d?.data?.quotes||[];
+      return items.filter(q=>q.symbol&&q.quoteType!=='NEWS');
+    }catch(e){ continue; }
+  }
+  return null;
+}
+
+function acSearch(inputEl, tickerFieldId, nameFieldId, currencyFieldId){
+  const q = inputEl.value.trim();
+  const dropId = inputEl.nextElementSibling.id;
+  const drop = document.getElementById(dropId);
+
+  // Resetta selezione se l'utente rimodifica
+  document.getElementById(nameFieldId).value = '';
+  hidePanelInfo(tickerFieldId);
+
+  if(q.length < 1){ drop.classList.remove('open'); return; }
+
+  drop.innerHTML = '<div class="ac-loading">Ricerca<span class="spinner"></span></div>';
+  drop.classList.add('open');
+  _acFocusIdx = -1;
+
+  clearTimeout(_acTimer);
+  _acTimer = setTimeout(async ()=>{
+    const results = await acFetch(q);
+    if(!drop.classList.contains('open')) return; // chiuso nel frattempo
+    if(results === null){
+      drop.innerHTML = '<div class="ac-none">Nessun risultato (rete non disponibile)</div>';
+      return;
+    }
+    if(results.length === 0){
+      drop.innerHTML = '<div class="ac-none">Nessun risultato trovato</div>';
+      return;
+    }
+    drop.innerHTML = results.map((item,i)=>{
+      const name   = item.longname||item.shortname||item.symbol;
+      const exch   = item.exchange||item.fullExchangeName||'';
+      const type   = item.typeDisp||item.quoteType||'';
+      return `<div class="ac-item" data-idx="${i}"
+        data-sym="${item.symbol}"
+        data-name="${name.replace(/"/g,'&quot;')}"
+        data-cur="${guessCurrency(item)}"
+        data-exch="${exch}"
+        data-type="${type}"
+        onclick="acSelect(this,'${tickerFieldId}','${nameFieldId}','${currencyFieldId}')">
+        <span class="ac-ticker">${item.symbol}</span>
+        <span class="ac-name">${name}</span>
+        <span class="ac-exch">${exch}</span>
+      </div>`;
+    }).join('');
+    _acFocusIdx = -1;
+  }, 280); // debounce 280ms
+}
+
+function acSelect(el, tickerFieldId, nameFieldId, currencyFieldId){
+  const sym  = el.dataset.sym;
+  const name = el.dataset.name;
+  const cur  = el.dataset.cur;
+  const exch = el.dataset.exch;
+  const type = el.dataset.type;
+
+  // Compila i campi hidden
+  const tickerEl = document.getElementById(tickerFieldId);
+  tickerEl.value = sym;
+  document.getElementById(nameFieldId).value = name;
+
+  // Imposta valuta (solo se c'è un select, non un hidden)
+  const curEl = document.getElementById(currencyFieldId);
+  if(curEl && curEl.tagName === 'SELECT'){
+    curEl.value = cur;
+  } else if(curEl){
+    curEl.value = cur;
+  }
+
+  // Mostra info selezionato
+  showPanelInfo(tickerFieldId, sym, name, exch, type, cur);
+
+  // Chiudi dropdown
+  const drop = tickerEl.nextElementSibling;
+  if(drop) drop.classList.remove('open');
+}
+
+function showPanelInfo(tickerFieldId, sym, name, exch, type, cur){
+  if(tickerFieldId === 'ticker'){
+    const el = document.getElementById('portSelectedInfo');
+    document.getElementById('portSelectedName').textContent = `${sym} — ${name}`;
+    document.getElementById('portSelectedMeta').textContent = `${exch}${type?' · '+type:''} · ${cur}`;
+    el.style.display = '';
+  } else {
+    const el = document.getElementById('wlSelectedInfo');
+    document.getElementById('wlSelectedName').textContent = `${sym} — ${name}`;
+    document.getElementById('wlSelectedMeta').textContent = `${exch}${type?' · '+type:''} · ${cur}`;
+    el.style.display = '';
+  }
+}
+function hidePanelInfo(tickerFieldId){
+  if(tickerFieldId === 'ticker'){
+    document.getElementById('portSelectedInfo').style.display = 'none';
+  } else {
+    document.getElementById('wlSelectedInfo').style.display = 'none';
+  }
+}
+
+// Navigazione tastiera (↑↓ Enter Esc)
+function acKey(event, dropId){
+  const drop = document.getElementById(dropId);
+  if(!drop.classList.contains('open')) return;
+  const items = drop.querySelectorAll('.ac-item');
+  if(!items.length) return;
+
+  if(event.key === 'ArrowDown'){
+    event.preventDefault();
+    _acFocusIdx = Math.min(_acFocusIdx+1, items.length-1);
+    items.forEach((el,i)=>el.classList.toggle('focused',i===_acFocusIdx));
+    items[_acFocusIdx]?.scrollIntoView({block:'nearest'});
+  } else if(event.key === 'ArrowUp'){
+    event.preventDefault();
+    _acFocusIdx = Math.max(_acFocusIdx-1, 0);
+    items.forEach((el,i)=>el.classList.toggle('focused',i===_acFocusIdx));
+    items[_acFocusIdx]?.scrollIntoView({block:'nearest'});
+  } else if(event.key === 'Enter'){
+    event.preventDefault();
+    if(_acFocusIdx >= 0) items[_acFocusIdx]?.click();
+    else if(items.length > 0) items[0]?.click(); // prende il primo se nessuno selezionato
+  } else if(event.key === 'Escape'){
+    drop.classList.remove('open');
+  }
+}
+
+// Chiudi autocomplete cliccando fuori
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.ac-wrap')){
+    document.querySelectorAll('.ac-dropdown').forEach(d=>d.classList.remove('open'));
+  }
+});
+
+// Reset form portfolio (aggiungi reset dei campi autocomplete)
+const _origClearForm = typeof clearForm === 'function' ? clearForm : null;
+
 function save(){ localStorage.setItem('portfolio_v3',JSON.stringify(positions)); }
 
 function clearForm(){
   ['ticker','name','qty','buyPrice'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('buyDate').value=todayStr();
+
+  document.getElementById('portSelectedInfo').style.display='none';
+  document.querySelectorAll('.ac-dropdown').forEach(d=>d.classList.remove('open'));
 }
 
 let notifTimer;

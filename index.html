@@ -170,7 +170,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 @media(prefers-color-scheme:dark){[data-theme="auto"] .pc-pnl-badge.pos{background:rgba(92,184,122,.13);}[data-theme="auto"] .pc-pnl-badge.neg{background:rgba(224,112,112,.12);}}
 .pc-pnl-eur{font-family:var(--font-num);font-size:1rem;font-weight:700;line-height:1.25;}
 .pc-pnl-pct{font-size:11px;font-weight:600;margin-top:1px;}
-#portfolioChartWrap{height:200px;position:relative;}
+#portfolioChartWrap{height:155px;position:relative;}
 
 /* ═══════════════════════════════════════════════════════════════
    P&L SECTION
@@ -205,7 +205,26 @@ header{display:flex;align-items:center;justify-content:space-between;
 @media(min-width:601px){
 }
 /* Watchlist compact row */
-.wl-empty{padding:2.5rem 1.2rem;text-align:center;color:var(--text3);font-size:13px;}
+.wl-empty{padding:1.5rem 1.2rem;text-align:center;color:var(--text3);font-size:13px;}
+/* Watchlist multi-sezione */
+.wl-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-top:.75rem;}
+.wl-section-header{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.1rem;border-bottom:1px solid var(--border);gap:.5rem;}
+.wl-section-title{display:flex;align-items:center;gap:.5rem;}
+.wl-name{font-size:13px;font-weight:600;color:var(--text);}
+.wl-section-btns{display:flex;align-items:center;gap:.3rem;}
+.wl-add-item-btn{font-size:11px;padding:3px 10px;}
+.wl-rename-btn,.wl-del-btn{padding:4px;color:var(--text3);}
+.wl-rename-btn:hover{color:var(--text2);}
+.wl-del-btn:hover{color:var(--neg);}
+.wl-section-body{overflow:hidden;}
+.wl-table{width:100%;border-collapse:collapse;}
+.wl-table th,.wl-table td{padding:.7rem .9rem;text-align:right;font-size:12px;border-bottom:1px solid var(--border);}
+.wl-table tr:last-child td{border-bottom:none;}
+.wl-table th{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);}
+.wl-table th:first-child,.wl-table td:first-child{text-align:left;}
+.wl-mobile-list{border-radius:0;}
+.btn-new-wl{display:flex;align-items:center;gap:.5rem;margin-top:.6rem;width:100%;background:none;border:1.5px dashed var(--border);color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:.6rem 1.2rem;border-radius:var(--radius);cursor:pointer;transition:all .15s;justify-content:center;}
+.btn-new-wl:hover{border-color:var(--accent);color:var(--accent);}
 /* Add-to-watchlist button */
 .btn-wl-add{display:none;background:none;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;cursor:pointer;transition:all .15s;align-items:center;gap:5px;white-space:nowrap;}
 .btn-wl-add:hover{border-color:var(--accent);color:var(--accent);}
@@ -492,22 +511,22 @@ canvas { touch-action: pan-y; }
   /* Hero */
   /* mh-top-row e badge P&L rimossi — valore e € sulla stessa riga */
   /* Hero card: bianca, bordi arrotondati, padding generoso */
-  .mobile-hero{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.25rem 1.25rem .85rem;margin-bottom:.65rem;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.05);}
-  .mh-label{font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);margin-bottom:.6rem;}
+  .mobile-hero{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:.85rem 1rem .6rem;margin-bottom:.45rem;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.04);}
+  .mh-label{font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem;}
   .mh-value{font-family:var(--font-num);font-size:1.75rem;font-weight:700;line-height:1;color:var(--text);letter-spacing:-.01em;}
   /* Due righe variazione sotto il valore */
-  .mh-sub-row{margin:.4rem 0 0;display:flex;flex-direction:column;gap:1px;}
-  .mh-change-row{display:flex;align-items:baseline;gap:.45rem;font-size:13.5px;line-height:1.5;}
+  .mh-sub-row{margin:.2rem 0 0;display:flex;flex-direction:column;gap:0;}
+  .mh-change-row{display:flex;align-items:baseline;gap:.4rem;font-size:12.5px;line-height:1.4;}
   .mh-change-row span:first-child{font-weight:600;}
   .mh-chg-lbl{color:var(--text2);font-size:13px;font-weight:500;}
   /* Grafico più alto per respirare */
-  .mh-chart{height:140px;position:relative;margin:1rem -.05rem .6rem;}
+  .mh-chart{height:100px;position:relative;margin:.5rem -.05rem .4rem;}
   /* Tab periodo */
   .mh-tabs{display:flex;border-top:1px solid var(--border);padding-top:.55rem;margin-top:0;}
   .mh-tab{flex:1;background:none;border:none;color:var(--text3);cursor:pointer;padding:5px 2px;font-size:12px;font-family:'Inter',sans-serif;font-weight:500;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;text-align:center;-webkit-tap-highlight-color:transparent;}
   .mh-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
   /* Stats strip */
-  .mobile-stats-strip{display:flex !important;gap:0;margin-bottom:.65rem;}
+  .mobile-stats-strip{display:flex !important;gap:0;margin-bottom:.35rem;}
   /* Panel */
   .panel{border-radius:14px;border:1px solid var(--border);contain:paint;}
   .panel-header{padding:.65rem 1rem;}
@@ -515,8 +534,8 @@ canvas { touch-action: pan-y; }
   .panel-header-mobile-btns .btn-add,.panel-header-mobile-btns .btn-refresh{flex:1;justify-content:center;}
   .panel-header .btn-add-desktop,.panel-header .btn-refresh-desktop{display:none;}
   /* Cards */
-  .mobile-card{padding:.75rem 1rem;gap:.6rem;}
-  .mc-spark{width:64px;height:32px;}
+  .mobile-card{padding:.5rem .9rem;gap:.5rem;}
+  .mc-spark{width:60px;height:26px;}
   /* Hide desktop ctx menus */
   .ctx-btn-v,.ctx-wrap{display:none !important;}
   /* Modals from bottom */
@@ -721,23 +740,16 @@ canvas { touch-action: pan-y; }
           <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
           Aggiungi posizione
         </button>
-        <button class="btn-wl-add" id="btnAddWatch" onclick="openWatchlistAdd()">
-          <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
-          Aggiungi titolo
-        </button>
+
         <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll()">↻ Aggiorna</button>
-        <!-- Mobile: bottone contestuale + refresh -->
-        <button class="btn-add ph-icon-mobile" id="mBtnAdd" onclick="openDrawer()">+ Aggiungi posizione</button>
+        <!-- Mobile: aggiungi posizione + refresh -->
+        <button class="btn-add ph-icon-mobile" id="mBtnAdd" onclick="openDrawer()">+ Aggiungi</button>
         <button class="ph-icon-btn ph-icon-mobile" onclick="refreshAll()" title="Aggiorna prezzi">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
       </div>
     </div>
-    <!-- Tab switcher Portafoglio / Watchlist -->
-    <div class="panel-tabs">
-      <button class="panel-tab active" id="tabPortfolio" onclick="switchPanelTab('portfolio')">Portafoglio</button>
-      <button class="panel-tab" id="tabWatchlist" onclick="switchPanelTab('watchlist')">Watchlist</button>
-    </div>
+
     <div class="desktop-table" id="portfolioDesktopTable">
       <div class="table-wrap">
       <table>
@@ -766,31 +778,11 @@ canvas { touch-action: pan-y; }
     </div>
     <ul class="mobile-list" id="mobileList"></ul>
 
-    <!-- ── WATCHLIST DESKTOP TABLE ─────────────────────────── -->
-    <div id="watchlistTableWrap" class="desktop-table">
-      <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th style="text-align:left">Titolo</th>
-            <th>Prezzo</th>
-            <th>Trend</th>
-            <th>Oggi</th>
-            <th>52w High</th>
-            <th>52w Low</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="watchlistBody">
-          <tr><td colspan="7"><div class="wl-empty">Nessun titolo nella watchlist.<br>Clicca <em>Aggiungi titolo</em> per iniziare.</div></td></tr>
-        </tbody>
-      </table>
-      </div>
-    </div>
-
-    <!-- ── WATCHLIST MOBILE LIST ───────────────────────────── -->
-    <ul class="mobile-list" id="watchMobileList"></ul>
   </div>
+
+
+  <!-- ══ WATCHLIST SECTIONS ════════════════════════════════════════ -->
+  <div id="wlContainer"></div>
 
 </div><!-- /container -->
 
@@ -1139,7 +1131,20 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   await loadFxRates();
   if(positions.length>0) await refreshAll();
   else { renderTable(); renderMobileHero(); }
+  // Auto-refresh ogni 30 secondi (non 5s — Yahoo Finance ha rate limiting, 5s causerebbe blocchi)
+  // 30s è il minimo ragionevole per dati real-time senza essere bloccati
+  setInterval(async ()=>{
+    if(document.visibilityState!=='visible') return;
+    await loadFxRates();
+    if(positions.length>0) await refreshAll();
+  }, 30000);
+  // Aggiorna anche quando la pagina torna in primo piano (es. da altra app)
+  document.addEventListener('visibilitychange', async ()=>{
+    if(document.visibilityState==='visible' && positions.length>0) await refreshAll();
+  });
   renderSummary();
+  renderAllWatchlists();
+  renderNewWlButton();
 });
 
 function todayStr(){ return new Date().toISOString().split('T')[0]; }
@@ -1205,40 +1210,48 @@ const PROXY_FNS = [
   (t,r) => `https://thingproxy.freeboard.io/fetch/${yahooUrl(t,r)}`,
 ];
 
+// Tenta prima i due endpoint Yahoo diretti in parallelo (più veloci),
+// poi cade su proxy se entrambi falliscono — migliore su mobile
 async function fetchPriceRange(ticker, range){
-  for(const pfn of PROXY_FNS){
-    try{
-      const url = pfn(ticker, range);
-      const res = await ft(url, 9000);
-      if(!res.ok) continue;
-      const txt = await res.text();
-      const data = JSON.parse(txt);
-      const result = data?.chart?.result?.[0];
-      const meta   = result?.meta;
-      if(!meta?.regularMarketPrice) continue;
+  // Fase 1: prova Yahoo diretto (query1 e query2) in parallelo con timeout 5s
+  const directResult = await Promise.any([
+    fetchFromUrl(PROXY_FNS[0](ticker,range), 5000),
+    fetchFromUrl(PROXY_FNS[1](ticker,range), 5000),
+  ]).catch(()=>null);
+  if(directResult) return directResult;
 
-      const closes     = result?.indicators?.quote?.[0]?.close??[];
-      const timestamps = result?.timestamp??[];
-      const history    = closes
-        .map((c,i)=>({t:timestamps[i],v:c}))
-        .filter(x=>x.v!=null);
-
-      return {
-        price:    meta.regularMarketPrice,
-        prevClose:meta.chartPreviousClose??meta.previousClose??null,
-        currency: meta.currency,
-        name:     meta.shortName||meta.longName||ticker,
-        history,
-      };
-    } catch{ /* next */ }
+  // Fase 2: prova i proxy in sequenza con timeout 7s ciascuno
+  for(const pfn of PROXY_FNS.slice(2)){
+    const result = await fetchFromUrl(pfn(ticker,range), 7000).catch(()=>null);
+    if(result) return result;
   }
   return null;
 }
 
+async function fetchFromUrl(url, ms){
+  const res = await ft(url, ms);
+  if(!res.ok) throw new Error('not ok');
+  const txt  = await res.text();
+  const data = JSON.parse(txt);
+  const result = data?.chart?.result?.[0];
+  const meta   = result?.meta;
+  if(!meta?.regularMarketPrice) throw new Error('no price');
+  const closes     = result?.indicators?.quote?.[0]?.close??[];
+  const timestamps = result?.timestamp??[];
+  const history    = closes.map((c,i)=>({t:timestamps[i],v:c})).filter(x=>x.v!=null);
+  return {
+    price:    meta.regularMarketPrice,
+    prevClose:meta.chartPreviousClose??meta.previousClose??null,
+    currency: meta.currency,
+    name:     meta.shortName||meta.longName||'',
+    fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh??null,
+    fiftyTwoWeekLow:  meta.fiftyTwoWeekLow??null,
+    history,
+  };
+}
+
 async function fetchPrice(ticker){
-  // We fetch the default range (5d for sparkline) and also grab metadata
-  const d = await fetchPriceRange(ticker, sparkTableRange);
-  return d;
+  return fetchPriceRange(ticker, sparkTableRange);
 }
 
 function ft(url, ms){
@@ -1347,13 +1360,13 @@ async function refreshAll(){
   refreshDividends().then(()=>{ renderTable(); renderSummary(); });
   setText('lastUpdate', new Date().toLocaleTimeString('it-IT'));
   if(fetched===0) showNotif('Impossibile aggiornare i prezzi. Verifica la connessione.',true);
-  // Aggiorna anche watchlist se visibile
-  if(activePanel==='watchlist'){
-    for(const w of watchlist){
-      const d = await fetchPriceRange(w.ticker, sparkTableRange||'1d');
-      if(d) currentPrices[w.ticker] = d;
-    }
-    renderWatchlist();
+  // Aggiorna prezzi watchlist in background
+  const allWlTickers = [...new Set(watchlists.flatMap(wl=>wl.items.map(w=>w.ticker)))];
+  if(allWlTickers.length){
+    Promise.allSettled(allWlTickers.map(async t=>{
+      const d = await fetchPriceRange(t, sparkTableRange||'1d');
+      if(d) currentPrices[t]=d;
+    })).then(()=>renderAllWatchlists());
   }
   // Update spark column header
   const el=document.getElementById('sparkColHeader');
@@ -1363,9 +1376,8 @@ async function refreshAll(){
   renderPortfolioChart();
   renderPnlSection();
   renderMobileHero();
-  // Watchlist: nascondi al caricamento
-  document.getElementById('watchlistTableWrap').style.display='none';
-  document.getElementById('watchMobileList').style.display='none';
+  renderAllWatchlists();
+  renderNewWlButton();
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1559,7 +1571,7 @@ function renderTable(loading=false){
       if(el){
         sparkCharts['d_'+p.id]=new Chart(el,{
           type:'line',
-          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},
+          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]},
           options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
         });
       }
@@ -1569,7 +1581,7 @@ function renderTable(loading=false){
         mel.width=72; mel.height=32;
         sparkCharts['m_'+p.id]=new Chart(mel,{
           type:'line',
-          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},
+          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]},
           options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
         });
       }
@@ -2742,44 +2754,184 @@ function fmtN(n){
 }
 function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
 /* ═══════════════════════════════════════════════════════════════════
-   WATCHLIST — dati, rendering, UI
+   WATCHLIST MULTI-LISTA — dati, rendering, UI
 ═══════════════════════════════════════════════════════════════════ */
-let watchlist = JSON.parse(localStorage.getItem('portfolio_wl') || '[]');
-let activePanel = 'portfolio'; // 'portfolio' | 'watchlist'
+
+// Migrazione da vecchio formato (array piatto) a nuovo (array di liste)
+function migrateWatchlist(){
+  const old = localStorage.getItem('portfolio_wl');
+  if(!old) return [];
+  try {
+    const parsed = JSON.parse(old);
+    if(Array.isArray(parsed) && parsed.length && parsed[0].items !== undefined) return parsed; // già nuovo formato
+    if(Array.isArray(parsed) && parsed.length){
+      // vecchio formato: array di {id,ticker,name,currency}
+      return [{ id: Date.now(), name: 'Watchlist', items: parsed }];
+    }
+  } catch {}
+  return [];
+}
+
+let watchlists = migrateWatchlist();
 let wlSparkCharts = {};
 
-function saveWl(){ localStorage.setItem('portfolio_wl', JSON.stringify(watchlist)); }
+function saveWl(){ localStorage.setItem('portfolio_wl', JSON.stringify(watchlists)); }
 
-// ── Switch tab Portafoglio / Watchlist ──────────────────────────
-function switchPanelTab(tab){
-  activePanel = tab;
-  document.getElementById('tabPortfolio').classList.toggle('active', tab==='portfolio');
-  document.getElementById('tabWatchlist').classList.toggle('active', tab==='watchlist');
-  const isPortfolio = tab === 'portfolio';
-  const isMobile = window.innerWidth <= 600;
+// ── Render tutte le watchlist sotto il portafoglio ──────────────
+function renderAllWatchlists(){
+  const container = document.getElementById('wlContainer');
+  if(!container) return;
+  // Distruggi vecchi spark
+  Object.values(wlSparkCharts).forEach(ch=>ch&&ch.destroy());
+  wlSparkCharts = {};
 
-  // Desktop: tabelle (mai su mobile)
-  document.getElementById('portfolioDesktopTable').style.display = (!isMobile && isPortfolio)  ? 'block' : 'none';
-  document.getElementById('watchlistTableWrap').style.display    = (!isMobile && !isPortfolio) ? 'block' : 'none';
-
-  // Mobile: liste (mai su desktop)
-  document.getElementById('mobileList').style.display      = (isMobile && isPortfolio)  ? 'block' : 'none';
-  document.getElementById('watchMobileList').style.display = (isMobile && !isPortfolio) ? 'block' : 'none';
-
-  // Bottone mobile contestuale
-  const mBtn = document.getElementById('mBtnAdd');
-  if(mBtn){
-    mBtn.textContent = isPortfolio ? '+ Aggiungi posizione' : '+ Aggiungi titolo';
-    mBtn.onclick = isPortfolio ? ()=>openDrawer() : ()=>openWatchlistAdd();
+  if(watchlists.length === 0){
+    container.innerHTML = '';
+    return;
   }
 
-  // Bottoni desktop — valori espliciti (non '' vuoto che lascia vincere il CSS default)
-  document.getElementById('btnAddPos').style.display   = (!isMobile && isPortfolio)  ? 'flex' : 'none';
-  document.getElementById('btnAddWatch').style.display = (!isMobile && !isPortfolio) ? 'flex' : 'none';
+  container.innerHTML = watchlists.map(wl => buildWlCardHTML(wl)).join('');
 
-  if(tab === 'watchlist') renderWatchlist();
+  // Disegna sparklines per tutte le liste
+  requestAnimationFrame(()=>{
+    watchlists.forEach(wl => {
+      wl.items.forEach(w => {
+        const pd = currentPrices[w.ticker];
+        if(!pd?.history?.length) return;
+        const vals = pd.history.map(h=>h.v);
+        const ref  = pd.prevClose ?? vals[0];
+        const isUp = vals[vals.length-1] >= ref;
+        const col  = isUp ? getCss('--pos') : getCss('--neg');
+        const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
+        let plotVals = (sparkTableRange==='1d' && pd.prevClose!=null) ? [pd.prevClose,...vals] : vals;
+        if(sparkTableRange==='1d'){
+          const TARGET = 392;
+          if(plotVals.length < TARGET) plotVals = [...new Array(TARGET-plotVals.length).fill(NaN), ...plotVals];
+        }
+        const lbl = plotVals.map((_,i)=>i);
+        const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
+        // Mobile card spark
+        const mel = document.getElementById(`wlmspark_${wl.id}_${w.id}`);
+        if(mel){ mel.width=60; mel.height=28; wlSparkCharts[`m_${wl.id}_${w.id}`]=new Chart(mel,cfg); }
+        // Desktop spark
+        const del = document.getElementById(`wldspark_${wl.id}_${w.id}`);
+        if(del){ wlSparkCharts[`d_${wl.id}_${w.id}`]=new Chart(del,{...cfg,options:{...cfg.options,responsive:false}}); }
+      });
+    });
+  });
 }
-function openWatchlistAdd(){
+
+function buildWlCardHTML(wl){
+  const isMobile = window.innerWidth <= 600;
+  const itemsHTML = wl.items.length === 0
+    ? `<div class="wl-empty">Nessun titolo. Clicca <em>+</em> per aggiungere.</div>`
+    : (isMobile ? buildWlMobileItems(wl) : buildWlDesktopItems(wl));
+
+  return `<div class="wl-section" id="wlSection_${wl.id}">
+    <div class="wl-section-header">
+      <div class="wl-section-title">
+        <div class="live-dot" style="background:var(--text3)"></div>
+        <span class="wl-name" id="wlName_${wl.id}">${escHtml(wl.name)}</span>
+      </div>
+      <div class="wl-section-btns">
+        <button class="btn-add wl-add-item-btn" onclick="openWatchlistAdd(${wl.id})" title="Aggiungi titolo">
+          <svg width="9" height="9" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+          Aggiungi
+        </button>
+        <button class="ph-icon-btn wl-rename-btn" onclick="renameWatchlist(${wl.id})" title="Rinomina">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+        </button>
+        <button class="ph-icon-btn wl-del-btn" onclick="deleteWatchlist(${wl.id})" title="Elimina lista">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="wl-section-body">${itemsHTML}</div>
+  </div>`;
+}
+
+function buildWlDesktopItems(wl){
+  return `<table class="wl-table"><thead><tr>
+    <th style="text-align:left">Titolo</th><th>Prezzo</th><th>Trend</th><th>Oggi</th><th>52w High</th><th>52w Low</th><th></th>
+  </tr></thead><tbody>` +
+  wl.items.map(w=>{
+    const pd = currentPrices[w.ticker];
+    const cp = pd?.price;
+    const sym = {USD:'$',EUR:'€',GBP:'£'}[w.currency]||w.currency;
+    const dayChg = pd?.prevClose!=null&&cp!=null ? (cp-pd.prevClose)/pd.prevClose*100 : null;
+    const hi52 = pd?.fiftyTwoWeekHigh, lo52 = pd?.fiftyTwoWeekLow;
+    const hasH = pd?.history?.length>1;
+    const dc = dayChg==null?'':dayChg>=0?'pos':'neg';
+    return `<tr>
+      <td><div class="ticker-chip">${w.ticker}</div><div class="meta-line">${escHtml(w.name||pd?.name||'')}</div></td>
+      <td>${cp!=null?`<div class="ds-price ${cp>=(pd?.prevClose||0)?'pos':'neg'}">${sym} ${fmtN(cp)}</div>`:'<span style="color:var(--text3)">N/D</span>'}</td>
+      <td class="spark-cell">${hasH?`<canvas id="wldspark_${wl.id}_${w.id}" width="80" height="36" onclick="openChartPopup('${w.ticker}')"></canvas>`:'—'}</td>
+      <td>${dayChg!=null?`<div class="dt-badge ${dc}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`:'—'}</td>
+      <td style="font-size:12px">${hi52!=null?`${sym} ${fmtN(hi52)}`:'—'}</td>
+      <td style="font-size:12px">${lo52!=null?`${sym} ${fmtN(lo52)}`:'—'}</td>
+      <td style="text-align:right"><button class="btn-del" onclick="deleteWlItem(${wl.id},${w.id})" title="Rimuovi">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button></td>
+    </tr>`;
+  }).join('') + '</tbody></table>';
+}
+
+function buildWlMobileItems(wl){
+  return `<ul class="mobile-list wl-mobile-list">` +
+  wl.items.map(w=>{
+    const pd = currentPrices[w.ticker];
+    const cp = pd?.price;
+    const sym = {USD:'$',EUR:'€',GBP:'£'}[w.currency]||w.currency;
+    const dayChg = pd?.prevClose!=null&&cp!=null ? (cp-pd.prevClose)/pd.prevClose*100 : null;
+    const hasH = pd?.history?.length>1;
+    const bc = dayChg!=null?(dayChg>=0?'pos':'neg'):'';
+    const bt = dayChg!=null?`${dayChg>=0?'+':''}${dayChg.toFixed(2)}%`:'';
+    return `<li class="mobile-card" onclick="openChartPopup('${w.ticker}')">
+      <div class="mc-left"><div class="mc-ticker">${w.ticker}</div><div class="mc-name">${escHtml(w.name||pd?.name||w.currency)}</div></div>
+      <div class="mc-spark-wrap">${hasH?`<canvas id="wlmspark_${wl.id}_${w.id}" class="mc-spark"></canvas>`:'<div class="mc-spark"></div>'}</div>
+      <div class="mc-right">
+        <div class="mc-price">${cp!=null?`${sym} ${fmtN(cp)}`:'—'}</div>
+        ${bt?`<div><span class="mc-badge ${bc}">${bt}</span></div>`:''}
+      </div>
+      <button class="mc-manage-btn" onclick="event.stopPropagation();deleteWlItem(${wl.id},${w.id})" title="Rimuovi">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </li>`;
+  }).join('') + '</ul>';
+}
+
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Crea nuova watchlist ────────────────────────────────────────
+function createWatchlist(){
+  const name = prompt('Nome della watchlist:', 'Watchlist ' + (watchlists.length+1));
+  if(!name) return;
+  watchlists.push({ id: Date.now(), name: name.trim(), items: [] });
+  saveWl();
+  renderAllWatchlists();
+}
+
+function renameWatchlist(wlId){
+  const wl = watchlists.find(w=>w.id===wlId);
+  if(!wl) return;
+  const name = prompt('Nuovo nome:', wl.name);
+  if(!name) return;
+  wl.name = name.trim();
+  saveWl();
+  renderAllWatchlists();
+}
+
+function deleteWatchlist(wlId){
+  if(!confirm('Eliminare questa watchlist?')) return;
+  watchlists = watchlists.filter(w=>w.id!==wlId);
+  saveWl();
+  renderAllWatchlists();
+}
+
+// ── Apri drawer aggiunta titolo ─────────────────────────────────
+let _currentWlId = null;
+function openWatchlistAdd(wlId){
+  _currentWlId = wlId;
   document.getElementById('wlTicker').value = '';
   document.getElementById('wlName').value = '';
   document.getElementById('wlCurrency').value = 'USD';
@@ -2789,11 +2941,10 @@ function openWatchlistAdd(){
   const dr = document.getElementById('wlDrawer');
   ov.classList.add('open');
   dr.classList.add('open');
-  if(window.innerWidth <= 600){
-    document.getElementById('wlDrawerHandle').style.display = 'block';
-  }
-  setTimeout(()=> document.getElementById('wlTicker').focus(), 100);
+  if(window.innerWidth <= 600) document.getElementById('wlDrawerHandle').style.display='block';
+  setTimeout(()=>document.getElementById('wlTicker').focus(), 150);
 }
+
 function closeWlDrawer(){
   document.getElementById('wlDrawerOverlay').classList.remove('open');
   document.getElementById('wlDrawer').classList.remove('open');
@@ -2804,129 +2955,41 @@ async function addToWatchlist(){
   const name   = document.getElementById('wlName').value.trim();
   const cur    = document.getElementById('wlCurrency').value;
   if(!ticker){ showNotif('Inserisci un ticker',true); return; }
-  if(watchlist.find(w=>w.ticker===ticker)){ showNotif('Già nella watchlist',true); return; }
+  const wl = watchlists.find(w=>w.id===_currentWlId);
+  if(!wl){ showNotif('Lista non trovata',true); return; }
+  if(wl.items.find(w=>w.ticker===ticker)){ showNotif('Già in questa watchlist',true); return; }
   const item = { id: Date.now(), ticker, name, currency: cur };
-  watchlist.push(item);
+  wl.items.push(item);
   saveWl();
   closeWlDrawer();
-  showNotif(`${ticker} aggiunto alla watchlist`);
-  // Assicurati di essere nella tab watchlist prima di renderizzare
-  if(activePanel !== 'watchlist') switchPanelTab('watchlist');
-  // Fetch dati subito
+  showNotif(`${ticker} aggiunto a "${wl.name}"`);
   const d = await fetchPriceRange(ticker, sparkTableRange||'1d');
   if(d) currentPrices[ticker] = d;
-  renderWatchlist();
+  renderAllWatchlists();
 }
 
-function deleteWlItem(id){
-  watchlist = watchlist.filter(w=>w.id!==id);
+function deleteWlItem(wlId, itemId){
+  const wl = watchlists.find(w=>w.id===wlId);
+  if(!wl) return;
+  wl.items = wl.items.filter(w=>w.id!==itemId);
   saveWl();
-  renderWatchlist();
+  renderAllWatchlists();
 }
 
-// ── Render watchlist ────────────────────────────────────────────
-function renderWatchlist(){
-  // Distruggi vecchi spark
-  Object.values(wlSparkCharts).forEach(ch=>ch&&ch.destroy());
-  wlSparkCharts = {};
-
-  const body  = document.getElementById('watchlistBody');
-  const wList = document.getElementById('watchMobileList');
-
-  if(watchlist.length === 0){
-    body.innerHTML = `<tr><td colspan="7"><div class="wl-empty">Nessun titolo nella watchlist.<br>Clicca <em>Aggiungi titolo</em> per iniziare.</div></td></tr>`;
-    wList.innerHTML = `<li style="padding:2.5rem 1rem;text-align:center;color:var(--text3);font-size:13px">Nessun titolo.<br>Clicca <em>+</em> per aggiungere.</li>`;
-    return;
-  }
-
-  // ── Desktop ──────────────────────────────────────────────────
-  body.innerHTML = watchlist.map(w=>{
-    const pd  = currentPrices[w.ticker];
-    const cp  = pd?.price;
-    const sym = {USD:'$',EUR:'€',GBP:'£'}[w.currency]||w.currency;
-    const dayChg = pd?.prevClose!=null&&cp!=null ? (cp-pd.prevClose)/pd.prevClose*100 : null;
-    const hi52 = pd?.fiftyTwoWeekHigh;
-    const lo52 = pd?.fiftyTwoWeekLow;
-    const hasH = pd?.history?.length>1;
-    const dayCol = dayChg==null?'':dayChg>=0?'pos':'neg';
-    return `<tr>
-      <td>
-        <div class="ticker-chip">${w.ticker}</div>
-        <div class="meta-line">${w.name||pd?.name||''}</div>
-      </td>
-      <td>
-        ${cp!=null ? `<div class="ds-price ${cp>=(pd?.prevClose||0)?'pos':'neg'}">${sym} ${fmtN(cp)}</div>` : '<span style="color:var(--text3)">N/D</span>'}
-      </td>
-      <td class="spark-cell">
-        ${hasH ? `<canvas id="wlspark_${w.id}" width="80" height="36" onclick="openChartPopup('${w.ticker}')"></canvas>` : '<span style="color:var(--text3)">—</span>'}
-      </td>
-      <td>
-        ${dayChg!=null ? `<div class="dt-badge ${dayCol}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>` : '—'}
-      </td>
-      <td style="font-size:12px">${hi52!=null?`${sym} ${fmtN(hi52)}`:'—'}</td>
-      <td style="font-size:12px">${lo52!=null?`${sym} ${fmtN(lo52)}`:'—'}</td>
-      <td style="text-align:right">
-        <button class="btn-del" onclick="deleteWlItem(${w.id})" title="Rimuovi">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-      </td>
-    </tr>`;
-  }).join('');
-
-  // ── Mobile ────────────────────────────────────────────────────
-  wList.innerHTML = watchlist.map(w=>{
-    const pd  = currentPrices[w.ticker];
-    const cp  = pd?.price;
-    const sym = {USD:'$',EUR:'€',GBP:'£'}[w.currency]||w.currency;
-    const dayChg = pd?.prevClose!=null&&cp!=null ? (cp-pd.prevClose)/pd.prevClose*100 : null;
-    const hasH = pd?.history?.length>1;
-    const badgeCls = dayChg!=null?(dayChg>=0?'pos':'neg'):'';
-    const badgeTxt = dayChg!=null?`${dayChg>=0?'+':''}${dayChg.toFixed(2)}%`:'';
-    return `
-    <li class="mobile-card" onclick="openChartPopup('${w.ticker}')">
-      <div class="mc-left">
-        <div class="mc-ticker">${w.ticker}</div>
-        <div class="mc-name">${w.name||pd?.name||w.currency}</div>
-      </div>
-      <div class="mc-spark-wrap">
-        ${hasH ? `<canvas id="wlmspark_${w.id}" class="mc-spark"></canvas>` : `<div class="mc-spark"></div>`}
-      </div>
-      <div class="mc-right">
-        <div class="mc-price">${cp!=null?`${sym} ${fmtN(cp)}`:'—'}</div>
-        ${badgeTxt ? `<div><span class="mc-badge ${badgeCls}">${badgeTxt}</span></div>` : ''}
-      </div>
-      <button class="mc-manage-btn" onclick="event.stopPropagation();deleteWlItem(${w.id})" title="Rimuovi">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </li>`;
-  }).join('');
-
-  // La visibilità è gestita da switchPanelTab — non serve qui
-
-  // ── Sparklines ───────────────────────────────────────────────
-  requestAnimationFrame(()=>{
-    watchlist.forEach(w=>{
-      const pd = currentPrices[w.ticker];
-      if(!pd?.history?.length) return;
-      const vals = pd.history.map(h=>h.v);
-      const ref  = pd.prevClose ?? vals[0];
-      const isUp = vals[vals.length-1] >= ref;
-      const col  = isUp ? getCss('--pos') : getCss('--neg');
-      const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
-      const plotVals = (sparkTableRange==='1d'&&pd.prevClose!=null) ? [pd.prevClose,...vals] : vals;
-      const lbl  = plotVals.map((_,i)=>i);
-
-      const el = document.getElementById(`wlspark_${w.id}`);
-      if(el){ wlSparkCharts['d_'+w.id]=new Chart(el,{type:'line',data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}}); }
-
-      const mel = document.getElementById(`wlmspark_${w.id}`);
-      if(mel){ mel.width=72; mel.height=32; wlSparkCharts['m_'+w.id]=new Chart(mel,{type:'line',data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35}]},options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}}); }
-    });
-  });
+// ── Bottone "Nuova watchlist" fisso in fondo ──────────────────
+function renderNewWlButton(){
+  const cont = document.getElementById('wlContainer');
+  if(!cont) return;
+  // Aggiunge il bottone dopo le sezioni
+  const existing = document.getElementById('btnNewWl');
+  if(existing) existing.remove();
+  const btn = document.createElement('button');
+  btn.id = 'btnNewWl';
+  btn.className = 'btn-new-wl';
+  btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg> Nuova watchlist';
+  btn.onclick = createWatchlist;
+  cont.after(btn);
 }
-
-// ── refreshAll aggiorna anche la watchlist ──────────────────────
-const _origRefreshAll = refreshAll;
 
 /* ═══════════════════════════════════════════════════════════════════
    AUTOCOMPLETE — ricerca ticker Yahoo Finance

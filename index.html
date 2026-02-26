@@ -1270,23 +1270,29 @@ async function fetchPrice(ticker){
 // Helper: padda le sparkline con NaN a sinistra per mostrare
 // la progressione della sessione (da sinistra verso destra)
 function padSparkline1d(vals, prevClose, pd){
-  let plotVals = prevClose != null ? [prevClose, ...vals] : vals;
-  // Usa sessionMinutes dai meta se disponibile, altrimenti stima dal primo timestamp
-  let target = (pd?.sessionMinutes || 390) + 1; // +1 per il prevClose iniziale
-  // Stima alternativa: se abbiamo i timestamp, conta i minuti dalla prima barra
-  if(pd?.history?.length >= 2){
-    const h = pd.history;
-    const dt = h[1].t - h[0].t; // intervallo in secondi
-    if(dt > 0 && dt <= 120){ // solo per intervalli 1m-2m
-      // Prendi il timestamp dell'apertura stimata e la chiusura
-      const firstT = h[0].t;
-      const now = Math.floor(Date.now()/1000);
-      const elapsedMin = Math.round((now - firstT) / 60);
-      // Session length: usa sessionMinutes dai meta
-      const sessionLen = pd?.sessionMinutes || 390;
-      target = Math.max(sessionLen, elapsedMin) + 1;
+  // Target = durata intera sessione in punti, calcolata dai timestamp reali.
+  // Logica: (ora attuale - apertura mercato) / intervallo_barre
+  // In questo modo tutti i ticker dello stesso mercato hanno lo stesso target
+  // e la sparkline cresce progressivamente da sinistra verso destra.
+  let target = 0;
+  const h = pd?.history;
+  if(h && h.length >= 2){
+    const dt = h[1].t - h[0].t; // intervallo tra barre in secondi (es. 60 per 1m)
+    if(dt > 0 && dt <= 300){
+      // Apertura = timestamp prima barra del giorno
+      const openT = h[0].t;
+      const nowT  = Math.floor(Date.now() / 1000);
+      // Quanti punti ci sarebbero dall'apertura ad ora?
+      target = Math.ceil((nowT - openT) / dt) + 1;
     }
   }
+  // Fallback: usa sessionMinutes dai meta o 390 (US default)
+  if(target < 2) target = (pd?.sessionMinutes || 390) + 1;
+
+  // Prependi prevClose come punto di partenza (baseline)
+  let plotVals = prevClose != null ? [prevClose, ...vals] : [...vals];
+
+  // Padda a sinistra con NaN per riempire i "minuti futuri" ancora non arrivati
   if(plotVals.length < target){
     const pad = new Array(target - plotVals.length).fill(NaN);
     plotVals = [...pad, ...plotVals];

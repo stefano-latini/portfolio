@@ -1585,7 +1585,7 @@ function renderTable(loading=false){
       if(el){
         sparkCharts['d_'+p.id]=new Chart(el,{
           type:'line',
-          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]},
+          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2.5:0,pointBackgroundColor:col,spanGaps:false}]},
           options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
         });
       }
@@ -1595,7 +1595,7 @@ function renderTable(loading=false){
         mel.width=72; mel.height=32;
         sparkCharts['m_'+p.id]=new Chart(mel,{
           type:'line',
-          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]},
+          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2:0,pointBackgroundColor:col,spanGaps:false}]},
           options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
         });
       }
@@ -2819,7 +2819,7 @@ function renderAllWatchlists(){
         const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
         const plotVals = pd.prevClose!=null ? [pd.prevClose,...vals] : vals;
         const lbl = plotVals.map((_,i)=>i);
-        const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
+        const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2:0,pointBackgroundColor:col,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
         // Mobile card spark
         const mel = document.getElementById(`wlmspark_${wl.id}_${w.id}`);
         if(mel){ mel.width=60; mel.height=28; wlSparkCharts[`m_${wl.id}_${w.id}`]=new Chart(mel,cfg); }

@@ -535,7 +535,7 @@ canvas { touch-action: pan-y; }
   .panel-header .btn-add-desktop,.panel-header .btn-refresh-desktop{display:none;}
   /* Cards */
   .mobile-card{padding:.5rem .9rem;gap:.5rem;}
-  .mc-spark{width:60px;height:26px;}
+  .mc-spark{width:72px;height:32px;}
   /* Hide desktop ctx menus */
   .ctx-btn-v,.ctx-wrap{display:none !important;}
   /* Modals from bottom */
@@ -1585,17 +1585,17 @@ function renderTable(loading=false){
       if(el){
         sparkCharts['d_'+p.id]=new Chart(el,{
           type:'line',
-          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2.5:0,pointBackgroundColor:col,spanGaps:false}]},
+          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2.5:0,pointHoverRadius:0,pointBackgroundColor:col,spanGaps:false}]},
           options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
         });
       }
       // Mobile spark
       const mel=document.getElementById(`mspark_${p.id}`);
       if(mel){
-        mel.width=72; mel.height=32;
+        mel.width=80; mel.height=36;
         sparkCharts['m_'+p.id]=new Chart(mel,{
           type:'line',
-          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2:0,pointBackgroundColor:col,spanGaps:false}]},
+          data:{labels:plotLabels,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2:0,pointHoverRadius:0,pointBackgroundColor:col,spanGaps:false}]},
           options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
         });
       }
@@ -2819,10 +2819,10 @@ function renderAllWatchlists(){
         const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
         const plotVals = pd.prevClose!=null ? [pd.prevClose,...vals] : vals;
         const lbl = plotVals.map((_,i)=>i);
-        const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2:0,pointBackgroundColor:col,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
+        const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,tension:plotVals.length<30?0:0.25,pointRadius:plotVals.length<30?2:0,pointHoverRadius:0,pointBackgroundColor:col,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
         // Mobile card spark
         const mel = document.getElementById(`wlmspark_${wl.id}_${w.id}`);
-        if(mel){ mel.width=60; mel.height=28; wlSparkCharts[`m_${wl.id}_${w.id}`]=new Chart(mel,cfg); }
+        if(mel){ mel.width=72; mel.height=32; wlSparkCharts[`m_${wl.id}_${w.id}`]=new Chart(mel,cfg); }
         // Desktop spark
         const del = document.getElementById(`wldspark_${wl.id}_${w.id}`);
         if(del){ wlSparkCharts[`d_${wl.id}_${w.id}`]=new Chart(del,{...cfg,options:{...cfg.options,responsive:false}}); }

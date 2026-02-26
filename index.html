@@ -1953,21 +1953,34 @@ async function renderMobileHero(){
     if(d) histories[t]=d.history;
   }));
 
-  // ── Serie combinata ────────────────────────────────────────────
+  // ── Serie combinata per timestamp (non per indice) ─────────────
+  // Gestisce correttamente portafogli misti EU+US con orari diversi
   const allH = tickers.map(t=>histories[t]||[]).filter(h=>h.length>0);
   if(allH.length===0) return;
-  const minLen = Math.min(...allH.map(h=>h.length));
+
+  const priceAtMh={};
+  tickers.forEach(t=>{
+    priceAtMh[t]={};
+    (histories[t]||[]).forEach(({t:ts,v})=>{ if(v!=null) priceAtMh[t][ts]=v; });
+  });
+  const tsSetMh=new Set();
+  tickers.forEach(t=>{ (histories[t]||[]).forEach(({t:ts})=>tsSetMh.add(ts)); });
+  const allTsMh=[...tsSetMh].sort((a,b)=>a-b);
+
   const combined=[];
-  for(let i=0;i<minLen;i++){
+  const lastKnownMh={};
+  tickers.forEach(t=>{ lastKnownMh[t]=null; });
+
+  for(const ts of allTsMh){
+    if(mhPeriod==='tot' && ts<earliestBuyTs) continue;
+    tickers.forEach(t=>{ if(priceAtMh[t][ts]!=null) lastKnownMh[t]=priceAtMh[t][ts]; });
     let tot=0; let ok=true;
     positions.forEach(p=>{
-      const h=histories[p.ticker];
-      if(!h||!h[i]||h[i].v==null){ok=false;return;}
-      tot+=h[i].v*p.qty*toEurRate(p.currency);
+      const v=lastKnownMh[p.ticker];
+      if(v==null){ ok=false; return; }
+      tot+=v*p.qty*toEurRate(p.currency);
     });
-    const ts=allH[0][i]?.t;
-    if(ok && (mhPeriod!=='tot' || !ts || ts>=earliestBuyTs))
-      combined.push({t:ts, v:tot});
+    if(ok) combined.push({t:ts,v:tot});
   }
   if(combined.length<2) return;
 
@@ -2223,18 +2236,36 @@ async function renderPortfolioChart(){
     const ps2=document.getElementById('portfolioSection'); ps2.style.display='none'; ps2.style.marginBottom='0';
     return;
   }
-  const minLen=Math.min(...allHistories.map(h=>h.length));
+
+  // ── Combina le history per timestamp (non per indice) ───────────────
+  // Costruiamo una mappa ts→prezzo per ogni ticker per ricerca O(1)
+  const priceAt={};
+  tickers.forEach(t=>{
+    priceAt[t]={};
+    (histories[t]||[]).forEach(({t:ts,v})=>{ if(v!=null) priceAt[t][ts]=v; });
+  });
+
+  // Tutti i timestamp distinti, ordinati
+  const tsSet=new Set();
+  tickers.forEach(t=>{ (histories[t]||[]).forEach(({t:ts})=>tsSet.add(ts)); });
+  const allTs=[...tsSet].sort((a,b)=>a-b);
+
+  // Carry-forward: per ogni timestamp, usiamo l'ultimo prezzo noto di ogni ticker
+  // Questo gestisce correttamente mercati con orari diversi (es. EU + US nello stesso portafoglio)
   const combined=[];
-  for(let i=0;i<minLen;i++){
+  const lastKnown={};
+  tickers.forEach(t=>{ lastKnown[t]=null; });
+
+  for(const ts of allTs){
+    if(portfolioPeriod==='tot' && ts<earliestBuyTs) continue;
+    tickers.forEach(t=>{ if(priceAt[t][ts]!=null) lastKnown[t]=priceAt[t][ts]; });
     let total=0; let valid=true;
     positions.forEach(p=>{
-      const h=histories[p.ticker];
-      if(!h||!h[i]||h[i].v==null){valid=false;return;}
-      total+=h[i].v*p.qty*toEurRate(p.currency);
+      const v=lastKnown[p.ticker];
+      if(v==null){ valid=false; return; }
+      total+=v*p.qty*toEurRate(p.currency);
     });
-    const ts=allHistories[0][i]?.t;
-    if(valid&&ts&&(portfolioPeriod!=='tot'||ts>=earliestBuyTs))
-      combined.push({t:ts,v:total});
+    if(valid) combined.push({t:ts,v:total});
   }
 
   if(combined.length<2){

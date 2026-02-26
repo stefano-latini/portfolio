@@ -1239,6 +1239,18 @@ async function fetchFromUrl(url, ms){
   const closes     = result?.indicators?.quote?.[0]?.close??[];
   const timestamps = result?.timestamp??[];
   const history    = closes.map((c,i)=>({t:timestamps[i],v:c})).filter(x=>x.v!=null);
+  // Calcola durata sessione corrente in minuti dai tradingPeriods
+  let sessionMinutes = 390; // default US
+  const tp = result?.meta?.tradingPeriods?.regular;
+  if(tp && tp[0] && tp[0][0]){
+    const sess = tp[0][0];
+    sessionMinutes = Math.round((sess.end - sess.start) / 60);
+  } else if(result?.meta?.exchangeTimezoneName){
+    // Euristica: mercati non-US hanno sessioni più lunghe
+    const tz = result.meta.exchangeTimezoneName||'';
+    if(tz.includes('Europe') || tz.includes('CET') || tz.includes('London'))
+      sessionMinutes = 510; // 8.5h = tipica sessione europea
+  }
   return {
     price:    meta.regularMarketPrice,
     prevClose:meta.chartPreviousClose??meta.previousClose??null,
@@ -1246,12 +1258,40 @@ async function fetchFromUrl(url, ms){
     name:     meta.shortName||meta.longName||'',
     fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh??null,
     fiftyTwoWeekLow:  meta.fiftyTwoWeekLow??null,
+    sessionMinutes,
     history,
   };
 }
 
 async function fetchPrice(ticker){
   return fetchPriceRange(ticker, sparkTableRange);
+}
+
+// Helper: padda le sparkline con NaN a sinistra per mostrare
+// la progressione della sessione (da sinistra verso destra)
+function padSparkline1d(vals, prevClose, pd){
+  let plotVals = prevClose != null ? [prevClose, ...vals] : vals;
+  // Usa sessionMinutes dai meta se disponibile, altrimenti stima dal primo timestamp
+  let target = (pd?.sessionMinutes || 390) + 1; // +1 per il prevClose iniziale
+  // Stima alternativa: se abbiamo i timestamp, conta i minuti dalla prima barra
+  if(pd?.history?.length >= 2){
+    const h = pd.history;
+    const dt = h[1].t - h[0].t; // intervallo in secondi
+    if(dt > 0 && dt <= 120){ // solo per intervalli 1m-2m
+      // Prendi il timestamp dell'apertura stimata e la chiusura
+      const firstT = h[0].t;
+      const now = Math.floor(Date.now()/1000);
+      const elapsedMin = Math.round((now - firstT) / 60);
+      // Session length: usa sessionMinutes dai meta
+      const sessionLen = pd?.sessionMinutes || 390;
+      target = Math.max(sessionLen, elapsedMin) + 1;
+    }
+  }
+  if(plotVals.length < target){
+    const pad = new Array(target - plotVals.length).fill(NaN);
+    plotVals = [...pad, ...plotVals];
+  }
+  return plotVals;
 }
 
 function ft(url, ms){
@@ -2803,11 +2843,9 @@ function renderAllWatchlists(){
         const isUp = vals[vals.length-1] >= ref;
         const col  = isUp ? getCss('--pos') : getCss('--neg');
         const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
-        let plotVals = (sparkTableRange==='1d' && pd.prevClose!=null) ? [pd.prevClose,...vals] : vals;
-        if(sparkTableRange==='1d'){
-          const TARGET = 392;
-          if(plotVals.length < TARGET) plotVals = [...new Array(TARGET-plotVals.length).fill(NaN), ...plotVals];
-        }
+        const plotVals = sparkTableRange==='1d'
+          ? padSparkline1d(vals, pd.prevClose, pd)
+          : (pd.prevClose!=null ? [pd.prevClose,...vals] : vals);
         const lbl = plotVals.map((_,i)=>i);
         const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
         // Mobile card spark

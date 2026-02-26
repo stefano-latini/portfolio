@@ -1267,37 +1267,6 @@ async function fetchPrice(ticker){
   return fetchPriceRange(ticker, sparkTableRange);
 }
 
-// Helper: padda le sparkline con NaN a sinistra per mostrare
-// la progressione della sessione (da sinistra verso destra)
-function padSparkline1d(vals, prevClose, pd){
-  // Tutte le sparkline 1d hanno la stessa larghezza = durata intera sessione.
-  // I dati reali sono allineati a DESTRA, NaN a sinistra per i minuti non ancora trascorsi.
-  // NON usiamo Date.now() — per mercati chiusi darebbe un target enorme.
-  // Usiamo sessionMinutes (calcolato dai tradingPeriods in fetchFromUrl).
-
-  const h = pd?.history;
-  const sessionMins = pd?.sessionMinutes || 390; // durata sessione in minuti
-
-  // Intervallo tra barre in secondi (default 60s = 1m)
-  let dt = 60;
-  if(h && h.length >= 2){
-    const d = h[1].t - h[0].t;
-    if(d > 0 && d <= 300) dt = d;
-  }
-
-  // Target = barre totali nell'intera sessione + 1 per il punto prevClose
-  const target = Math.round(sessionMins * 60 / dt) + 1;
-
-  // Prependi prevClose come punto baseline a sinistra
-  let plotVals = prevClose != null ? [prevClose, ...vals] : [...vals];
-
-  // Padda a SINISTRA con NaN (= minuti ancora non trascorsi dall'inizio sessione)
-  if(plotVals.length < target){
-    const pad = new Array(target - plotVals.length).fill(NaN);
-    plotVals = [...pad, ...plotVals];
-  }
-  return plotVals;
-}
 
 function ft(url, ms){
   return Promise.race([
@@ -2848,9 +2817,7 @@ function renderAllWatchlists(){
         const isUp = vals[vals.length-1] >= ref;
         const col  = isUp ? getCss('--pos') : getCss('--neg');
         const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
-        const plotVals = sparkTableRange==='1d'
-          ? padSparkline1d(vals, pd.prevClose, pd)
-          : (pd.prevClose!=null ? [pd.prevClose,...vals] : vals);
+        const plotVals = pd.prevClose!=null ? [pd.prevClose,...vals] : vals;
         const lbl = plotVals.map((_,i)=>i);
         const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,pointRadius:0,tension:0.35,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
         // Mobile card spark

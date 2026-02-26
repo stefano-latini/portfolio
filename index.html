@@ -1131,17 +1131,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   await loadFxRates();
   if(positions.length>0) await refreshAll();
   else { renderTable(); renderMobileHero(); }
-  // Auto-refresh ogni 30 secondi (non 5s — Yahoo Finance ha rate limiting, 5s causerebbe blocchi)
-  // 30s è il minimo ragionevole per dati real-time senza essere bloccati
-  setInterval(async ()=>{
-    if(document.visibilityState!=='visible') return;
-    await loadFxRates();
-    if(positions.length>0) await refreshAll();
-  }, 30000);
-  // Aggiorna anche quando la pagina torna in primo piano (es. da altra app)
-  document.addEventListener('visibilitychange', async ()=>{
-    if(document.visibilityState==='visible' && positions.length>0) await refreshAll();
-  });
+  // Nessun auto-refresh automatico: aggiornamento solo all'apertura e su richiesta manuale
   renderSummary();
   renderAllWatchlists();
   renderNewWlButton();
@@ -1943,15 +1933,20 @@ async function renderMobileHero(){
   });
   setText('mhValue', `€ ${fmtN(totalVal)}`);
 
-  // ── Fetch storico ──────────────────────────────────────────────
+  // ── Usa currentPrices già in cache (aggiornati da refreshAll) ─────────
   const earliestBuyTs = Math.min(...positions.map(p=>new Date(p.buyDate).getTime()/1000));
   const fetchRange = mhPeriod==='tot' ? '5y' : mhPeriod;
   const tickers=[...new Set(positions.map(p=>p.ticker))];
   const histories={};
-  await Promise.allSettled(tickers.map(async t=>{
-    const d=await fetchPriceRange(t, fetchRange);
-    if(d) histories[t]=d.history;
-  }));
+  const needFetchMh = fetchRange !== sparkTableRange;
+  if(needFetchMh){
+    await Promise.allSettled(tickers.map(async t=>{
+      const d=await fetchPriceRange(t, fetchRange);
+      if(d) histories[t]=d.history;
+    }));
+  } else {
+    tickers.forEach(t=>{ if(currentPrices[t]?.history) histories[t]=currentPrices[t].history; });
+  }
 
   // ── Serie combinata per timestamp (non per indice) ─────────────
   // Gestisce correttamente portafogli misti EU+US con orari diversi
@@ -2221,14 +2216,23 @@ async function renderPortfolioChart(){
   const pcValEl=document.getElementById('pcValue');
   if(pcValEl) pcValEl.textContent=`€ ${fmtN(totalVal)}`;
 
-  // ── Fetch storico ──────────────────────────────────────────────
+  // ── Usa currentPrices già in cache (aggiornati da refreshAll) ─────────
+  // Se il periodo richiesto è diverso da sparkTableRange, fetcha solo se necessario
   const fetchRange = portfolioPeriod==='tot' ? '5y' : portfolioPeriod;
   const tickers=[...new Set(positions.map(p=>p.ticker))];
+
+  // Controlla se i dati in cache sono per il range corretto
+  const needFetch = fetchRange !== (sparkTableRange==='1d'?'1d':sparkTableRange);
   const histories={};
-  await Promise.allSettled(tickers.map(async t=>{
-    const d=await fetchPriceRange(t, fetchRange);
-    if(d) histories[t]=d.history;
-  }));
+  if(needFetch){
+    await Promise.allSettled(tickers.map(async t=>{
+      const d=await fetchPriceRange(t, fetchRange);
+      if(d) histories[t]=d.history;
+    }));
+  } else {
+    // Usa direttamente currentPrices già aggiornati
+    tickers.forEach(t=>{ if(currentPrices[t]?.history) histories[t]=currentPrices[t].history; });
+  }
 
   const earliestBuyTs=Math.min(...positions.map(p=>new Date(p.buyDate).getTime()/1000));
   const allHistories=tickers.map(t=>histories[t]||[]).filter(h=>h.length>0);

@@ -195,9 +195,9 @@ header{display:flex;align-items:center;justify-content:space-between;
 ═══════════════════════════════════════════════════════════════ */
 .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);contain:paint;}
 /* Panel tab switcher */
-.panel-tabs{display:flex;gap:0;padding:0 1.2rem;border-bottom:1px solid var(--border);}
-.panel-tab{background:none;border:none;color:var(--text3);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:.55rem .1rem;margin-right:1.2rem;border-bottom:2px solid transparent;cursor:pointer;transition:color .15s,border-color .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
-.panel-tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:600;}
+
+
+
 /* Watchlist desktop table */
 /* Watchlist mobile list */
 @media(max-width:600px){
@@ -226,7 +226,7 @@ header{display:flex;align-items:center;justify-content:space-between;
 .btn-new-wl{display:flex;align-items:center;gap:.5rem;margin-top:.6rem;width:100%;background:none;border:1.5px dashed var(--border);color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:.6rem 1.2rem;border-radius:var(--radius);cursor:pointer;transition:all .15s;justify-content:center;}
 .btn-new-wl:hover{border-color:var(--accent);color:var(--accent);}
 /* Add-to-watchlist button */
-.btn-wl-add{display:none;background:none;border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:4px 14px;border-radius:20px;cursor:pointer;transition:all .15s;align-items:center;gap:5px;white-space:nowrap;}
+
 .btn-wl-add:hover{border-color:var(--accent);color:var(--accent);}
 /* wlDrawer usa stessi stili del drawer principale */
 #wlDrawerOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;opacity:0;transition:opacity var(--tr);}
@@ -496,7 +496,7 @@ canvas { touch-action: pan-y; }
 ═══════════════════════════════════════════════════════════════ */
 @media(max-width:600px){
   html,body{overflow-x:hidden;width:100%;}
-  .summary-grid,.portfolio-section,.desktop-table:not(#watchlistTableWrap),.pnl-section,.ds-bar{display:none !important;}
+  .summary-grid,.portfolio-section,.desktop-table,.pnl-section,.ds-bar{display:none !important;}
   .mobile-list{display:block;}
   .mobile-hero{display:block !important;}
   body{padding:0 .75rem calc(env(safe-area-inset-bottom) + 1.5rem);overflow-x:hidden;}
@@ -1143,11 +1143,19 @@ function todayStr(){ return new Date().toISOString().split('T')[0]; }
    FX
 ═══════════════════════════════════════════════════════════════════ */
 async function loadFxRates(){
+  // Usa Yahoo Finance per i tassi FX in tempo reale (stessa fonte dei prezzi)
   try{
-    const r=await ft('https://api.frankfurter.app/latest?from=EUR&to=USD,GBP',6000);
-    const d=await r.json();
-    fxRates={EUR:1,USD:d.rates.USD,GBP:d.rates.GBP};
-    eurUsd=d.rates.USD;
+    const [usdData, gbpData] = await Promise.allSettled([
+      fetchPriceRange('EURUSD=X','1d'),
+      fetchPriceRange('EURGBP=X','1d')
+    ]);
+    if(usdData.status==='fulfilled' && usdData.value?.price){
+      eurUsd = usdData.value.price;
+      fxRates.USD = eurUsd;
+    }
+    if(gbpData.status==='fulfilled' && gbpData.value?.price){
+      fxRates.GBP = gbpData.value.price;
+    }
     setText('fxRate',`1 € = ${eurUsd.toFixed(4)} $`);
     setText('fxCurrent',eurUsd.toFixed(4)); setText('fxMobileVal',eurUsd.toFixed(4));
   } catch(e){
@@ -1157,10 +1165,16 @@ async function loadFxRates(){
 }
 async function fetchHistFx(date,currency){
   if(currency==='EUR') return 1;
+  // Usa Yahoo Finance per il tasso storico approssimato
+  // Yahoo non ha un endpoint storico per singola data, usiamo il tasso corrente come fallback
   try{
+    const pair = currency + 'EUR=X';
+    const d = await fetchPriceRange(pair, '1d');
+    if(d?.price) return d.price;
+    // Fallback: prova frankfurter come backup
     const r=await ft(`https://api.frankfurter.app/${date}?from=${currency}&to=EUR`,6000);
-    const d=await r.json();
-    return d.rates?.EUR??null;
+    const j=await r.json();
+    return j.rates?.EUR??null;
   } catch{ return null; }
 }
 function toEurRate(currency){

@@ -694,6 +694,36 @@ canvas { touch-action: pan-y; }
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   MINIMAL — pulizia grafica (solido, nessun blur/ombra pesante)
+═══════════════════════════════════════════════════════════════ */
+body::before{display:none !important;}
+.portfolio-section::after,.panel::after,.mobile-hero::after,.wl-section::after{display:none !important;}
+.portfolio-section,.ds-bar,.panel,.mobile-hero,.mobile-stats-strip,.wl-section,
+.modal,.chart-modal,.drawer,.ctx-menu,.ac-dropdown{
+  background:var(--card) !important;
+  border:1px solid var(--border) !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.04) !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+}
+.modal,.chart-modal,.drawer,.ctx-menu,.ac-dropdown{box-shadow:0 12px 40px rgba(0,0,0,.18) !important;}
+.theme-toggle,.fx-mobile-pill,.btn-add,.btn-ghost{
+  background:var(--surface) !important;border:1px solid var(--border) !important;box-shadow:none !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+}
+header{
+  background:var(--bg) !important;box-shadow:none !important;
+  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  border:none !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;
+}
+@media(min-width:601px){ header{border:1px solid var(--border) !important;border-radius:16px !important;top:.75rem;} }
+.modal-overlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
+/* Niente selezione di testo / callout durante lo scroll col dito */
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;}
+input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;}
+.mobile-card:active{transform:none !important;background:var(--surface);}
+.mobile-card,.mc-left,.mc-right{-webkit-user-select:none;user-select:none;}
 </style>
 </head>
 <body>
@@ -1200,6 +1230,7 @@ canvas { touch-action: pan-y; }
 ═══════════════════════════════════════════════════════════════════ */
 let positions     = JSON.parse(localStorage.getItem('portfolio_v3') || '[]');
 let fxRates       = { EUR:1, USD:1.08, GBP:0.86 };
+let _fxLoaded     = false;
 let eurUsd        = 1.08;
 let currentPrices = {};       // ticker → { price, prevClose, currency, name, histories:{range→[]} }
 let sparkCharts   = {};
@@ -1317,7 +1348,7 @@ async function loadFxRates(){
       fetchPriceRange('EURGBP=X','6mo')
     ]);
     if(usdData.status==='fulfilled' && usdData.value?.price){
-      eurUsd = usdData.value.price;
+      eurUsd = usdData.value.price; _fxLoaded = true;
       fxRates.USD = eurUsd;
     }
     if(gbpData.status==='fulfilled' && gbpData.value?.price){
@@ -1388,6 +1419,10 @@ const _inflightFetches = {}; // dedup: ticker|range -> Promise condivisa
 let _rangeCache = {}; // ticker|range -> {ts, d}  (TTL breve: evita richieste doppie tra grafici)
 const RANGE_TTL = 120000;
 const _sleep = ms => new Promise(r=>setTimeout(r,ms));
+// Max richieste "logiche" contemporanee: troppe in parallelo fanno scattare i limiti di Yahoo (429)
+let _slots = 4; const _waiters = [];
+async function _acquire(){ if(_slots>0){ _slots--; return; } await new Promise(r=>_waiters.push(r)); }
+function _release(){ const w=_waiters.shift(); if(w) w(); else _slots++; }
 
 async function fetchPriceRange(ticker, range){
   const key = ticker + '|' + range;
@@ -1396,21 +1431,29 @@ async function fetchPriceRange(ticker, range){
   if(_inflightFetches[key]) return _inflightFetches[key];
 
   const p = (async () => {
-    // Yahoo diretto (query1+query2) subito; i proxy partono scaglionati solo se serve.
-    // Prima era sequenziale (fino a ~22s per titolo); ora vince la prima risposta valida.
-    let done = false;
-    const attempts = PROXY_FNS.map((fn,i)=> (async()=>{
-      if(i>=2) await _sleep(1500*(i-1));
-      if(done) throw new Error('skip');
-      return fetchFromUrl(fn(ticker,range), i<2 ? 5000 : 7000);
-    })());
+    // Fase 1 (limitata): Yahoo diretto query1+query2 in parallelo
+    await _acquire();
     try{
-      const d = await Promise.any(attempts);
+      const d = await Promise.any([
+        fetchFromUrl(PROXY_FNS[0](ticker,range), 6000),
+        fetchFromUrl(PROXY_FNS[1](ticker,range), 6000),
+      ]);
       _rangeCache[key] = {ts:Date.now(), d};
       return d;
-    } catch(e){
-      return null;
-    } finally { done = true; }
+    } catch(e){ /* passa ai proxy */ }
+    finally { _release(); }
+    // Fase 2 (fuori dal limite): proxy scaglionati, vince il primo valido
+    let done = false;
+    try{
+      const d = await Promise.any(PROXY_FNS.slice(2).map((fn,i)=>(async()=>{
+        if(i>0) await _sleep(1500*i);
+        if(done) throw new Error('skip');
+        return fetchFromUrl(fn(ticker,range), 8000);
+      })()));
+      _rangeCache[key] = {ts:Date.now(), d};
+      return d;
+    } catch(e){ return null; }
+    finally { done = true; }
   })();
 
   _inflightFetches[key] = p;
@@ -1595,11 +1638,11 @@ async function refreshAll(showSpinner=true){
 
     // Tutto in parallelo: FX, prezzi posizioni, prezzi watchlist e storico del grafico principale
     const chartRange = (mhPeriod==='tot' ? '5y' : mhPeriod);
-    let fetched=0;
+    let fetched=0; const okSet=new Set();
     const fxP = loadFxRates().then(()=>_queueLightRender());
     const priceP = Promise.allSettled(tickers.map(async t=>{
       const d = await fetchPrice(t);
-      if(d){ currentPrices[t]=d; fetched++; _queueLightRender(); }
+      if(d){ currentPrices[t]=d; okSet.add(t); fetched++; _queueLightRender(); }
     }));
     const wlP = Promise.allSettled(wlTickers.map(async t=>{
       const d = await fetchPriceRange(t, sparkTableRange||'1d');
@@ -1609,6 +1652,16 @@ async function refreshAll(showSpinner=true){
     if(chartRange!==sparkTableRange) tickers.forEach(t=>fetchPriceRange(t, chartRange));
 
     await Promise.all([fxP, priceP]);
+    // Secondo tentativo per i titoli (e il cambio) che non hanno risposto
+    const missing = tickers.filter(t=>!okSet.has(t));
+    if(missing.length || !_fxLoaded){
+      await _sleep(800);
+      await Promise.allSettled([
+        ...missing.map(async t=>{ const d=await fetchPrice(t); if(d){ currentPrices[t]=d; okSet.add(t); fetched++; } }),
+        _fxLoaded ? null : loadFxRates()
+      ]);
+      _queueLightRender();
+    }
     setText('lastUpdate', new Date().toLocaleTimeString('it-IT'));
     if(fetched===0) showNotif('Impossibile aggiornare i prezzi. Verifica la connessione.',true);
     else saveCache();
@@ -2156,7 +2209,7 @@ async function renderMobileHero(){
 
   const combined=[];
   const lastKnownMh={};
-  tickers.forEach(t=>{ lastKnownMh[t]=null; });
+  tickers.forEach(t=>{ lastKnownMh[t]=(histories[t]&&histories[t][0]?.v!=null)?histories[t][0].v:(currentPrices[t]?.price??null); });
 
   for(const ts of allTsMh){
     if(mhPeriod==='tot' && ts<earliestBuyTs) continue;
@@ -2455,7 +2508,7 @@ async function renderPortfolioChart(){
   // Questo gestisce correttamente mercati con orari diversi (es. EU + US nello stesso portafoglio)
   const combined=[];
   const lastKnown={};
-  tickers.forEach(t=>{ lastKnown[t]=null; });
+  tickers.forEach(t=>{ lastKnown[t]=(histories[t]&&histories[t][0]?.v!=null)?histories[t][0].v:(currentPrices[t]?.price??null); });
 
   for(const ts of allTs){
     if(portfolioPeriod==='tot' && ts<earliestBuyTs) continue;

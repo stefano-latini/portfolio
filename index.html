@@ -123,7 +123,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
   overflow-x:hidden;position:relative;min-height:100vh;min-height:100dvh;}
 /* Sfondo ambientale che il vetro rifrange */
 body::before{content:'';position:fixed;inset:0;background:var(--ambient);pointer-events:none;z-index:0;}
-.container{position:relative;z-index:1;}
+.container{position:relative;}
 
 /* Liquid press feedback */
 .mh-tab,.ul-tab,.settings-ptab,.theme-btn,.btn-add,.icon-btn,.chart-collapse-btn,.ctx-btn{
@@ -731,30 +731,17 @@ body::before{display:none !important;}
 }
 html,body{-webkit-tap-highlight-color:transparent;}
 
-/* ── Bordo superiore su iOS installato ──────────────────────────── */
-#topEdge{display:none;}
-@media(max-width:600px){
-  #topEdge{
-    display:block;position:fixed;top:0;left:0;right:0;width:100%;
-    height:var(--hdr-h,56px);
-    background:var(--card);
-    z-index:199;pointer-events:none;
-  }
-}
-/* App installata: nessuna trasparenza sulle barre a filo dei bordi */
+/* App installata: nessuna trasparenza sulla barra a filo del bordo.
+   È l'intestazione stessa la scatola fissa e opaca che copre il bordo
+   superiore: è così che WebKit salta lo scroll edge effect di iOS 26. */
 @media all and (display-mode:standalone){
   header{ background:var(--card)!important;
           backdrop-filter:none!important;-webkit-backdrop-filter:none!important; }
-  #topEdge{ background:var(--card); }
 }
 .mobile-card:active{transform:none !important;background:var(--surface);}
 </style>
 </head>
 <body>
-<!-- iOS 26+ sfuma il bordo superiore delle app installate (scroll edge effect).
-     WebKit salta l'effetto solo se trova lì una scatola fissa, opaca e larga
-     quanto lo schermo: è questa. Sta sotto l'intestazione e ne ripete il colore. -->
-<div id="topEdge" aria-hidden="true"></div>
 <div class="container">
 
   <!-- ══ HEADER ══════════════════════════════════════════════════════ -->

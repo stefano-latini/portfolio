@@ -145,19 +145,18 @@ body::before{content:'';position:fixed;inset:0;background:var(--ambient);pointer
 /* ═══════════════════════════════════════════════════════════════
    LIQUID GLASS — materiale condiviso
 ═══════════════════════════════════════════════════════════════ */
-/* Card di contenuto: niente blur (sfondo statico -> costo senza beneficio visivo, pesante su iOS) */
+/* Superfici: fondo PIENO. Niente trasparenza né blur: su Safari il vetro
+   restava visibile e si leggeva il contenuto sottostante attraverso le
+   superfici. Qui non c'è nulla da sovrascrivere altrove. */
 .portfolio-section,.ds-bar,.panel,.mobile-hero,.mobile-stats-strip,.wl-section,
 .modal,.chart-modal,.drawer,.ctx-menu,.ac-dropdown,.theme-toggle{
-  background:var(--glass-bg)!important;
-  border:1px solid var(--glass-border)!important;
-  box-shadow:var(--glass-shadow),var(--glass-inner)!important;
+  background:var(--card);
+  border:1px solid var(--border);
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
 }
-/* Solo superfici che scorrono sopra contenuto: blur reale */
 .modal,.chart-modal,.drawer,.ctx-menu,.ac-dropdown{
-  backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:0 12px 40px rgba(0,0,0,.20);
 }
-/* Specular highlight sul bordo superiore (riflesso luce) */
 .portfolio-section,.panel,.mobile-hero,.wl-section,.modal,.chart-modal,.drawer{
   position:relative;
 }
@@ -176,26 +175,24 @@ body::before{content:'';position:fixed;inset:0;background:var(--ambient);pointer
 header{display:flex;align-items:center;justify-content:space-between;
   margin-bottom:1.75rem;padding:1rem 1.4rem;border:1px solid var(--glass-border);gap:1rem;
   position:sticky;top:1rem;z-index:200;border-radius:20px;
-  background:var(--glass-bg-strong);
-  backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  box-shadow:var(--glass-shadow),var(--glass-inner);}
+  background:var(--card);
+  box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .logo{display:flex;align-items:baseline;gap:.6rem;}
 .logo h1{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:600;letter-spacing:-.3px;}
 .logo sub{font-size:11px;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;}
 .header-right{display:flex;align-items:center;gap:.9rem;}
 .header-meta{text-align:right;color:var(--text3);font-size:11px;line-height:1.7;}
 .header-meta b{color:var(--text2);font-weight:500;}
-.theme-toggle{display:flex;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;padding:3px;gap:2px;box-shadow:var(--glass-inner);}
+.theme-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px;gap:2px;box-shadow:var(--glass-inner);}
 .theme-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:5px 7px;border-radius:14px;font-size:11px;font-family:'Inter',sans-serif;font-weight:500;transition:all .15s;white-space:nowrap;display:flex;align-items:center;justify-content:center;}
 .theme-btn.active{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.15);}
 .theme-btn.active svg{stroke:var(--accent);}
 .theme-btn:hover:not(.active){color:var(--text2);}
 .icon-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px 5px;font-size:19px;transition:color .15s;line-height:1;display:flex;align-items:center;}
 .icon-btn:hover{color:var(--text2);}
-.fx-mobile-pill{display:none;align-items:center;gap:3px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;padding:3px 9px;font-size:10.5px;color:var(--text3);box-shadow:var(--glass-inner);}
+.fx-mobile-pill{display:none;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 9px;font-size:10.5px;color:var(--text3);box-shadow:var(--glass-inner);}
 .fx-mobile-pill .fx-pill-val{color:var(--text2);font-weight:600;font-variant-numeric:tabular-nums;}
-.btn-add{background:var(--glass-bg);border:1px solid var(--glass-border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:5px 15px;border-radius:20px;cursor:pointer;transition:all var(--tr);display:flex;align-items:center;gap:5px;white-space:nowrap;box-shadow:var(--glass-inner);}
+.btn-add{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:5px 15px;border-radius:20px;cursor:pointer;transition:all var(--tr);display:flex;align-items:center;gap:5px;white-space:nowrap;box-shadow:var(--glass-inner);}
 .btn-add:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);box-shadow:var(--glass-shadow),var(--glass-inner);}
 
 /* ─── 3-DOT CONTEXT MENU (desktop) ───────────────────────────── */
@@ -426,7 +423,7 @@ select option{background:var(--surface);}
 .btn-primary{width:100%;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:13px;cursor:pointer;transition:background var(--tr),transform var(--tr),box-shadow var(--tr);margin-top:.5rem;box-shadow:0 4px 16px rgba(37,99,235,.28);}
 .btn-primary:hover{background:var(--accent-d);transform:translateY(-1px);}
 .btn-primary:active{transform:translateY(0);}
-.btn-ghost{width:100%;background:var(--glass-bg);color:var(--text2);border:1.5px solid var(--input-border);border-radius:14px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;padding:12px;cursor:pointer;transition:all var(--tr);margin-top:.5rem;}
+.btn-ghost{width:100%;background:var(--surface);color:var(--text2);border:1.5px solid var(--input-border);border-radius:14px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;padding:12px;cursor:pointer;transition:all var(--tr);margin-top:.5rem;}
 .btn-ghost:hover{border-color:var(--border2);color:var(--text);}
 .fx-pill{display:flex;justify-content:space-between;align-items:center;background:var(--input-bg);border:1.5px solid var(--input-border);border-radius:13px;padding:12px 15px;margin-top:.9rem;font-size:13px;}
 .fx-pill .key{color:var(--text3);font-size:10.5px;}
@@ -588,7 +585,7 @@ canvas { touch-action: pan-y; }
   .mobile-list{display:block;}
   .mobile-hero{display:block !important;}
   body{padding:0 .75rem calc(env(safe-area-inset-bottom) + 1.5rem);overflow-x:hidden;}
-  header{position:fixed;top:0;left:0;right:0;z-index:200;padding-top:max(env(safe-area-inset-top),10px);padding-bottom:.6rem;padding-left:1rem;padding-right:1rem;border:none;border-bottom:1px solid var(--glass-border);background:var(--glass-bg);backdrop-filter:blur(28px) saturate(190%);-webkit-backdrop-filter:blur(28px) saturate(190%);box-shadow:0 4px 20px -8px rgba(0,0,0,0.15);margin-bottom:0;border-radius:0;}
+  header{position:fixed;top:0;left:0;right:0;z-index:200;padding-top:max(env(safe-area-inset-top),10px);padding-bottom:.6rem;padding-left:1rem;padding-right:1rem;border:none;border-bottom:1px solid var(--border);background:var(--card);box-shadow:0 2px 10px -6px rgba(0,0,0,.4);margin-bottom:0;border-radius:0;}
   /* L'altezza vera dell'intestazione viene misurata da JS (--hdr-h): un valore
      fisso sbagliava su iPhone in modalità app e il contenuto finiva sotto. */
   .container{padding-top:var(--hdr-h,calc(max(env(safe-area-inset-top),10px) + 50px));max-width:100%;overflow-x:hidden;}
@@ -717,24 +714,13 @@ canvas { touch-action: pan-y; }
 ═══════════════════════════════════════════════════════════════ */
 body::before{display:none !important;}
 .portfolio-section::after,.panel::after,.mobile-hero::after,.wl-section::after{display:none !important;}
-.portfolio-section,.ds-bar,.panel,.mobile-hero,.mobile-stats-strip,.wl-section,
-.modal,.chart-modal,.drawer,.ctx-menu,.ac-dropdown{
-  background:var(--card) !important;
-  border:1px solid var(--border) !important;
-  box-shadow:0 1px 2px rgba(0,0,0,.04) !important;
-  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
-}
-.modal,.chart-modal,.drawer,.ctx-menu,.ac-dropdown{box-shadow:0 12px 40px rgba(0,0,0,.18) !important;}
+/* Pulsanti e pillole: fondo pieno */
 .theme-toggle,.fx-mobile-pill,.btn-add,.btn-ghost{
-  background:var(--surface) !important;border:1px solid var(--border) !important;box-shadow:none !important;
-  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  background:var(--surface);border:1px solid var(--border);box-shadow:none;
 }
-header{
-  background:var(--card) !important;box-shadow:none !important;
-  backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
-  border:none !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;
-}
-@media(min-width:601px){ header{border:1px solid var(--border) !important;border-radius:16px !important;top:.75rem;} }
+/* Intestazione: fondo pieno, definito nella regola base (niente vetro da
+   sovrascrivere: su Safari la sovrascrittura non reggeva). */
+@media(min-width:601px){ header{top:.75rem;} }
 .modal-overlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
 /* Su touch: niente selezione accidentale mentre si scorre. Da desktop il testo
    resta selezionabile e copiabile, come dev'essere. */
@@ -913,7 +899,7 @@ html,body{-webkit-tap-highlight-color:transparent;}
           <tr>
             <th style="text-align:left">Titolo</th>
             <th>Prezzo</th>
-            <th>Gain totale</th>
+            <th>P/L</th>
             <th>Valore (€)</th>
             <th>Oggi</th>
             <th>FX effect</th>
@@ -1922,7 +1908,7 @@ function renderTable(loading=false){
         <div class="mc-name">${p.name||pd?.name||p.currency}</div>
       </div>
       <div class="mc-gain-wrap">
-        <div class="mc-gain-label">Gain tot.</div>
+        <div class="mc-gain-label">P/L</div>
         ${gainBlock}
       </div>
       <div class="mc-right">
@@ -1955,30 +1941,51 @@ async function loadDetailChart(ticker, range){
   const d=await fetchPriceRange(ticker, range);
   if(!d||!d.history.length) return;
 
-  const vals=d.history.map(h=>h.v);
-  const isUp=vals[vals.length-1]>=vals[0];
-  const col=isUp?getCss('--pos'):getCss('--neg');
-  const bg=isUp?'rgba(92,184,122,0.10)':'rgba(224,112,112,0.10)';
-  const sym={USD:'$',EUR:'€',GBP:'£'}[d.currency]||d.currency;
+  const vals=d.history.map(h=>+h.v.toFixed(4));
+  // Linea di riferimento: chiusura precedente per il giorno, primo prezzo del
+  // periodo altrimenti. È rispetto a questa che il titolo sale o scende.
+  const baseline = (range==='1d' && d.prevClose!=null) ? d.prevClose : vals[0];
+  const isUp = vals[vals.length-1] >= baseline;
+  const col  = isUp?getCss('--pos'):getCss('--neg');
+  const bg   = isUp?'rgba(92,184,122,0.10)':'rgba(224,112,112,0.10)';
+  const sym  = {USD:'$',EUR:'€',GBP:'£'}[d.currency]||d.currency;
+  const grid = getCss('--border')||'rgba(128,128,128,.2)';
+  const tick = getCss('--text3')||'#8a8a8a';
+
   const labels=d.history.map(h=>{
     const dt=new Date(h.t*1000);
-    if(['1d','5d'].includes(range)) return dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-    return dt.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
+    if(range==='1d') return dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    if(range==='5d') return dt.toLocaleDateString('it-IT',{weekday:'short',hour:'2-digit',minute:'2-digit'});
+    if(range==='1mo'||range==='6mo') return dt.toLocaleDateString('it-IT',{day:'2-digit',month:'short'});
+    return dt.toLocaleDateString('it-IT',{month:'short',year:'2-digit'});
   });
 
   detailChart=newChart(canvas,{
     type:'line',
-    data:{labels,datasets:[{
-      data:vals.map(v=>+v.toFixed(4)),
-      borderColor:col,borderWidth:2,
-      backgroundColor:bg,fill:true,
-      pointRadius:0,tension:0.3,
-    }]},
+    data:{labels,datasets:[
+      { data:vals, borderColor:col, borderWidth:2, backgroundColor:bg, fill:true,
+        pointRadius:0, tension:0.3, order:1 },
+      // Linea di riferimento tratteggiata
+      { data:labels.map(()=>baseline), borderColor:tick, borderWidth:1,
+        borderDash:[4,4], pointRadius:0, fill:false, tension:0, order:0 },
+    ]},
     options:{
-      responsive:true,maintainAspectRatio:false,
+      responsive:true, maintainAspectRatio:false,
       animation:{duration:250},
-      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:c=>`${sym} ${fmtN(c.parsed.y)}`}}},
-      scales:{x:{display:false},y:{display:false,grace:'3%'}}
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{filter:it=>it.datasetIndex===0, callbacks:{label:c=>`${sym} ${fmtN(c.parsed.y)}`}},
+      },
+      scales:{
+        x:{ display:true, grid:{display:false}, border:{color:grid},
+            ticks:{ color:tick, font:{size:9}, maxRotation:0, autoSkip:true,
+                    maxTicksLimit:5, padding:4 } },
+        y:{ display:true, position:'right', grace:'4%',
+            grid:{color:grid, drawTicks:false}, border:{display:false},
+            ticks:{ color:tick, font:{size:9}, maxTicksLimit:4, padding:6,
+                    callback:v=>`${sym} ${fmtN(v)}` } },
+      }
     }
   });
 }
@@ -3199,10 +3206,6 @@ function saveWl(){ localStorage.setItem('portfolio_wl', JSON.stringify(watchlist
 function renderAllWatchlists(){
   const container = document.getElementById('wlContainer');
   if(!container) return;
-  // Distruggi vecchi spark
-  Object.values(wlSparkCharts).forEach(ch=>ch&&ch.destroy());
-  wlSparkCharts = {};
-
   if(watchlists.length === 0){
     container.innerHTML = '';
     return;
@@ -3210,31 +3213,6 @@ function renderAllWatchlists(){
 
   container.innerHTML = watchlists.map(wl => buildWlCardHTML(wl)).join('');
 
-  // Disegna sparklines per tutte le liste
-  requestAnimationFrame(()=>{
-    watchlists.forEach(wl => {
-      wl.items.forEach(w => {
-        const pd = currentPrices[w.ticker];
-        if(!pd?.history?.length) return;
-        const vals = pd.history.map(h=>h.v);
-        const ref  = pd.prevClose ?? vals[0];
-        const isUp = vals[vals.length-1] >= ref;
-        const col  = isUp ? getCss('--pos') : getCss('--neg');
-        const bg   = isUp ? 'rgba(92,184,122,0.12)' : 'rgba(224,112,112,0.12)';
-        const plotVals = sparkTableRange==='1d'
-          ? padSparkline1d(vals, pd.prevClose, pd)
-          : (pd.prevClose!=null ? [pd.prevClose,...vals] : vals);
-        const lbl = plotVals.map((_,i)=>i);
-        const cfg = { type:'line', data:{labels:lbl,datasets:[{data:plotVals,borderColor:col,borderWidth:1.5,backgroundColor:bg,fill:true,tension:0.25,pointRadius:0,spanGaps:false}]}, options:{animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}} };
-        // Mobile card spark
-        const mel = document.getElementById(`wlmspark_${wl.id}_${w.id}`);
-        if(mel){ mel.width=72; mel.height=32; wlSparkCharts[`m_${wl.id}_${w.id}`]=newChart(mel,cfg); }
-        // Desktop spark
-        const del = document.getElementById(`wldspark_${wl.id}_${w.id}`);
-        if(del){ wlSparkCharts[`d_${wl.id}_${w.id}`]=newChart(del,{...cfg,options:{...cfg.options,responsive:false}}); }
-      });
-    });
-  });
 }
 
 function buildWlCardHTML(wl){
@@ -3268,7 +3246,7 @@ function buildWlCardHTML(wl){
 
 function buildWlDesktopItems(wl){
   return `<table class="wl-table"><thead><tr>
-    <th style="text-align:left">Titolo</th><th>Prezzo</th><th>Trend</th><th>Oggi</th><th>52w High</th><th>52w Low</th><th></th>
+    <th style="text-align:left">Titolo</th><th>Prezzo</th><th>P/L</th><th>Oggi</th><th>52w High</th><th>52w Low</th><th></th>
   </tr></thead><tbody>` +
   wl.items.map(w=>{
     const pd = currentPrices[w.ticker];
@@ -3281,7 +3259,7 @@ function buildWlDesktopItems(wl){
     return `<tr>
       <td><div class="ticker-chip">${w.ticker}</div><div class="meta-line">${escHtml(w.name||pd?.name||'')}</div></td>
       <td>${cp!=null?`<div class="ds-price ${cp>=(pd?.prevClose||0)?'pos':'neg'}">${sym} ${fmtN(cp)}</div>`:'<span style="color:var(--text3)">N/D</span>'}</td>
-      <td class="spark-cell">${hasH?`<canvas id="wldspark_${wl.id}_${w.id}" width="80" height="36" onclick="openChartPopup('${w.ticker}')"></canvas>`:'—'}</td>
+      <td><span style="color:var(--text3)">—</span></td>
       <td>${dayChg!=null?`<div class="dt-badge ${dc}">${dayChg>=0?'+':''}${dayChg.toFixed(2)}%</div>`:'—'}</td>
       <td style="font-size:12px">${hi52!=null?`${sym} ${fmtN(hi52)}`:'—'}</td>
       <td style="font-size:12px">${lo52!=null?`${sym} ${fmtN(lo52)}`:'—'}</td>
@@ -3304,7 +3282,10 @@ function buildWlMobileItems(wl){
     const bt = dayChg!=null?`${dayChg>=0?'+':''}${dayChg.toFixed(2)}%`:'';
     return `<li class="mobile-card" onclick="openChartPopup('${w.ticker}')">
       <div class="mc-left"><div class="mc-ticker">${w.ticker}</div><div class="mc-name">${escHtml(w.name||pd?.name||w.currency)}</div></div>
-      <div class="mc-spark-wrap">${hasH?`<canvas id="wlmspark_${wl.id}_${w.id}" class="mc-spark"></canvas>`:'<div class="mc-spark"></div>'}</div>
+      <div class="mc-gain-wrap">
+        <div class="mc-gain-label">P/L</div>
+        <div class="mc-gain"><div class="mc-gain-eur" style="color:var(--text3)">—</div></div>
+      </div>
       <div class="mc-right">
         <div class="mc-price">${cp!=null?`${sym} ${fmtN(cp)}`:'—'}</div>
         ${bt?`<div><span class="mc-badge ${bc}">${bt}</span></div>`:''}

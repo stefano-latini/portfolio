@@ -446,7 +446,7 @@ select option{background:var(--surface);}
 .modal-overlay.open .modal{transform:scale(1);}
 .modal-header{padding:1.1rem 1.4rem;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;}
 .modal-header h3{font-family:'Sora',sans-serif;font-weight:600;font-size:.95rem;}
-.modal-body{padding:1.4rem;}
+.modal-body{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:1.4rem;}
 .settings-section{margin-bottom:1.2rem;}
 .settings-section:last-child{margin-bottom:0;}
 .settings-label{color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem;}
@@ -484,7 +484,7 @@ select option{background:var(--surface);}
 .detail-overlay,.manage-overlay{position:fixed;inset:0;background:var(--overlay);z-index:400;opacity:0;pointer-events:none;transition:opacity .22s;}
 .detail-overlay.open,.manage-overlay.open{opacity:1;pointer-events:all;}
 .detail-sheet,.manage-sheet{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:18px 18px 0 0;border-top:1px solid var(--border);z-index:401;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding-bottom:max(env(safe-area-inset-bottom),12px);}
-.detail-sheet{max-height:88vh;overflow-y:auto;}
+.detail-sheet{max-height:88vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .detail-sheet.open,.manage-sheet.open{transform:translateY(0);}
 .detail-handle,.manage-handle{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:10px auto 0;}
 .detail-header{padding:.9rem 1.2rem .6rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--glass-border);}
@@ -666,7 +666,9 @@ canvas { touch-action: pan-y; }
   #settingsOverlay .modal {
     width:100%; max-width:100%;
     border-radius:18px 18px 0 0;
-    max-height:88vh; overflow-y:auto;
+    /* Colonna: intestazione sempre visibile, scorre solo il contenuto.
+       Prima scorreva tutta la scheda e il titolo con la ✕ usciva dallo schermo. */
+    max-height:85dvh; display:flex; flex-direction:column; overflow:hidden;
     transform:translateY(100%);
     transition:transform .3s cubic-bezier(.4,0,.2,1);
     padding-bottom:max(env(safe-area-inset-bottom),16px);
@@ -689,12 +691,23 @@ canvas { touch-action: pan-y; }
   #drawerHandle { display:block !important; }
 }
 
-/* Bottom sheet mobile: glass più materico per leggibilità form */
+/* Schede dal basso: intestazione fissa, scorre solo il corpo */
 @media(max-width:600px){
-  .drawer,#settingsOverlay .modal,#wlDrawer,.chart-modal{
-    background:var(--glass-bg-strong)!important;
-    backdrop-filter:blur(30px) saturate(190%);
-    -webkit-backdrop-filter:blur(30px) saturate(190%);
+  #settingsOverlay .modal > .modal-header,
+  .drawer > .drawer-header,
+  #detailSheet > .sheet-header{ flex:0 0 auto; }
+  #settingsOverlay .modal > .modal-body{ flex:1 1 auto; overflow-y:auto; min-height:0; }
+  .detail-sheet{ max-height:85dvh; }
+}
+
+/* Schede dal basso: fondo PIENO. Erano semitrasparenti e si leggeva
+   il testo della pagina sotto. */
+@media(max-width:600px){
+  .drawer,#settingsOverlay .modal,#wlDrawer,.chart-modal,#detailSheet,#manageSheet,#editOverlay .modal{
+    background:var(--card)!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    box-shadow:0 -8px 40px rgba(0,0,0,.22)!important;
   }
 }
 
@@ -717,7 +730,7 @@ body::before{display:none !important;}
   backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
 }
 header{
-  background:var(--bg) !important;box-shadow:none !important;
+  background:var(--card) !important;box-shadow:none !important;
   backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
   border:none !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;
 }
@@ -1532,12 +1545,17 @@ async function fetchPriceRange(ticker, range){
 }
 
 // r.jina.ai restituisce il JSON dentro un involucro di testo: lo estraiamo.
-function parseChartPayload(txt){
+function extractJson(txt, anchors){
   try{ return JSON.parse(txt); }catch(e){}
-  const i = txt.indexOf('{"chart"');
-  if(i < 0) throw new Error('nessun JSON');
-  return JSON.parse(txt.slice(i, txt.lastIndexOf('}')+1));
+  for(const a of (anchors||[])){
+    const i = txt.indexOf(a);
+    if(i >= 0){ try{ return JSON.parse(txt.slice(i, txt.lastIndexOf('}')+1)); }catch(e){} }
+  }
+  const i = txt.indexOf('{');
+  if(i >= 0){ try{ return JSON.parse(txt.slice(i, txt.lastIndexOf('}')+1)); }catch(e){} }
+  throw new Error('nessun JSON');
 }
+function parseChartPayload(txt){ return extractJson(txt, ['{"chart"']); }
 
 async function fetchFromUrl(url, ms){
   const res = await ft(url, ms);
@@ -3421,19 +3439,21 @@ function guessCurrency(item){
 }
 
 async function acFetch(query){
-  const base = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&lang=it&region=IT&quotesCount=8&newsCount=0&enableFuzzyQuery=true&enableCb=false`;
-  const proxies = [
-    `https://corsproxy.io/?${encodeURIComponent(base)}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(base)}`,
-  ];
-  for(const url of proxies){
+  const base = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}&lang=it&region=IT&quotesCount=10&newsCount=0&enableFuzzyQuery=true&enableCb=false`;
+  // Stesse rotte dei prezzi: diretto quando passa, altrimenti il ponte.
+  // I vecchi proxy (corsproxy/allorigins) sono fuori servizio: la ricerca
+  // non trovava più nulla, su nessun mercato.
+  const urls = (bestRoute === 'jina')
+    ? ['https://r.jina.ai/'+base, base]
+    : [base, 'https://r.jina.ai/'+base];
+  for(const url of urls){
     try{
-      const r = await fetch(url,{signal:AbortSignal.timeout(4000)});
+      const r = await ft(url, 9000);
       if(!r.ok) continue;
-      const d = await r.json();
-      const items = d?.quotes||d?.data?.quotes||[];
-      return items.filter(q=>q.symbol&&q.quoteType!=='NEWS');
-    }catch(e){ continue; }
+      const d = extractJson(await r.text(), ['{"explains"','{"count"','{"quotes"']);
+      const items = (d?.quotes||d?.data?.quotes||[]).filter(q=>q.symbol&&q.quoteType!=='NEWS');
+      if(items.length) return items;
+    }catch(e){ /* rotta successiva */ }
   }
   return null;
 }
@@ -3590,28 +3610,95 @@ function showNotif(msg,err=false){
 }
 
 function exportData(){
-  const blob=new Blob([JSON.stringify({positions,date:new Date().toISOString()},null,2)],
-    {type:'application/json'});
+  const dati = {
+    versione: 2,
+    date: new Date().toISOString(),
+    positions,
+    watchlists,
+    impostazioni: {
+      defaultChartPeriod: localStorage.getItem('defaultChartPeriod')||null,
+      tema: localStorage.getItem('portfolio_theme')||null,
+      periodoDatiTitoli: sparkTableRange,
+    },
+  };
+  const blob=new Blob([JSON.stringify(dati,null,2)],{type:'application/json'});
   const a=Object.assign(document.createElement('a'),
     {href:URL.createObjectURL(blob),download:`portfolio_${todayStr()}.json`});
   a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  const nWl = watchlists.reduce((n,w)=>n+w.items.length,0);
+  showNotif(`Esportate ${positions.length} posizioni e ${watchlists.length} watchlist (${nWl} titoli).`);
 }
+
 function importData(e){
   const file=e.target.files[0]; if(!file) return;
   const fr=new FileReader();
   fr.onload=async ev=>{
     try{
       const d=JSON.parse(ev.target.result);
-      if(Array.isArray(d.positions)){
-        positions=d.positions; save();
-        showNotif(`${positions.length} posizioni importate.`);
-        closeDrawer();
-        await refreshAll();
-      } else showNotif('File non valido.',true);
+      if(!Array.isArray(d.positions)){ showNotif('File non valido.',true); return; }
+      positions = d.positions;
+      save();
+      let msg = `${positions.length} posizioni`;
+      // I file vecchi non hanno le watchlist: in quel caso le lasciamo come sono.
+      if(Array.isArray(d.watchlists)){
+        watchlists = d.watchlists;
+        saveWl();
+        const nWl = watchlists.reduce((n,w)=>n+w.items.length,0);
+        msg += ` e ${watchlists.length} watchlist (${nWl} titoli)`;
+      }
+      const imp = d.impostazioni||{};
+      if(imp.defaultChartPeriod) localStorage.setItem('defaultChartPeriod', imp.defaultChartPeriod);
+      if(imp.tema) { localStorage.setItem('portfolio_theme', imp.tema); document.documentElement.setAttribute('data-theme', imp.tema); }
+      if(imp.periodoDatiTitoli) sparkTableRange = imp.periodoDatiTitoli;
+      showNotif(`Importate ${msg}.`);
+      closeDrawer(); closeSettings();
+      currentPrices={}; _rangeCache={};
+      renderAllWatchlists(); renderNewWlButton();
+      await refreshAll();
     } catch{ showNotif('Errore lettura file.',true); }
   };
   fr.readAsText(file);
+  e.target.value='';
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   BLOCCO SCORRIMENTO CON SCHEDA APERTA
+   Su iOS, con una scheda aperta la pagina sotto continuava a scorrere.
+   Congeliamo il corpo pagina conservando la posizione.
+═══════════════════════════════════════════════════════════════════ */
+const _overlayIds = ['detailOverlay','detailSheet','manageOverlay','manageSheet',
+  'chartOverlay','editOverlay','settingsOverlay','drawer','drawerOverlay',
+  'wlDrawer','wlDrawerOverlay'];
+let _scrollY = 0, _scrollLocked = false;
+
+function _anyOverlayOpen(){
+  return _overlayIds.some(id=>document.getElementById(id)?.classList.contains('open'));
+}
+function updateScrollLock(){
+  const want = _anyOverlayOpen();
+  if(want === _scrollLocked) return;
+  const b = document.body.style;
+  if(want){
+    _scrollY = window.scrollY || window.pageYOffset || 0;
+    b.position='fixed'; b.top = `-${_scrollY}px`; b.left='0'; b.right='0'; b.width='100%';
+    _scrollLocked = true;
+  } else {
+    b.position=''; b.top=''; b.left=''; b.right=''; b.width='';
+    window.scrollTo(0, _scrollY);
+    _scrollLocked = false;
+  }
+}
+// Un osservatore copre ogni via di apertura/chiusura (pulsante, overlay, ESC)
+(function(){
+  const obs = new MutationObserver(()=>updateScrollLock());
+  const start = ()=>_overlayIds.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) obs.observe(el, {attributes:true, attributeFilter:['class']});
+  });
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
 
 // Close modals on ESC
 document.addEventListener('keydown',e=>{

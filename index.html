@@ -120,7 +120,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
   font-size:13px;line-height:1.5;
   padding:2rem 2rem calc(2rem + env(safe-area-inset-bottom));
   transition:background var(--tr),color var(--tr);
-  overflow-x:hidden;position:relative;min-height:100vh;}
+  overflow-x:hidden;position:relative;min-height:100vh;min-height:100dvh;}
 /* Sfondo ambientale che il vetro rifrange */
 body::before{content:'';position:fixed;inset:0;background:var(--ambient);pointer-events:none;z-index:0;}
 .container{position:relative;z-index:1;}
@@ -589,7 +589,9 @@ canvas { touch-action: pan-y; }
   .mobile-hero{display:block !important;}
   body{padding:0 .75rem calc(env(safe-area-inset-bottom) + 1.5rem);overflow-x:hidden;}
   header{position:fixed;top:0;left:0;right:0;z-index:200;padding-top:max(env(safe-area-inset-top),10px);padding-bottom:.6rem;padding-left:1rem;padding-right:1rem;border:none;border-bottom:1px solid var(--glass-border);background:var(--glass-bg);backdrop-filter:blur(28px) saturate(190%);-webkit-backdrop-filter:blur(28px) saturate(190%);box-shadow:0 4px 20px -8px rgba(0,0,0,0.15);margin-bottom:0;border-radius:0;}
-  .container{padding-top:calc(max(env(safe-area-inset-top),10px) + 50px);max-width:100%;overflow-x:hidden;}
+  /* L'altezza vera dell'intestazione viene misurata da JS (--hdr-h): un valore
+     fisso sbagliava su iPhone in modalità app e il contenuto finiva sotto. */
+  .container{padding-top:var(--hdr-h,calc(max(env(safe-area-inset-top),10px) + 50px));max-width:100%;overflow-x:hidden;}
   .logo h1{font-size:1.1rem;}
   .logo sub{display:none;}
   .header-meta{display:none;}
@@ -721,11 +723,14 @@ header{
 }
 @media(min-width:601px){ header{border:1px solid var(--border) !important;border-radius:16px !important;top:.75rem;} }
 .modal-overlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}
-/* Niente selezione di testo / callout durante lo scroll col dito */
-html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;}
-input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;}
+/* Su touch: niente selezione accidentale mentre si scorre. Da desktop il testo
+   resta selezionabile e copiabile, come dev'essere. */
+@media (hover:none){
+  html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+  input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;}
+}
+html,body{-webkit-tap-highlight-color:transparent;}
 .mobile-card:active{transform:none !important;background:var(--surface);}
-.mobile-card,.mc-left,.mc-right{-webkit-user-select:none;user-select:none;}
 </style>
 </head>
 <body>
@@ -1289,13 +1294,44 @@ function newChart(el, cfg){
 /* ═══════════════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════════════ */
+// Misura l'altezza reale dell'intestazione fissa su mobile e la comunica al layout.
+function syncHeaderHeight(){
+  const h = document.querySelector('header');
+  if(!h) return;
+  if(window.innerWidth > 600){ document.documentElement.style.removeProperty('--hdr-h'); return; }
+  const px = Math.ceil(h.getBoundingClientRect().height);
+  if(px > 0) document.documentElement.style.setProperty('--hdr-h', px + 'px');
+}
+window.addEventListener('resize', syncHeaderHeight);
+window.addEventListener('orientationchange', ()=>setTimeout(syncHeaderHeight,250));
+if(window.visualViewport) window.visualViewport.addEventListener('resize', syncHeaderHeight);
+
 function _safe(fn){ try{ const r=fn(); if(r&&r.catch) r.catch(e=>console.warn(e)); }catch(e){ console.warn(e); } }
 
 const CACHE_KEY='portfolio_cache_v1';
+// La cache deve restare PICCOLA: lo spazio del browser è limitato e, se si riempie,
+// a non salvarsi sarebbero le posizioni. Teniamo max 60 punti per titolo.
+function slimHistory(h){
+  if(!h || h.length<=60) return h||[];
+  const step = Math.ceil(h.length/60);
+  const out = h.filter((_,i)=> i%step===0);
+  if(out[out.length-1] !== h[h.length-1]) out.push(h[h.length-1]);
+  return out;
+}
 function saveCache(){
+  const tick = new Set(positions.map(p=>p.ticker));
+  const prices = {};
+  tick.forEach(t=>{
+    const d = currentPrices[t]; if(!d) return;
+    prices[t] = { price:d.price, prevClose:d.prevClose, currency:d.currency, name:d.name,
+                  sessionMinutes:d.sessionMinutes, history:slimHistory(d.history) };
+  });
   try{
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), range:sparkTableRange, fxRates, eurUsd, prices:currentPrices}));
-  }catch(e){ /* quota: ignora */ }
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), range:sparkTableRange, fxRates, eurUsd, prices}));
+  }catch(e){
+    // Spazio esaurito: la cache è un di più, le posizioni no. Liberiamo subito.
+    try{ localStorage.removeItem(CACHE_KEY); }catch{}
+  }
 }
 function loadCache(){
   try{
@@ -1313,6 +1349,9 @@ function loadCache(){
 document.addEventListener('DOMContentLoaded', ()=>{
   try{ Chart.register(crosshairPlugin); }catch(e){ console.warn('Chart.js non caricato',e); }
   document.getElementById('buyDate').value = todayStr();
+  syncHeaderHeight();
+  setTimeout(syncHeaderHeight, 300);  // dopo il caricamento dei font
+  if(document.fonts?.ready) document.fonts.ready.then(syncHeaderHeight);
   // 1) Mostra SUBITO l'ultimo stato noto (cache), senza aspettare la rete
   const cached = positions.length>0 && loadCache();
   _safe(()=>renderTable());
@@ -1356,39 +1395,46 @@ function todayStr(){ return new Date().toISOString().split('T')[0]; }
    FX
 ═══════════════════════════════════════════════════════════════════ */
 async function loadFxRates(){
-  // Usa Yahoo Finance per i tassi FX in tempo reale (stessa fonte dei prezzi)
-  try{
-    const [usdData, gbpData] = await Promise.allSettled([
-      fetchPriceRange('EURUSD=X','6mo'),
-      fetchPriceRange('EURGBP=X','6mo')
-    ]);
-    if(usdData.status==='fulfilled' && usdData.value?.price){
-      eurUsd = usdData.value.price; _fxLoaded = true;
-      fxRates.USD = eurUsd;
-    }
-    if(gbpData.status==='fulfilled' && gbpData.value?.price){
-      fxRates.GBP = gbpData.value.price;
-    }
-    setText('fxRate',`1 € = ${eurUsd.toFixed(4)} $`);
-    setText('fxCurrent',eurUsd.toFixed(4)); setText('fxMobileVal',eurUsd.toFixed(4));
-  } catch(e){
-    setText('fxRate','≈ 1.0800 $ (offline)');
-    setText('fxCurrent','~1.0800'); setText('fxMobileVal','~1.08');
+  // Fonti con CORS nativo: veloci e affidabili, nessun proxy di mezzo.
+  const sources = [
+    async ()=>{
+      const r = await ft('https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD,GBP', 6000);
+      const j = await r.json();
+      return { USD:j?.rates?.USD, GBP:j?.rates?.GBP };
+    },
+    async ()=>{
+      const r = await ft('https://open.er-api.com/v6/latest/EUR', 6000);
+      const j = await r.json();
+      return { USD:j?.rates?.USD, GBP:j?.rates?.GBP };
+    },
+  ];
+  for(const get of sources){
+    try{
+      const v = await get();
+      if(v.USD){
+        eurUsd = v.USD; fxRates.USD = v.USD; _fxLoaded = true;
+        if(v.GBP) fxRates.GBP = v.GBP;
+        setText('fxRate',`1 € = ${eurUsd.toFixed(4)} $`);
+        setText('fxCurrent',eurUsd.toFixed(4)); setText('fxMobileVal',eurUsd.toFixed(4));
+        return;
+      }
+    }catch(e){ /* prossima fonte */ }
+  }
+  if(!_fxLoaded){
+    setText('fxRate',`≈ ${eurUsd.toFixed(4)} $ (non aggiornato)`);
+    setText('fxCurrent',`~${eurUsd.toFixed(4)}`); setText('fxMobileVal',`~${eurUsd.toFixed(2)}`);
   }
 }
+
 async function fetchHistFx(date,currency){
   if(currency==='EUR') return 1;
-  // Usa Yahoo Finance per il tasso storico approssimato
-  // Yahoo non ha un endpoint storico per singola data, usiamo il tasso corrente come fallback
+  // Tasso reale alla data d'acquisto (non più il tasso di oggi come approssimazione)
   try{
-    const pair = currency + 'EUR=X';
-    const d = await fetchPriceRange(pair, '1d');
-    if(d?.price) return d.price;
-    // Fallback: prova frankfurter come backup
-    const r=await ft(`https://api.frankfurter.app/${date}?from=${currency}&to=EUR`,6000);
-    const j=await r.json();
-    return j.rates?.EUR??null;
-  } catch{ return null; }
+    const r = await ft(`https://api.frankfurter.dev/v1/${date}?base=${currency}&symbols=EUR`, 7000);
+    const j = await r.json();
+    if(j?.rates?.EUR) return j.rates.EUR;
+  }catch(e){}
+  return toEurRate(currency); // ripiego: tasso corrente
 }
 function toEurRate(currency){
   if(currency==='EUR') return 1;
@@ -1424,11 +1470,14 @@ function yahooUrl2(ticker, range){
    il piano B. L'app IMPARA quale rotta funziona e la riusa: così
    dalla seconda apertura non spreca più secondi su rotte morte.  */
 const ROUTES = [
-  { id:'y1',    u:(t,r)=> yahooUrl(t,r) },
-  { id:'y2',    u:(t,r)=> yahooUrl2(t,r) },
-  { id:'cors',  u:(t,r)=> `https://corsproxy.io/?url=${encodeURIComponent(yahooUrl(t,r))}` },
-  { id:'allo',  u:(t,r)=> `https://api.allorigins.win/raw?url=${encodeURIComponent(yahooUrl(t,r))}` },
-  { id:'ctabs', u:(t,r)=> `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yahooUrl(t,r))}` },
+  // Verificate dal vivo il 16/10/2026. Yahoo diretto è bloccato dal browser (CORS)
+  // su quasi tutte le reti, ma quando passa è istantaneo: si tenta comunque per primo.
+  // r.jina.ai è il ponte che funziona davvero (8 titoli in ~1,3s).
+  // corsproxy.io ora richiede una chiave a pagamento, allorigins/codetabs/thingproxy
+  // sono fuori servizio: toglierli evita secondi di attesa inutile a ogni apertura.
+  { id:'y1',   u:(t,r)=> yahooUrl(t,r) },
+  { id:'y2',   u:(t,r)=> yahooUrl2(t,r) },
+  { id:'jina', u:(t,r)=> 'https://r.jina.ai/'+yahooUrl(t,r) },
 ];
 let bestRoute = localStorage.getItem('bestRoute') || null;
 const _diag = { route:null, failed:[], ok:0, ko:0 };
@@ -1461,7 +1510,7 @@ async function fetchPriceRange(ticker, range){
       // le altre entrano solo se la prima tarda. Vince chi risponde.
       const order = _routeOrder();
       const race = order.map((rt,i)=>(async()=>{
-        if(i>0) await _sleep(i===1 ? 500 : 500+900*(i-1));
+        if(i>0) await _sleep(i===1 ? 400 : 800);
         if(done) throw new Error('skip');
         const d = await fetchFromUrl(rt.u(ticker,range), 7000);
         return { d, id:rt.id };
@@ -1482,11 +1531,19 @@ async function fetchPriceRange(ticker, range){
   finally { delete _inflightFetches[key]; }
 }
 
+// r.jina.ai restituisce il JSON dentro un involucro di testo: lo estraiamo.
+function parseChartPayload(txt){
+  try{ return JSON.parse(txt); }catch(e){}
+  const i = txt.indexOf('{"chart"');
+  if(i < 0) throw new Error('nessun JSON');
+  return JSON.parse(txt.slice(i, txt.lastIndexOf('}')+1));
+}
+
 async function fetchFromUrl(url, ms){
   const res = await ft(url, ms);
   if(!res.ok) throw new Error('not ok');
   const txt  = await res.text();
-  const data = JSON.parse(txt);
+  const data = parseChartPayload(txt);
   const result = data?.chart?.result?.[0];
   const meta   = result?.meta;
   if(!meta?.regularMarketPrice) throw new Error('no price');
@@ -1564,19 +1621,15 @@ async function fetchDividends(ticker, buyDate){
   const buyTs  = Math.floor(new Date(buyDate).getTime()/1000);
   const nowTs  = Math.floor(Date.now()/1000);
   const baseUrl= `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?events=div&interval=1mo&period1=${buyTs}&period2=${nowTs}`;
-  const proxies= [
-    baseUrl,
+  const proxies= [ baseUrl,
     `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?events=div&interval=1mo&period1=${buyTs}&period2=${nowTs}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(baseUrl)}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(baseUrl)}`,
-    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(baseUrl)}`,
-  ];
+    'https://r.jina.ai/'+baseUrl ];
   for(const url of proxies){
     try{
       const res = await ft(url, 8000);
       if(!res.ok) continue;
       const txt  = await res.text();
-      const data = JSON.parse(txt);
+      const data = parseChartPayload(txt);
       const events = data?.chart?.result?.[0]?.events?.dividends;
       if(!events) return 0; // no dividends
       // Sum all dividends paid on or after buyDate
@@ -1648,9 +1701,11 @@ function _queueLightRender(){
   requestAnimationFrame(()=>{ _renderQueued=false; _safe(()=>renderTable()); _safe(()=>renderSummary()); });
 }
 
+let _refreshPending=false;
 async function refreshAll(showSpinner=true){
   if(positions.length===0){ renderTable(); renderSummary(); return; }
-  if(_refreshing) return;
+  // Un secondo aggiornamento non viene buttato via: viene accodato.
+  if(_refreshing){ _refreshPending=true; return; }
   _refreshing=true;
   try{
     _rangeCache={}; // refresh esplicito: dati freschi
@@ -1705,7 +1760,10 @@ async function refreshAll(showSpinner=true){
     }
     await wlP;
     saveCache();
-  } finally { _refreshing=false; }
+  } finally {
+    _refreshing=false;
+    if(_refreshPending){ _refreshPending=false; refreshAll(false); }
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2998,7 +3056,7 @@ function resetRoute(){
 
 function renderDiag(){
   const el=document.getElementById('diagBox'); if(!el) return;
-  const names={y1:'Yahoo diretto',y2:'Yahoo diretto (2)',cors:'corsproxy',allo:'allorigins',ctabs:'codetabs'};
+  const names={y1:'Yahoo diretto',y2:'Yahoo diretto (2)',jina:'ponte r.jina.ai'};
   const miss=positions.filter(p=>!currentPrices[p.ticker]).map(p=>p.ticker);
   el.innerHTML = `<div>Rotta dati: <b>${names[_diag.route||bestRoute]||'—'}</b></div>`
     + `<div>Richieste riuscite: <b>${_diag.ok}</b> · fallite: <b>${_diag.ko}</b></div>`

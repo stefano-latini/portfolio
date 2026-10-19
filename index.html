@@ -896,10 +896,10 @@ html,body{-webkit-tap-highlight-color:transparent;}
           Aggiungi posizione
         </button>
 
-        <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll()">↻ Aggiorna</button>
+        <button class="btn-refresh btn-refresh-desktop" onclick="refreshAll(true,true)">↻ Aggiorna</button>
         <!-- Mobile: aggiungi posizione + refresh -->
         <button class="btn-add ph-icon-mobile" id="mBtnAdd" onclick="openDrawer()">+ Aggiungi</button>
-        <button class="ph-icon-btn ph-icon-mobile" onclick="refreshAll()" title="Aggiorna prezzi">
+        <button class="ph-icon-btn ph-icon-mobile" onclick="refreshAll(true,true)" title="Aggiorna prezzi">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
       </div>
@@ -989,7 +989,7 @@ html,body{-webkit-tap-highlight-color:transparent;}
       </div>
     </div>
     <button class="btn-primary" onclick="addPosition()">+ Aggiungi</button>
-    <button class="btn-ghost" style="border-radius:20px;margin-top:.5rem" onclick="refreshAll(); closeDrawer();">↻ Aggiorna prezzi</button>
+    <button class="btn-ghost" style="border-radius:20px;margin-top:.5rem" onclick="refreshAll(true,true); closeDrawer();">↻ Aggiorna prezzi</button>
     <div class="fx-pill">
       <span class="key">EUR/USD ora</span>
       <span class="val" id="fxRate">—</span>
@@ -1483,15 +1483,18 @@ const INTERVALS = {
   '1y':  { interval:'1d',  range:'1y'  },  // giornaliero per 1 anno ~252 punti
   '5y':  { interval:'1wk', range:'5y'  },  // settimanale per 5 anni ~260 punti
   'tot': { interval:'1wk', range:'max' },  // max disponibile, clip al primo acquisto
+  // Solo prezzo e chiusura precedente: niente storico. Serve alle watchlist,
+  // che non hanno più le sparkline. Risposta ~2 KB invece di 20-45 KB.
+  'quote':{ interval:'1d',  range:'1d'  },
 };
 
 function yahooUrl(ticker, range){
-  const { interval } = INTERVALS[range]||INTERVALS['1mo'];
-  return `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=${interval}&range=${range}`;
+  const c = INTERVALS[range]||INTERVALS['1mo'];
+  return `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=${c.interval}&range=${c.range}`;
 }
 function yahooUrl2(ticker, range){
-  const { interval } = INTERVALS[range]||INTERVALS['1mo'];
-  return `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=${interval}&range=${range}`;
+  const c = INTERVALS[range]||INTERVALS['1mo'];
+  return `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=${c.interval}&range=${c.range}`;
 }
 
 /* ── ROTTE DATI ───────────────────────────────────────────────────
@@ -1520,10 +1523,21 @@ const _inflightFetches = {}; // dedup: ticker|range -> Promise condivisa
 let _rangeCache = {};        // ticker|range -> {ts, d}
 const RANGE_TTL = 120000;
 const _sleep = ms => new Promise(r=>setTimeout(r,ms));
-// Limite di richieste contemporanee: troppe insieme fanno scattare i blocchi (429)
-let _slots = 4; const _waiters = [];
-async function _acquire(){ if(_slots>0){ _slots--; return; } await new Promise(r=>_waiters.push(r)); }
-function _release(){ const w=_waiters.shift(); if(w) w(); else _slots++; }
+// Due corsie separate. Gli storici dei grafici sono grossi e lenti; i prezzi
+// delle watchlist sono minuscoli. Tenendoli nella stessa coda, la watchlist
+// finiva dietro a venti richieste pesanti e arrivava buona ultima.
+const _pool = { heavy:{slots:5, q:[]}, light:{slots:4, q:[]} };
+function _laneOf(range){ return range==='quote' ? 'light' : 'heavy'; }
+async function _acquire(lane){
+  const p=_pool[lane];
+  if(p.slots>0){ p.slots--; return; }
+  await new Promise(r=>p.q.push(r));
+}
+function _release(lane){
+  const p=_pool[lane];
+  const w=p.q.shift();
+  if(w) w(); else p.slots++;
+}
 
 async function fetchPriceRange(ticker, range){
   const key = ticker + '|' + range;
@@ -1531,8 +1545,9 @@ async function fetchPriceRange(ticker, range){
   if(hit && Date.now()-hit.ts < RANGE_TTL) return hit.d;
   if(_inflightFetches[key]) return _inflightFetches[key];
 
+  const lane = _laneOf(range);
   const p = (async () => {
-    await _acquire();
+    await _acquire(lane);
     let done = false;
     try{
       // Tutte le rotte in gara, scaglionate: la migliore parte subito,
@@ -1541,7 +1556,7 @@ async function fetchPriceRange(ticker, range){
       const race = order.map((rt,i)=>(async()=>{
         if(i>0) await _sleep(i===1 ? 400 : 800);
         if(done) throw new Error('skip');
-        const d = await fetchFromUrl(rt.u(ticker,range), 7000);
+        const d = await fetchFromUrl(rt.u(ticker,range), rt.id==='jina' ? 12000 : 5000);
         return { d, id:rt.id };
       })());
       const win = await Promise.any(race);
@@ -1552,7 +1567,7 @@ async function fetchPriceRange(ticker, range){
     } catch(e){
       _diag.ko++; if(!_diag.failed.includes(ticker)) _diag.failed.push(ticker);
       return null;
-    } finally { done = true; _release(); }
+    } finally { done = true; _release(lane); }
   })();
 
   _inflightFetches[key] = p;
@@ -1655,9 +1670,9 @@ async function fetchDividends(ticker, buyDate){
   const buyTs  = Math.floor(new Date(buyDate).getTime()/1000);
   const nowTs  = Math.floor(Date.now()/1000);
   const baseUrl= `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?events=div&interval=1mo&period1=${buyTs}&period2=${nowTs}`;
-  const proxies= [ baseUrl,
-    `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?events=div&interval=1mo&period1=${buyTs}&period2=${nowTs}`,
-    'https://r.jina.ai/'+baseUrl ];
+  const proxies = (bestRoute==='jina')
+    ? ['https://r.jina.ai/'+baseUrl, baseUrl]
+    : [baseUrl, 'https://r.jina.ai/'+baseUrl];
   for(const url of proxies){
     try{
       const res = await ft(url, 8000);
@@ -1678,7 +1693,9 @@ async function fetchDividends(ticker, buyDate){
 
 async function refreshDividends(){
   const tickers = [...new Set(positions.map(p=>p.ticker))];
-  await Promise.allSettled(tickers.map(async t=>{
+  // In sequenza, non in parallelo: è lavoro di sottofondo, non deve competere
+  // con i prezzi né far scattare i limiti del ponte.
+  for(const t of tickers){
     const pd = currentPrices[t];
     const currency = pd?.currency || positions.find(p=>p.ticker===t)?.currency || 'USD';
     const buyDates = positions.filter(p=>p.ticker===t).map(p=>p.buyDate);
@@ -1692,7 +1709,7 @@ async function refreshDividends(){
         p.dividends = Math.round(totalEur * 100) / 100;
       }
     }
-  }));
+  }
   save();
 }
 
@@ -1729,6 +1746,13 @@ async function addPosition(){
    REFRESH ALL
 ═══════════════════════════════════════════════════════════════════ */
 let _refreshing=false, _renderQueued=false;
+let _wlRenderQueued=false;
+function _queueWlRender(){
+  if(_wlRenderQueued) return;
+  _wlRenderQueued=true;
+  requestAnimationFrame(()=>{ _wlRenderQueued=false; _safe(()=>renderAllWatchlists()); });
+}
+
 function _queueLightRender(){
   if(_renderQueued) return;
   _renderQueued=true;
@@ -1736,13 +1760,16 @@ function _queueLightRender(){
 }
 
 let _refreshPending=false;
-async function refreshAll(showSpinner=true){
+async function refreshAll(showSpinner=true, force=false){
   if(positions.length===0){ renderTable(); renderSummary(); return; }
   // Un secondo aggiornamento non viene buttato via: viene accodato.
   if(_refreshing){ _refreshPending=true; return; }
   _refreshing=true;
   try{
-    _rangeCache={}; // refresh esplicito: dati freschi
+    // Svuotare sempre la cache faceva riscaricare lo storico del grafico una
+    // seconda volta a ogni apertura (8 richieste pesanti sprecate). Ora si
+    // svuota solo quando l'aggiornamento è chiesto a mano.
+    if(force) _rangeCache={};
     const tickers=[...new Set(positions.map(p=>p.ticker))];
     const wlTickers=[...new Set(watchlists.flatMap(wl=>wl.items.map(w=>w.ticker)))].filter(t=>!tickers.includes(t));
     if(showSpinner && !tickers.some(t=>currentPrices[t])) renderTable(true);
@@ -1755,12 +1782,15 @@ async function refreshAll(showSpinner=true){
       const d = await fetchPrice(t);
       if(d){ currentPrices[t]=d; okSet.add(t); fetched++; _queueLightRender(); }
     }));
+    // Watchlist: richieste leggere ('quote'), avviate SUBITO insieme alle
+    // posizioni e non dopo, e ridisegnate mano a mano che arrivano.
+    const wlOk = new Set();
     const wlP = Promise.allSettled(wlTickers.map(async t=>{
-      const d = await fetchPriceRange(t, sparkTableRange||'1d');
-      if(d) currentPrices[t]=d;
-    })).then(()=>_safe(()=>renderAllWatchlists()));
-    // pre-carica lo storico del grafico (verrà servito dalla cache breve)
-    if(chartRange!==sparkTableRange) tickers.forEach(t=>fetchPriceRange(t, chartRange));
+      const d = await fetchPriceRange(t, 'quote');
+      if(d){ currentPrices[t]=d; wlOk.add(t); _queueWlRender(); }
+    }));
+    // Niente pre-carico dello storico del grafico: raddoppiava le richieste e
+    // metteva la watchlist in fondo alla coda. Il grafico si procura i suoi dati.
 
     await Promise.all([fxP, priceP]);
     // Secondo tentativo per i titoli (e il cambio) che non hanno risposto
@@ -1781,19 +1811,38 @@ async function refreshAll(showSpinner=true){
     if(el) el.textContent=SPARK_LABELS[sparkTableRange]||sparkTableRange;
     _safe(()=>renderTable());
     _safe(()=>renderSummary());
-    _safe(()=>renderPortfolioChart());
-    _safe(()=>renderPnlSection());
+    // Su mobile la sezione desktop è nascosta: evitiamo di scaricarne lo
+    // storico, erano 8 richieste pesanti buttate via a ogni apertura.
+    if(window.innerWidth > 600){
+      _safe(()=>renderPortfolioChart());
+      _safe(()=>renderPnlSection());
+    }
     _safe(()=>renderMobileHero());
     _safe(()=>renderNewWlButton());
     _safe(()=>renderDiag());
 
-    // Dividendi: in background, al massimo ogni 6 ore (erano rifatti a ogni apertura)
+    await wlP;
+    // Ritenta i titoli di watchlist rimasti senza prezzo
+    const wlMissing = wlTickers.filter(t=>!wlOk.has(t));
+    if(wlMissing.length){
+      await _sleep(600);
+      await Promise.allSettled(wlMissing.map(async t=>{
+        const d = await fetchPriceRange(t, 'quote');
+        if(d){ currentPrices[t]=d; wlOk.add(t); }
+      }));
+    }
+    _safe(()=>renderAllWatchlists());
+    saveCache();
+
+    // Dividendi per ultimi: sono 8 richieste pesanti che non servono subito e
+    // all'avvio rubavano banda ai prezzi. Al massimo ogni 6 ore.
     const lastDiv=+localStorage.getItem('divFetchedAt')||0;
     if(Date.now()-lastDiv > 6*3600*1000 || positions.some(p=>p.dividends==null)){
-      refreshDividends().then(()=>{ localStorage.setItem('divFetchedAt',Date.now()); renderTable(); renderSummary(); }).catch(()=>{});
+      refreshDividends().then(()=>{
+        localStorage.setItem('divFetchedAt',Date.now());
+        _safe(()=>renderTable()); _safe(()=>renderSummary());
+      }).catch(()=>{});
     }
-    await wlP;
-    saveCache();
   } finally {
     _refreshing=false;
     if(_refreshPending){ _refreshPending=false; refreshAll(false); }
@@ -3106,7 +3155,16 @@ function closeSettings(e){
 function resetRoute(){
   bestRoute=null; try{ localStorage.removeItem('bestRoute'); }catch{}
   _diag.route=null; _diag.ok=0; _diag.ko=0; _diag.failed=[];
-  _rangeCache={}; renderDiag(); closeSettings(); refreshAll();
+  _rangeCache={};
+  // Sblocca un aggiornamento eventualmente piantato, altrimenti il pulsante
+  // veniva semplicemente ignorato.
+  for(const k of Object.keys(_inflightFetches)) delete _inflightFetches[k];
+  _refreshing=false; _refreshPending=false;
+  _pool.heavy.slots=5; _pool.heavy.q.length=0;
+  _pool.light.slots=4; _pool.light.q.length=0;
+  renderDiag(); closeSettings();
+  showNotif('Riprovo tutte le rotte dati…');
+  refreshAll(true,true);
 }
 
 function renderDiag(){
@@ -3390,7 +3448,7 @@ async function addToWatchlist(){
   saveWl();
   closeWlDrawer();
   showNotif(`${ticker} aggiunto a "${wl.name}"`);
-  const d = await fetchPriceRange(ticker, sparkTableRange||'1d');
+  const d = await fetchPriceRange(ticker, 'quote');
   if(d) currentPrices[ticker] = d;
   renderAllWatchlists();
 }
